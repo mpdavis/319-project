@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>319 Project</title>
+
+        <link rel="author" href="humans.txt" />
+
+        <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.css" />
+        <link rel="stylesheet" type="text/css" href="/static/css/styles.css" />
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+        <script src="/static/js/bootstrap-modal.js"></script>
+
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+
+                    <ul class="nav">
+                        <li><a href="/">Home</a></li>
+
+                    </ul>
+
+                    {% if not username %}
+
+                        <form class="form-inline" action="login" method="post" style="text-align: right; margin-bottom: 0px;">
+                            <input type="text" class="input-small" id="username" name="username" placeholder="Name">
+                            <input type="password" class="input-small" id="password" name="password" placeholder="Password">
+
+                            <button type="submit" class="btn">Sign in</button>
+                        </form>
+
+                    {% endif %}
+
+                    {% if username %}
+
+                        <form class="form-inline" action="logout" method="post" style="text-align: right; margin-bottom: 0px;">
+                            <label>Welcome, {{ username }}.</label>
+                            <button type="submit" class="btn">Logout</button>
+
+                        </form>
+
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="container">
+            <div id="content">
+
+                {% block content %}{% endblock %}
+
+            </div>
+        </div>
+    </body>
+</html>
