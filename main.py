@@ -17,13 +17,12 @@
 
 import os
 import webapp2
-
 from google.appengine.ext.webapp import template
 from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
 
-import models
-import utils
+from auth import views as auth_views
+
 
 class MainHandler(webapp2.RequestHandler):
     def get(self):
@@ -32,6 +31,9 @@ class MainHandler(webapp2.RequestHandler):
         self.response.out.write(template.render(path, {}))
 
 app = webapp2.WSGIApplication([('/', MainHandler),
+
+                                ('/auth/login', auth_views.login),
+                                ('/auth/logout', auth_views.logout),
 
                                 ],
                               debug=True)
