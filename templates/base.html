@@ -30,26 +30,15 @@
 
                     {% if not username %}
 
-                        <a href="auth/login" class="btn btn-primary pull-right">Login</a>
-
-
-{#                        <form class="form-inline" action="login" method="post" style="text-align: right; margin-bottom: 0px;">#}
-{#                            <input type="text" class="input-small" id="username" name="username" placeholder="Name">#}
-{#                            <input type="password" class="input-small" id="password" name="password" placeholder="Password">#}
-{##}
-{#                            <button type="submit" class="btn">Sign in</button>#}
-{#                        </form>#}
+                        <a href="/auth/login" class="btn btn-primary pull-right">Login</a>
 
                     {% endif %}
 
                     {% if username %}
-
-                        <form class="form-inline" action="logout" method="post" style="text-align: right; margin-bottom: 0px;">
-                            <label>Welcome, {{ username }}.</label>
-                            <button type="submit" class="btn">Logout</button>
-
-                        </form>
-
+                        <div class="pull-right">
+                            Welcome, {{ username }}
+                            <a href="/auth/logout" class="btn">Logout</a>
+                        </div>
                     {% endif %}
 
                 </div>
