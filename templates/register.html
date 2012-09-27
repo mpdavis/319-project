@@ -13,19 +13,26 @@
                         </div>
                     </div>
                     <div class="control-group">
+                        <label class="control-label">Username</label>
+                        <div class="controls">
+                            {{ form.username|safe }}
+                        </div>
+                    </div>
+                    <div class="control-group">
                         <label class="control-label">Password</label>
                         <div class="controls">
                             {{ form.password|safe }}
                         </div>
                     </div>
                     <div class="control-group">
+                        <label class="control-label">Confirm</label>
                         <div class="controls">
-                            <label class="checkbox">
-                                <input type="checkbox"> Remember me
-                            </label>
-                            <div style="margin-top: 20px;">
-                                <button type="submit" class="btn btn-primary">Login</button> or <a href="/auth/register"> register an account.</a>
-                            </div>
+                            {{ form.password_confirm|safe }}
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <button type="submit" class="btn btn-primary">Register</button>
                         </div>
                     </div>
                 </form>
