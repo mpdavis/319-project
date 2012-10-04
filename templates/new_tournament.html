@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block style %} <!-- Temp, maybe move to css file later -->
+<style>
+#new-tourney-form label{
+    font-size: 22px;
+    font-weight: bold;
+    vertical-align: middle;
+}
+
+#new-tourney-form input[type="radio"] {
+    margin-right: 2px;
+    margin-top: 1px;
+}
+
+#new-tourney-form td{
+    vertical-align: middle;
+    border-right: none;
+    border-left: none;
+    height: 90px;
+}
+
+#new-tourney-form .description {
+    font-size: 14px;
+}
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+
+    <h1 style="margin:35px 0 15px 0;">Start a New Tournament</h1>
+
+    <div class="span12">
+{#        <div class="well">#}
+            <!-- Manually build form because of custom formating -->
+            <form id="new-tourney-form" action='' method='POST'>
+                {% csrf_token %}
+                <p>Choose this tournament's level of security:</p>
+                <div style="margin-left: 20px; margin-top: 10px;">
+
+                    <table id="new-tourney-table" class="table table-striped table-bordered">
+                        <tr>
+                            <td style="width:20px;border-left: 1px solid #DDDDDD;"></td>
+                            <td style="border-right: none;width:150px;">
+                                <label for="id_tournament-type-public">
+                                    <input id="id_tournament-type-public" type="radio" name="tournament-type" value="public" />
+                                    Public
+                                </label>
+                            </td>
+                            <td class="description">
+                                A public tournament will be accessible to any user with the tournament link, no login required.  Any visitor can make changes to the tournament.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width:20px;border-left: 1px solid #DDDDDD;"></td>
+                            <td style="border-right: none;width:150px;">
+                                <label for="id_tournament-type-protected">
+                                    <input id="id_tournament-type-protected" type="radio" name="tournament-type" value="protected" />
+                                    Protected
+                                </label>
+                            </td>
+                            <td class="description">
+                                A protected tournament will also be accessible to any user with the tournament link, no login required. However, only an authenticated user with appropriate permissions will be able to make changes to the tournament.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width:20px;border-left: 1px solid #DDDDDD;"></td>
+                            <td style="border-right: none;width:150px;">
+                                <label for="id_tournament-type-private">
+                                    <input id="id_tournament-type-private" type="radio" name="tournament-type" value="private" />
+                                    Private
+                                </label>
+                            </td>
+                            <td class="description">
+                                A private tournament will require all users to login and have appropriate permission in order to view and make changes to the tournament.
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <input type="submit" class="btn btn-primary pull-right" value="Next" style="width:75px;" />
+            </form>
+
+{#        </div>#}
+    </div>
+
+</div>
+
+<script>
+$(document).ready(function(){
+    $("#new-tourney-table").find("tr").click(function(){
+        console.log("Working");
+        $("input", this).attr('checked', 'checked');
+    });
+});
+
+</script>
+{% endblock %}

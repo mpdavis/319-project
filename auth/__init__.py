@@ -1,6 +1,8 @@
+import os
+
 import webapp2
 from webapp2_extras import sessions
-from webapp2_extras import auth
+from webapp2_extras import auth as webapp_auth
 from google.appengine.ext.webapp import template
 
 from auth import models as auth_models
@@ -32,7 +34,7 @@ class UserAwareHandler(webapp2.RequestHandler):
 
     @webapp2.cached_property
     def auth(self):
-        return auth.get_auth(request=self.request)
+        return webapp_auth.get_auth(request=self.request)
 
     @webapp2.cached_property
     def user(self):
@@ -49,7 +51,14 @@ class UserAwareHandler(webapp2.RequestHandler):
 #        logging.warning(user_model.username)
         return user_model
 
-    def render_response(self, temp, form=None, error=None):
-        context = dict()
-        context['form'] = form
+    def render_response(self, temp, view_context={}, form=None, error=None):
+        context = {}
+        #put stuff in context here like base.get_context would normally have.
+
+        ##
+        context.update(view_context)
+
+        if 'form' not in context:
+            context['form'] = form
+
         self.response.out.write(template.render(temp, context))
