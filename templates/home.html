@@ -2,12 +2,14 @@
 
 {% block jumbotron %}
 
-    <div class="jumbotron masthead">
-        <h1>Web Tournaments</h1>
-        <div class="container">
+    <div class="jumbotron masthead home">
 
+
+
+        <div class="container" style="padding-top: 95px; width: 1080px">
+            <h1>Web Tournaments</h1>
             <p>Easy, fast, and powerful tournament software. </p>
-            <p><a href="assets/bootstrap.zip" class="btn btn-primary btn-large" onclick="_gaq.push(['_trackEvent', 'Jumbotron actions', 'Download', 'Download 2.1.1']);">Start a Tournament</a></p>
+            <p><a href="admin/create" class="btn btn-primary btn-large">Start a Tournament</a></p>
 
         </div>
     </div>
@@ -17,22 +19,40 @@
 {% block content %}
 
 
-<br>
-<div class="row">
-    <div class="span4">
-        <h2>Test</h2>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras id auctor metus. Ut eu vestibulum diam. Nam volutpat ultrices scelerisque. Nunc bibendum augue sit amet erat porttitor vehicula. Vivamus iaculis augue sit amet dolor facilisis dignissim. Integer id est in dolor cursus interdum et a arcu. Maecenas sed est eu leo rutrum consequat. Proin sed massa at lorem laoreet ultrices.
-    </div>
 
-    <div class="span4">
-        <h2>Test</h2>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras id auctor metus. Ut eu vestibulum diam. Nam volutpat ultrices scelerisque. Nunc bibendum augue sit amet erat porttitor vehicula. Vivamus iaculis augue sit amet dolor facilisis dignissim. Integer id est in dolor cursus interdum et a arcu. Maecenas sed est eu leo rutrum consequat. Proin sed massa at lorem laoreet ultrices.
-    </div>
+    <div class="marketing">
 
-    <div class="span4">
-        <h2>Test</h2>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras id auctor metus. Ut eu vestibulum diam. Nam volutpat ultrices scelerisque. Nunc bibendum augue sit amet erat porttitor vehicula. Vivamus iaculis augue sit amet dolor facilisis dignissim. Integer id est in dolor cursus interdum et a arcu. Maecenas sed est eu leo rutrum consequat. Proin sed massa at lorem laoreet ultrices.
+{#        <h1>Web Tournaments</h1>#}
+{#        <p class="marketing-byline">Need reasons to love Bootstrap? Look no further.</p>#}
+
+        <div class="row-fluid">
+
+            <div class="span12" style="margin-top: 60px;">
+                <img src="/static/img/macbook-full.png">
+            </div>
+
+        </div>
+        <div class="row-fluid">
+
+            <div class="span4">
+
+                <h2>By nerds, for nerds.</h2>
+                <p>Built at Twitter by <a href="http://twitter.com/mdo">@mdo</a> and <a href="http://twitter.com/fat">@fat</a>, Bootstrap utilizes <a href="http://lesscss.org">LESS CSS</a>, is compiled via <a href="http://nodejs.org">Node</a>, and is managed through <a href="http://github.com">GitHub</a> to help nerds do awesome stuff on the web.</p>
+            </div>
+            <div class="span4">
+
+                <h2>Made for everyone.</h2>
+                <p>Bootstrap was made to not only look and behave great in the latest desktop browsers (as well as IE7!), but in tablet and smartphone browsers via <a href="./scaffolding.html#responsive">responsive CSS</a> as well.</p>
+            </div>
+            <div class="span4">
+
+                <h2>Packed with features.</h2>
+                <p>A 12-column responsive <a href="./scaffolding.html#grid">grid</a>, dozens of components, <a href="./javascript.html">javascript plugins</a>, typography, form controls, and even a <a href="./customize.html">web-based Customizer</a> to make Bootstrap your own.</p>
+            </div>
+        </div>
+
+        <hr class="soften">
+
     </div>
-</div>
 
 {% endblock %}
