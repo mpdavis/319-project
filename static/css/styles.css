@@ -10,15 +10,25 @@
 /* Body and structure
 -------------------------------------------------- */
 
+html {
+    height: 100%;
+}
+
 body {
     position: relative;
-    padding-top: 40px;
+    height: 100%;
 }
 
 /* Code in headings */
 h3 code {
     font-size: 14px;
     font-weight: normal;
+}
+
+.container {
+    min-height: 100%;
+    height: auto;
+    height: 100%;
 }
 
 
@@ -318,8 +328,11 @@ hr.soften {
 -------------------------------------------------- */
 
 .footer {
+    height: 60px;
+    position: relative;
+    bottom: 0;
     padding: 70px 0;
-    margin-top: 70px;
+    margin-top: -200px;
     border-top: 1px solid #e5e5e5;
     background-color: #292929;
 }
