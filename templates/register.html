@@ -5,6 +5,11 @@
     <div class="row" style="margin-top:80px;">
         <div class="span6 offset3">
             <div class="well">
+                {% if error %}
+                    <div class="alert alert-error">
+                        Whoops.  Something went wrong.
+                    </div>
+                {% endif %}
                 <form class="form-horizontal" method="post" action="">
                     <div class="control-group">
                         <label class="control-label">Email</label>

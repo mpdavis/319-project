@@ -49,6 +49,7 @@ config['webapp2_extras.sessions'] = {
 app = webapp2.WSGIApplication([
     webapp2.Route('/', MainHandler, 'home'),
     webapp2.Route('/auth/login', auth_views.login, 'login'),
+    webapp2.Route('/auth/login/ajax', auth_views.login_ajax, 'login_ajax'),
     webapp2.Route('/auth/logout', auth_views.logout, 'logout'),
     webapp2.Route('/auth/register', auth_views.register, 'register'),
 

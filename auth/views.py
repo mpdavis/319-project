@@ -1,6 +1,7 @@
 
 import auth
 from auth import forms as auth_forms
+from auth import utils as auth_utils
 
 from google.appengine.ext.webapp import template
 
@@ -24,6 +25,9 @@ class register(auth.UserAwareHandler):
                 password_raw= form.password.data)
 
             if success:
+                auth_utils.send_registration_email(form.email.data, form.username.data)
+
+            if success:
                 self.auth.get_user_by_password("auth:"+form.email.data,
                     form.password.data)
                 return self.redirect_to("home")
@@ -33,10 +37,6 @@ class register(auth.UserAwareHandler):
                         error = "That email is already in use."
                 else:
                     error = "Something has gone horibly wrong."
-
-        else:
-            import logging
-            logging.warning(form.email)
 
         self.render_response("templates/register.html", form=form, error=error)
 
@@ -60,6 +60,22 @@ class login(auth.UserAwareHandler):
         self.render_response("templates/login.html",
             form=form,
             error=error)
+
+class login_ajax(auth.UserAwareHandler):
+    def post(self):
+
+        form = auth_forms.LoginForm(self.request.POST)
+        error = None
+        if form.validate():
+            try:
+                self.auth.get_user_by_password(
+                    "auth:"+form.email.data,
+                    form.password.data)
+                return self.response.write("valid")
+            except (google_auth.InvalidAuthIdError, google_auth.InvalidPasswordError):
+                error = "Invalid Email / Password"
+
+        self.response.write("<b>Whoops!</b> Incorrect username or password.")
 
 
 class logout(auth.UserAwareHandler):
