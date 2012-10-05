@@ -77,7 +77,7 @@
                 //content on the page to push it down there.  It sets the min-height on the
                 //main-content div.  This gets automatically recalculated whenever the window is resized.
                 $(window).resize(function(){
-                    var new_height = $(window).height() - 251 - $('.footer').height();
+                    var new_height = $(window).height() - 191 - $('.footer').height();
                     //The 'jumbotron' is not in main-content so we have to account for that separately.
                     if($(".jumbotron").length > 0){
                         new_height = new_height - $('.jumbotron').height() - 150; //150 is for top and bottom padding.
