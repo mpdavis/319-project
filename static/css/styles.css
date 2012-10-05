@@ -10,15 +10,25 @@
 /* Body and structure
 -------------------------------------------------- */
 
+html {
+    height: 100%;
+}
+
 body {
     position: relative;
-    padding-top: 40px;
+    height: 100%;
 }
 
 /* Code in headings */
 h3 code {
     font-size: 14px;
     font-weight: normal;
+}
+
+.container {
+    min-height: 100%;
+    height: auto;
+    height: 100%;
 }
 
 
