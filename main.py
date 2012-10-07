@@ -55,6 +55,7 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/auth/login/ajax', auth_views.login_ajax, 'login_ajax'),
     webapp2.Route('/auth/logout', auth_views.logout, 'logout'),
     webapp2.Route('/auth/register', auth_views.register, 'register'),
+    webapp2.Route('/auth/check_username', auth_views.check_username, 'check_username'),
 
     webapp2.Route('/tournament/new', tournament_views.new_tournament, 'new-tourney'),
 

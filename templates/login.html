@@ -42,13 +42,17 @@
     <script>
     function login()
     {
+
+
         $.post("/auth/login/ajax", {email: $("#email").val(), password: $("#password").val()},
                 function(responseText)
                 {
-                    if (responseText == "valid") {
+                    var data = $.parseJSON(responseText);
+
+                    if (data.loggedin) {
                         window.location.replace("/");
                     } else {
-                        $("#error").html(responseText);
+                        $("#error").html(data.error_message);
                         $("#error").show();
                     }
 

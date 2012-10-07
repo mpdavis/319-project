@@ -1,9 +1,12 @@
 
+import json
+
 import auth
 from auth import forms as auth_forms
 from auth import utils as auth_utils
 
 from google.appengine.ext.webapp import template
+from google.appengine.ext import db
 
 import webapp2
 from webapp2_extras import auth as google_auth
@@ -66,16 +69,20 @@ class login_ajax(auth.UserAwareHandler):
 
         form = auth_forms.LoginForm(self.request.POST)
         error = None
+        loggedin = False
+        message = None
         if form.validate():
             try:
                 self.auth.get_user_by_password(
                     "auth:"+form.email.data,
                     form.password.data)
-                return self.response.write("valid")
+                loggedin = True
             except (google_auth.InvalidAuthIdError, google_auth.InvalidPasswordError):
-                error = "Invalid Email / Password"
+                message = "Invalid Email / Password"
 
-        self.response.write("<b>Whoops!</b> Incorrect username or password.")
+        response = json.dumps({'loggedin': loggedin, 'error_message': message})
+
+        self.response.write(response)
 
 
 class logout(auth.UserAwareHandler):
@@ -84,3 +91,18 @@ class logout(auth.UserAwareHandler):
     def get(self):
         self.auth.unset_session()
         self.redirect('/auth/login')
+
+class check_username(auth.UserAwareHandler):
+    def get(self):
+        username = self.request.GET.get('username', None)
+
+        output = {"valid" : True}
+        count = db.GqlQuery("SELECT * FROM Unique WHERE Key_name=:1", username)
+        import logging
+        logging.warning(count)
+
+        if username == 'test':
+            output['valid'] = False
+
+        self.response.write(json.dumps(output))
+

@@ -17,7 +17,7 @@
                             {{ form.email|safe }}
                         </div>
                     </div>
-                    <div class="control-group">
+                    <div class="control-group" id="username_control">
                         <label class="control-label">Username</label>
                         <div class="controls">
                             {{ form.username|safe }}
@@ -47,5 +47,34 @@
         </div>
 
     </div>
+
+    <script>
+    $(function() {
+
+
+
+        $("#username").blur(function () {
+            var page = "/auth/check_username?"
+            var output;
+            $.getJSON(page,
+                {
+                  username: $("#username").val()
+                },
+                function(data) {
+
+                    if (data.valid) {
+                        $("#username_control").removeClass("warning").addClass("success")
+                    } else {
+                        $("#username_control").removeClass("success").addClass("warning")
+                    }
+                })
+
+
+
+        })
+    })
+
+
+    </script>
 
 {% endblock %}
