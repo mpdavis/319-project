@@ -21,6 +21,7 @@
                         <label class="control-label">Username</label>
                         <div class="controls">
                             {{ form.username|safe }}
+                            <div class="help-inline" id="username_text"></div>
                         </div>
                     </div>
                     <div class="control-group">
@@ -63,9 +64,12 @@
                 function(data) {
 
                     if (data.valid) {
-                        $("#username_control").removeClass("warning").addClass("success")
+                        $("#username_control").removeClass("error").addClass("success")
+                        $("#username_text").text("Available");
+
                     } else {
-                        $("#username_control").removeClass("success").addClass("warning")
+                        $("#username_control").removeClass("success").addClass("error")
+                        $("#username_text").text("Unavailable");
                     }
                 })
 
