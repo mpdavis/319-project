@@ -42,9 +42,7 @@
     <script>
     function login()
     {
-
-
-        $.post("/auth/login/ajax", {email: $("#email").val(), password: $("#password").val()},
+        $.post("/auth/login", {email: $("#email").val(), password: $("#password").val()},
                 function(responseText)
                 {
                     var data = $.parseJSON(responseText);
