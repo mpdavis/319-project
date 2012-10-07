@@ -22,9 +22,9 @@ from google.appengine.ext.webapp import template
 from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
 
+
 import auth
 from auth import views as auth_views
-from auth import models as auth_models
 
 import tournament
 from tournament import views as tournament_views
@@ -36,23 +36,16 @@ class MainHandler(auth.UserAwareHandler):
         context = dict()
 
         if self.user:
-            import logging
-            logging.warning(self.user_model)
-            context['username'] = self.user_model.username
+            context['username'] = self.user.username
 
         self.render_response('templates/home.html', context)
 
 
-config = {}
-config['webapp2_extras.sessions'] = {
-    'secret_key': 'zomg-this-key-is-so-secret',
-    }
-
-
 app = webapp2.WSGIApplication([
+
     webapp2.Route('/', MainHandler, 'home'),
+
     webapp2.Route('/auth/login', auth_views.login, 'login'),
-    webapp2.Route('/auth/login/ajax', auth_views.login_ajax, 'login_ajax'),
     webapp2.Route('/auth/logout', auth_views.logout, 'logout'),
     webapp2.Route('/auth/register', auth_views.register, 'register'),
     webapp2.Route('/auth/check_username', auth_views.check_username, 'check_username'),
@@ -60,4 +53,4 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/tournament/new', tournament_views.new_tournament, 'new-tourney'),
 
                                 ],
-                              debug=True, config=config)
+                              debug=True)

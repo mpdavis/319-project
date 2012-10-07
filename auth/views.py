@@ -1,9 +1,11 @@
 
 import json
+import logging
 
 import auth
 from auth import forms as auth_forms
 from auth import utils as auth_utils
+from auth import models as auth_models
 
 from google.appengine.ext.webapp import template
 from google.appengine.ext import db
@@ -20,20 +22,17 @@ class register(auth.UserAwareHandler):
         form = auth_forms.SignupForm(self.request.POST)
         error = None
         if form.validate():
-            success, info = self.auth.store.user_model.create_user(
-                "auth:" + form.email.data,
-                unique_properties=['email', 'username'],
-                username = form.username.data,
-                email= form.email.data,
-                password_raw= form.password.data)
+            password, salt = auth_utils.encode_password(form.password.data)
 
-            if success:
+            new_user = auth_models.WTUser(username=form.username.data,
+                                          email=form.email.data,
+                                          password=password,
+                                          salt=salt)
+            new_user.save()
+
+            if new_user:
                 auth_utils.send_registration_email(form.email.data, form.username.data)
 
-            if success:
-                self.auth.get_user_by_password("auth:"+form.email.data,
-                    form.password.data)
-                return self.redirect_to("home")
             else:
                 if user:
                     if 'email' in user:
@@ -49,36 +48,19 @@ class login(auth.UserAwareHandler):
         self.render_response("templates/login.html", form=auth_forms.LoginForm())
 
     def post(self):
-        form = auth_forms.LoginForm(self.request.POST)
-        error = None
-        if form.validate():
-            try:
-                self.auth.get_user_by_password(
-                    "auth:"+form.email.data,
-                    form.password.data)
-                return self.redirect('/')
-            except (google_auth.InvalidAuthIdError, google_auth.InvalidPasswordError):
-                error = "Invalid Email / Password"
-
-        self.render_response("templates/login.html",
-            form=form,
-            error=error)
-
-class login_ajax(auth.UserAwareHandler):
-    def post(self):
 
         form = auth_forms.LoginForm(self.request.POST)
         error = None
         loggedin = False
         message = None
+
         if form.validate():
-            try:
-                self.auth.get_user_by_password(
-                    "auth:"+form.email.data,
-                    form.password.data)
-                loggedin = True
-            except (google_auth.InvalidAuthIdError, google_auth.InvalidPasswordError):
+            loggedin = auth_utils.check_password(form.password.data, form.email.data)
+
+            if not loggedin:
                 message = "Invalid Email / Password"
+            else:
+                self.session['user'] = auth_models.WTUser.all().filter('email =', form.email.data).fetch(1)[0]
 
         response = json.dumps({'loggedin': loggedin, 'error_message': message})
 
@@ -89,7 +71,9 @@ class logout(auth.UserAwareHandler):
     """Destroy the user session and return them to the login screen."""
     @auth.login_required
     def get(self):
-        self.auth.unset_session()
+        if self.session.is_active():
+            self.session.terminate()
+
         self.redirect('/auth/login')
 
 class check_username(auth.UserAwareHandler):
@@ -97,11 +81,9 @@ class check_username(auth.UserAwareHandler):
         username = self.request.GET.get('username', None)
 
         output = {"valid" : True}
-        count = db.GqlQuery("SELECT * FROM Unique WHERE Key_name=:1", username)
-        import logging
-        logging.warning(count)
+        count = auth_models.WTUser.all().filter('username =', username).count()
 
-        if username == 'test':
+        if count > 0:
             output['valid'] = False
 
         self.response.write(json.dumps(output))
