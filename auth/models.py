@@ -9,3 +9,6 @@ class WTUser(db.Model):
     method = db.StringProperty()
     email = db.EmailProperty()
     created = db.DateTimeProperty(auto_now=True)
+
+    def get_display_name(self):
+        return "% %" % (self.first_name, self.last_name)
