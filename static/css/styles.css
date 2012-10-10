@@ -19,6 +19,10 @@ body {
     padding-top: 40px;
 }
 
+ul {
+    list-style: none;
+}
+
 /* Code in headings */
 h3 code {
     font-size: 14px;
@@ -1037,4 +1041,21 @@ form.bs-docs-example {
     .footer .pull-right {
         float: none;
     }
+}
+
+/****FORM****/
+.required-indicator {
+    color:#FF0000;
+    padding-left: 2px;
+}
+.form-horizontal .controls {
+    margin-left: 110px;
+}
+
+.form-horizontal .control-label {
+    width: 100px;
+}
+
+ul.errorlist {
+    margin: 0;
 }
