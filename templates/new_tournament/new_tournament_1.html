@@ -1,4 +1,4 @@
-{% extends '../base.html' %}
+{% extends 'base.html' %}
 
 {% block style %} <!-- Temp, maybe move to css file later -->
 <style>
@@ -36,8 +36,7 @@
 {#        <div class="well">#}
             <!-- Manually build form because of custom formating -->
             <form id="new-tourney-form" action='' method='POST'>
-                {% csrf_token %}
-                {% render_hidden_fields fields %}
+                {{ render_hidden_fields() }}
                 <p style="font-size: 20px;margin-bottom:20px;margin-left: 20px;">It's easy!  Start by choosing the tournament's security level:</p>
                 <div style="margin-left: 20px; margin-top: 10px;">
 

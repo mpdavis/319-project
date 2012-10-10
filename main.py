@@ -30,7 +30,6 @@ import tournament
 from tournament import views as tournament_views
 
 
-
 class MainHandler(auth.UserAwareHandler):
     def get(self):
         context = dict()
@@ -38,7 +37,7 @@ class MainHandler(auth.UserAwareHandler):
         if self.user:
             context['username'] = self.user.username
 
-        self.render_response('templates/home.html', context)
+        self.render_response('home.html', context)
 
 
 app = webapp2.WSGIApplication([
@@ -54,4 +53,4 @@ app = webapp2.WSGIApplication([
 
                                 ],
                               debug=True)
-template.register_template_library('tournament.templatetags.ttags')
+#template.register_template_library('tournament.templatetags.ttags')

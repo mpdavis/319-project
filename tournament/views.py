@@ -28,4 +28,4 @@ class new_tournament(auth.UserAwareHandler):
             step = context['fields'].get('step', 1)
         else:
             step = 1
-        self.render_response('templates/new_tournament/new_tournament_%s.html' % step, context)
+        self.render_response('new_tournament/new_tournament_%s.html' % step, context)
