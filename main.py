@@ -54,3 +54,4 @@ app = webapp2.WSGIApplication([
 
                                 ],
                               debug=True)
+template.register_template_library('tournament.templatetags.ttags')

@@ -1,0 +1,27 @@
+{% extends '../base.html' %}
+
+{% block content %}
+<div class="row">
+
+    <h1 style="margin:35px 0 60px 0;">Start a New Tournament - Step 2</h1>
+
+    <div class="span12">
+{#        <div class="well">#}
+            <!-- Manually build form because of custom formating -->
+            <form id="new-tourney-form" action='' method='POST'>
+                {% csrf_token %}
+                {% render_hidden_fields fields %}
+                <p style="font-size: 20px;margin-bottom:20px;margin-left: 20px;">Tell us more about your tournament:</p>
+                <div style="margin-left: 20px; margin-top: 10px;">
+                    Testing123!!
+
+                </div>
+                <input type="submit" class="btn btn-primary pull-right" value="Next" style="width:120px;font-size:20px;" />
+            </form>
+
+{#        </div>#}
+    </div>
+
+</div>
+
+{% endblock %}

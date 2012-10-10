@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends '../base.html' %}
 
 {% block style %} <!-- Temp, maybe move to css file later -->
 <style>
@@ -37,6 +37,7 @@
             <!-- Manually build form because of custom formating -->
             <form id="new-tourney-form" action='' method='POST'>
                 {% csrf_token %}
+                {% render_hidden_fields fields %}
                 <p style="font-size: 20px;margin-bottom:20px;margin-left: 20px;">It's easy!  Start by choosing the tournament's security level:</p>
                 <div style="margin-left: 20px; margin-top: 10px;">
 
@@ -44,8 +45,8 @@
                         <tr>
                             <td style="width:20px;border-left: 1px solid #DDDDDD;"></td>
                             <td style="border-right: none;width:150px;">
-                                <label for="id_tournament-type-public">
-                                    <input id="id_tournament-type-public" type="radio" name="tournament-type" value="public" />
+                                <label for="id_tournament-security-0">
+                                    <input id="id_tournament-security-0" type="radio" name="tournament_security" value="public" />
                                     Public
                                 </label>
                             </td>
@@ -56,8 +57,8 @@
                         <tr>
                             <td style="width:20px;border-left: 1px solid #DDDDDD;"></td>
                             <td style="border-right: none;width:150px;">
-                                <label for="id_tournament-type-protected">
-                                    <input id="id_tournament-type-protected" type="radio" name="tournament-type" value="protected" />
+                                <label for="id_tournament-security-1">
+                                    <input id="id_tournament-security-1" type="radio" name="tournament_security" value="protected" />
                                     Protected
                                 </label>
                             </td>
@@ -68,8 +69,8 @@
                         <tr>
                             <td style="width:20px;border-left: 1px solid #DDDDDD;"></td>
                             <td style="border-right: none;width:150px;">
-                                <label for="id_tournament-type-private">
-                                    <input id="id_tournament-type-private" type="radio" name="tournament-type" value="private" />
+                                <label for="id_tournament-security-2">
+                                    <input id="id_tournament-security-2" type="radio" name="tournament_security" value="private" />
                                     Private
                                 </label>
                             </td>
