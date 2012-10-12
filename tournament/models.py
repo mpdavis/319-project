@@ -1,6 +1,7 @@
 from google.appengine.ext import db
 from auth import models as auth_models
 
+
 class Event(db.Model):
     name = db.StringProperty()
     date = db.DateTimeProperty()
@@ -21,7 +22,7 @@ class Tournament(db.Model):
     type = db.StringProperty(choices=TOURNAMENT_TYPES)
 
     order = db.IntegerProperty()
-    next_tournament = db.ReferenceProperty(Tournament)
+    next_tournament = db.SelfReferenceProperty()
 
     #Win Methods
     win_method = db.IntegerProperty()
@@ -32,7 +33,7 @@ class Tournament(db.Model):
 class Match(db.Model):
     round = db.IntegerProperty()
     has_been_played = db.BooleanProperty()
-    next_match = db.ReferenceProperty(Match)
+    next_match = db.SelfReferenceProperty()
 
     def determine_winner(self):
         if not self.has_been_played:
