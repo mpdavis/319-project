@@ -1,8 +1,13 @@
-import os
+import sys, os
 
-from lib.flask import Flask
-from lib.flask.views import MethodView
-from lib.flask.templating import render_template
+ROOT_PATH = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
+LIB_PATH = os.path.join(ROOT_PATH, 'libs')
+sys.path.insert(0, LIB_PATH)
+
+from google.appengine.ext.webapp.util import run_wsgi_app
+
+from flask import Flask
+from flask.templating import render_template
 
 import auth
 from auth import views as auth_views
@@ -37,4 +42,6 @@ app.add_url_rule('/tournament/new/', view_func=tournament_views.new_tournament.a
 ttags.setup_jinja2_environment(app)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    #Add the lib directory to the path
+    run_wsgi_app(app)
+

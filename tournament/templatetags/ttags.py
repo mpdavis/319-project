@@ -1,6 +1,5 @@
-from jinja2.ext import Extension, contextfunction, Markup
-
-import wtforms as forms
+from jinja2.ext import  contextfunction, Markup
+import wtforms
 
 
 def setup_jinja2_environment(app):
@@ -42,7 +41,7 @@ def render_hidden_fields(context):
 @contextfunction
 def render_field(context, field, label=None, single_input=False):
     #shortcut for hidden fields
-    if isinstance(field.widget, forms.widgets.HiddenInput):
+    if isinstance(field.widget, wtforms.widgets.HiddenInput):
         return '<li id="li_%(name)s" class="hidden">%(widget)s</li>' % {'name': field.name, 'widget': field.widget}
 
     classes = ['control-group']
@@ -54,7 +53,7 @@ def render_field(context, field, label=None, single_input=False):
     # setup the required indicator
     is_required = True
     for validator in field.validators:
-        if isinstance(validator, forms.validators.Optional):
+        if isinstance(validator, wtforms.validators.Optional):
             is_required = False
             break;
     if is_required and field.label:
@@ -79,7 +78,7 @@ def render_field(context, field, label=None, single_input=False):
 
     template='<div class="control-group %(classes)s"><label class="control-label" for="id_%(name)s">%(label)s</label><div class="controls">%(widget)s<span class="help-inline">%(error)s</span></div></div>'
     checkbox_template='<div class="control-group %(classes)s"><label class="checkbox">%(widget)s%(label)s</label></div>'
-    if isinstance(field.widget, forms.widgets.CheckboxInput):
+    if isinstance(field.widget, wtforms.widgets.CheckboxInput):
         return Markup(checkbox_template % ctx)
 
     return Markup(template % ctx)
@@ -91,7 +90,7 @@ def render_form(context, form):
     def get_visible_inputs(form):
         visible_inputs = []
         for field in form.__iter__():
-            if not isinstance(field.widget, forms.widgets.HiddenInput):
+            if not isinstance(field.widget, wtforms.widgets.HiddenInput):
                 visible_inputs.append(field)
         return visible_inputs
 

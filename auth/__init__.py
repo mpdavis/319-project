@@ -1,7 +1,5 @@
-import os
-
-from lib.flask.views import MethodView
-from lib.flask import session, redirect, url_for
+from flask.views import MethodView
+from flask import session, redirect, url_for
 
 #import lib.gaesessions
 #from lib.gaesessions import get_current_session

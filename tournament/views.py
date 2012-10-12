@@ -1,17 +1,17 @@
-import os
-
-from lib.flask import request
-from lib.flask.templating import render_template
+from flask import request
+from flask.templating import render_template
 
 import auth
 import forms
-import logging
+import models
 
 class new_tournament(auth.UserAwareView):
     def get(self):
         context = {
             'fields':{'step':1},
         }
+        thing = models.Match(round=1, has_been_played=False, next_match=None)
+        thing.put()
         return self.render_new_tourney(context)
 
     def post(self):

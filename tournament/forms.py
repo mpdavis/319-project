@@ -1,6 +1,6 @@
-import wtforms as forms
-
 from tournament import models
+import wtforms as forms
+from wtforms import validators
 
 class NewTournamentStep1(forms.Form):
     SECURITY_CHOICES = [('public', 'Public'),
@@ -11,8 +11,8 @@ class NewTournamentStep1(forms.Form):
 
 class NewTournamentStep2(forms.Form):
     name = forms.StringField("Name")
-    location = forms.StringField("Location", [forms.validators.Optional()])
-    date = forms.DateTimeField("Date", [forms.validators.Optional()])
+    location = forms.StringField("Location", [validators.Optional()])
+    date = forms.DateTimeField("Date", [validators.Optional()])
 
 
 class NewTournamentStep3(forms.Form):

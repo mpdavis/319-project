@@ -1,15 +1,12 @@
 import json
-import logging
 
 import auth
 from auth import forms as auth_forms
 from auth import utils as auth_utils
 from auth import models as auth_models
 
-from google.appengine.ext import db
-
-from lib.flask import redirect
-from lib.flask.templating import render_template
+from flask import redirect
+from flask.templating import render_template
 
 
 class register(auth.UserAwareView):
