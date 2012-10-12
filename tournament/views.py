@@ -31,9 +31,12 @@ class new_tournament(auth.UserAwareHandler):
                 context['fields'].update({
                     'tournament_security':self.request.POST.get('tournament_security')})
                 context['fields'].update({'step':3})
+                context['form'] = forms.NewTournamentStep3()
                 self.render_new_tourney(context)
             else:
                 self.render_new_tourney({'fields':{'step':2}, 'form':form})
+        elif step == 3:
+            pass
 
     #Made this so I don't have to type the template a bunch of times
     def render_new_tourney(self, context):

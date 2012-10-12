@@ -1,5 +1,13 @@
 {% extends 'base.html' %}
 
+{% block style %}
+<style>
+#new-tourney-form label {
+    width:200px;
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="row">
 
@@ -11,8 +19,8 @@
             <div class="well">
                 <!-- Manually build form because of custom formating -->
                     {{ render_hidden_fields() }}
-                    <div style="margin-left: 250px; margin-top: 10px;">
-                         Step 3!
+                    <div style="margin-left: 180px; margin-top: 10px;">
+                        {{ render_form(form) }}
                            TODO: Make this not ugly.
                     </div>
 
