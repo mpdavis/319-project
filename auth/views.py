@@ -8,13 +8,14 @@ from auth import models as auth_models
 
 from google.appengine.ext import db
 
-import webapp2
-from webapp2_extras import auth as google_auth
+from lib.flask import redirect
+from lib.flask.templating import render_template
 
 
-class register(auth.UserAwareHandler):
+class register(auth.UserAwareView):
     def get(self):
-        self.render_response("templates/register.html", form=auth_forms.SignupForm())
+        #self.render_response("templates/register.html", form=auth_forms.SignupForm())
+        return render_template("register.html", form=auth_forms.SignupForm())
 
     def post(self):
         form = auth_forms.SignupForm(self.request.POST)
@@ -38,12 +39,14 @@ class register(auth.UserAwareHandler):
                 else:
                     error = "Something has gone horibly wrong."
 
-        self.render_response("templates/register.html", form=form, error=error)
+        #self.render_response("templates/register.html", form=form, error=error)
+        return render_template("register.html", form=form, error=error)
 
 
-class login(auth.UserAwareHandler):
+class login(auth.UserAwareView):
     def get(self):
-        self.render_response("templates/login.html", form=auth_forms.LoginForm())
+        #self.render_response("templates/login.html", form=auth_forms.LoginForm())
+        return render_template("login.html", form=auth_forms.LoginForm())
 
     def post(self):
 
@@ -62,19 +65,21 @@ class login(auth.UserAwareHandler):
 
         response = json.dumps({'loggedin': loggedin, 'error_message': message})
 
-        self.response.write(response)
+        #self.response.write(response)
+        return response
 
 
-class logout(auth.UserAwareHandler):
+class logout(auth.UserAwareView):
     """Destroy the user session and return them to the login screen."""
     @auth.login_required
     def get(self):
         if self.session.is_active():
             self.session.terminate()
 
-        self.redirect('/auth/login')
+        return redirect('/auth/login')
 
-class check_username(auth.UserAwareHandler):
+
+class check_username(auth.UserAwareView):
     def get(self):
         username = self.request.GET.get('username', None)
 
@@ -84,5 +89,6 @@ class check_username(auth.UserAwareHandler):
         if count > 0:
             output['valid'] = False
 
-        self.response.write(json.dumps(output))
+        #self.response.write(json.dumps(output))
+        return json.dumps(output)
 

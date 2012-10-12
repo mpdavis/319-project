@@ -39,8 +39,10 @@
             <form id="new-tourney-form" action='' method='POST'>
                 {{ render_hidden_fields() }}
                 <p style="font-size: 20px;margin-bottom:20px;margin-left: 20px;">It's easy!  Start by choosing the tournament's security level:</p>
-                {% if form.errors %}
-                    <div class="alert alert-error" style="margin-left:20px;">{{ form.errors.tournament_security.0 }}</div>
+                {% if form %}
+                    {% if form.errors %}
+                        <div class="alert alert-error" style="margin-left:20px;">{{ form.errors.tournament_security.0 }}</div>
+                    {% endif %}
                 {% endif %}
                 <div style="margin-left: 20px; margin-top: 10px;">
 

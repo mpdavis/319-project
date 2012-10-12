@@ -1,24 +1,20 @@
-import webapp2
-
-from webapp2_extras import jinja2
-from jinja2 import nodes
 from jinja2.ext import Extension, contextfunction, Markup
 
 import wtforms as forms
 
-def jinja2_factory(app):
-    j = jinja2.Jinja2(app)
-    j.environment.filters.update({
+
+def setup_jinja2_environment(app):
+    jenv = app.jinja_env
+    jenv.filters.update({
         # Set filters.
         # ...
     })
-    j.environment.extensions.update({
+    jenv.extensions.update({
         # Set Extensions.
 #        'csrf_token': CsrfExtension(j.environment),
         })
-    j.environment.globals.update({
+    jenv.globals.update({
         # Set global variables.
-        'uri_for': webapp2.uri_for,
         'render_hidden_fields': render_hidden_fields,
         'render_feild': render_field,
         'render_form': render_form,
@@ -26,7 +22,7 @@ def jinja2_factory(app):
 #        'csrf_token':csrf_token,
         # ...
     })
-    return j
+    return
 
 @contextfunction
 def render_hidden_fields(context):

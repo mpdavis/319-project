@@ -1,56 +1,40 @@
-#!/usr/bin/env python
-#
-# Copyright 2007 Google Inc.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
-
 import os
-import webapp2
 
-from google.appengine.ext.webapp import template
-from google.appengine.ext import blobstore
-from google.appengine.ext.webapp import blobstore_handlers
-
+from lib.flask import Flask
+from lib.flask.views import MethodView
+from lib.flask.templating import render_template
 
 import auth
 from auth import views as auth_views
 
-import tournament
 from tournament import views as tournament_views
+from tournament.templatetags import ttags
 
 
-class MainHandler(auth.UserAwareHandler):
+app = Flask(__name__)
+
+
+class MainHandler(auth.UserAwareView):
     def get(self):
         context = dict()
 
         if self.user:
             context['username'] = self.user.username
 
-        self.render_response('home.html', context)
+#        self.render_response('home.html', context)
+        return render_template('home.html')
 
+#Define URLs
+app.add_url_rule('/', view_func=MainHandler.as_view('home'))
+app.add_url_rule('/auth/login/', view_func=auth_views.login.as_view('login'))
+app.add_url_rule('/auth/logout/', view_func=auth_views.logout.as_view('logout'))
+app.add_url_rule('/auth/register/', view_func=auth_views.logout.as_view('register'))
+app.add_url_rule('/auth/check_username/', view_func=auth_views.logout.as_view('check_username'))
 
-app = webapp2.WSGIApplication([
+app.add_url_rule('/tournament/new/', view_func=tournament_views.new_tournament.as_view('new-tourney'))
 
-    webapp2.Route('/', MainHandler, 'home'),
+#Setup other things
+ttags.setup_jinja2_environment(app)
 
-    webapp2.Route('/auth/login', auth_views.login, 'login'),
-    webapp2.Route('/auth/logout', auth_views.logout, 'logout'),
-    webapp2.Route('/auth/register', auth_views.register, 'register'),
-    webapp2.Route('/auth/check_username', auth_views.check_username, 'check_username'),
-
-    webapp2.Route('/tournament/new', tournament_views.new_tournament, 'new-tourney'),
-
-                                ],
-                              debug=True)
-#template.register_template_library('tournament.templatetags.ttags')
+if __name__ == '__main__':
+    app.run(debug=True)
