@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+
+    <h1 style="margin:35px 0 60px 0;">Start a New Tournament - Step 3</h1>
+
+    <div class="span12">
+        <p style="font-size: 20px;margin-bottom:20px;margin-left: 20px;">Tell us more about your tournament:</p>
+        <form id="new-tourney-form" action='' method='POST' class="form-horizontal">
+            <div class="well">
+                <!-- Manually build form because of custom formating -->
+                    {{ render_hidden_fields() }}
+                    <div style="margin-left: 250px; margin-top: 10px;">
+                         Step 3!
+                           TODO: Make this not ugly.
+                    </div>
+
+
+            </div>
+            <input type="submit" class="btn btn-primary pull-right" value="Next" style="width:120px;font-size:20px;" />
+        </form>
+    </div>
+
+</div>
+
+{% endblock %}

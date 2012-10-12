@@ -1,4 +1,3 @@
-
 import json
 import logging
 
@@ -7,7 +6,6 @@ from auth import forms as auth_forms
 from auth import utils as auth_utils
 from auth import models as auth_models
 
-from google.appengine.ext.webapp import template
 from google.appengine.ext import db
 
 import webapp2
