@@ -6,15 +6,22 @@
 
         <link rel="author" href="humans.txt" />
 
+        {% if MEDIA_MERGED %}
+        <link rel="stylesheet" type="text/css" href="/static/merged/merged.css" />
+
+        <script type="text/javascript" src="/static/merged/merged.js"></script>
+        {% else %}
         <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.css" />
         <link rel="stylesheet" type="text/css" href="/static/css/chosen.css" />
         <link rel="stylesheet" type="text/css" href="/static/css/styles.css" />
-        {% block style %}{% endblock %}
 
         <script type="text/javascript" src="/static/js/jquery-1.7.1.min.js"></script>
         <script type="text/javascript" src="/static/js/bootstrap-modal.js"></script>
         <script type="text/javascript" src="/static/js/chosen.jquery.min.js"></script>
         <script type="text/javascript" src="/static/js/chosen.autoload.js"></script>
+        {% endif %}
+
+        {% block style %}{% endblock %}
         {% block script %}{% endblock %}
     </head>
 

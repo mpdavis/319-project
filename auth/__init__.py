@@ -6,6 +6,8 @@ from flask import session, redirect, url_for
 
 from auth import models as auth_models
 
+import settings
+
 
 def login_required(handler):
     "Requires that a user be logged in to access the resource"
@@ -31,6 +33,12 @@ class UserAwareView(MethodView):
     def user(self):
         if 'user' in self.session:
             return self.session['user']
+
+    def get_context(self):
+        ctx = {
+            'MEDIA_MERGED': settings.MEDIA_MERGED,
+        }
+        return ctx
 
 #    def render_response(self, temp, view_context={}, form=None, error=None):
 #        context = {}

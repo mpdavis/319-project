@@ -21,13 +21,13 @@ app = Flask(__name__)
 
 class MainHandler(auth.UserAwareView):
     def get(self):
-        context = dict()
+        context = self.get_context()
 
         if self.user:
             context['username'] = self.user.username
 
 #        self.render_response('home.html', context)
-        return render_template('home.html')
+        return render_template('home.html', **context)
 
 #Define URLs
 app.add_url_rule('/', view_func=MainHandler.as_view('home'))
