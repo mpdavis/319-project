@@ -63,9 +63,17 @@ def render_field(context, field, label=None, single_input=False):
 
     # setup the label
     if field.label:
-        final_label = "%s:%s" % ((label or field.label.text), required_indicator)
+        if isinstance(field.widget, wtforms.widgets.CheckboxInput):
+            final_label = "%s%s" % ((label or field.label.text), required_indicator)
+        else:
+            final_label = "%s:%s" % ((label or field.label.text), required_indicator)
     else:
         final_label = ""
+
+    #setup div_attrs
+    div_attrs = ''
+    if hasattr(field, 'div_attrs'):
+        div_attrs = field.div_attrs
 
     # render the row
     ctx = {
@@ -74,10 +82,11 @@ def render_field(context, field, label=None, single_input=False):
         'classes': ' '.join(classes),
         'widget': field(),
         'error': errors,
+        'div_attrs': div_attrs,
         }
 
-    template='<div class="control-group %(classes)s"><label class="control-label" for="id_%(name)s">%(label)s</label><div class="controls">%(widget)s<span class="help-inline">%(error)s</span></div></div>'
-    checkbox_template='<div class="control-group %(classes)s"><label class="checkbox">%(widget)s%(label)s</label></div>'
+    template='<div class="%(classes)s" %(div_attrs)s><label class="control-label" for="id_%(name)s">%(label)s</label><div class="controls">%(widget)s<span class="help-inline">%(error)s</span></div></div>'
+    checkbox_template='<div class="%(classes)s" %(div_attrs)s><div class="controls"><label class="checkbox">%(widget)s%(label)s</label></div></div>'
     if isinstance(field.widget, wtforms.widgets.CheckboxInput):
         return Markup(checkbox_template % ctx)
 

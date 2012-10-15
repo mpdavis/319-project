@@ -16,9 +16,9 @@ class Event(db.Model):
 
 
 class Tournament(db.Model):
-    TOURNAMENT_TYPES = [('RR', 'Round Robin'),
-                        ('SE', 'Single Elimination'),
-                        ('DE', 'Double Elimination')]
+    TOURNAMENT_TYPES = [('SE', 'Single Elimination'),
+                        ('DE', 'Double Elimination'),
+                        ('RR', 'Round Robin'),]
     type = db.StringProperty(choices=TOURNAMENT_TYPES)
 
     order = db.IntegerProperty()

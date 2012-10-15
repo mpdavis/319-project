@@ -2,6 +2,7 @@ from tournament import models
 import wtforms as forms
 from wtforms import validators
 
+
 class NewTournamentStep1(forms.Form):
     SECURITY_CHOICES = [('public', 'Public'),
                         ('protected', 'Protected'),
@@ -16,5 +17,10 @@ class NewTournamentStep2(forms.Form):
 
 
 class NewTournamentStep3(forms.Form):
-    number_participants = forms.IntegerField("Number of Participants")
     type = forms.SelectField("Tourney Type", choices=models.Tournament.TOURNAMENT_TYPES)
+    number_participants = forms.IntegerField("Number of Participants")
+    show_seeds = forms.BooleanField("Enter seeds for each participant", [validators.Optional()], default=True)
+
+    def __init__(self, *args, **kwargs):
+        super(NewTournamentStep3, self).__init__(*args, **kwargs)
+        setattr(self.show_seeds, 'div_attrs', 'id=show-seeds-div')

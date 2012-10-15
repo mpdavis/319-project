@@ -18,12 +18,12 @@
         <form id="new-tourney-form" action='' method='POST' class="form-horizontal">
             <div class="well">
                 <!-- Manually build form because of custom formating -->
-                    {{ render_hidden_fields() }}
-                    <div style="margin-left: 180px; margin-top: 10px;">
-                        {{ render_form(form) }}
-                           TODO: Make this not ugly.
-                    </div>
+                {{ render_hidden_fields() }}
+                <div style="margin-left: 180px; margin-top: 10px;">
+                    {{ render_form(form) }}
 
+                       TODO: Make this not ugly.
+                </div>
 
             </div>
             <input type="submit" class="btn btn-primary pull-right" value="Next" style="width:120px;font-size:20px;" />
