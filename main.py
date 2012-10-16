@@ -36,7 +36,8 @@ app.add_url_rule('/auth/logout/', view_func=auth_views.logout.as_view('logout'))
 app.add_url_rule('/auth/register/', view_func=auth_views.logout.as_view('register'))
 app.add_url_rule('/auth/check_username/', view_func=auth_views.logout.as_view('check_username'))
 
-app.add_url_rule('/tournament/new/', view_func=tournament_views.new_tournament.as_view('new-tourney'))
+app.add_url_rule('/tournament/new/', view_func=tournament_views.New_Tournament.as_view('new-tourney'))
+app.add_url_rule('/tournament/list/', view_func=tournament_views.Event_List.as_view('event-list'))
 
 #Setup other things
 ttags.setup_jinja2_environment(app)
