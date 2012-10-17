@@ -2,7 +2,7 @@
 
 <html>
     <head>
-        <title>319 Project</title>
+        <title>{% block title %}319 Project{% endblock %}</title>
 
         <link rel="author" href="humans.txt" />
 
@@ -19,6 +19,7 @@
         <script type="text/javascript" src="/static/js/bootstrap-modal.js"></script>
         <script type="text/javascript" src="/static/js/chosen.jquery.min.js"></script>
         <script type="text/javascript" src="/static/js/chosen.autoload.js"></script>
+        <script type="text/javascript" src="/static/js/jquery.datatable.js"></script>
         {% endif %}
 
         {% block style %}{% endblock %}
@@ -27,21 +28,22 @@
 
     <body>
 
-        <div class="navbar navbar-fixed-top">
+        <div class="navbar navbar-fixed-top navbar-inverse">
             <div class="navbar-inner">
                 <div class="container">
 
                     <ul class="nav">
                         <li><a href="/">Home</a></li>
+                        {% if username %} <!-- TODO: Change this to user.is_authenticated() ?? -->
+                        <li><a href="{{ url_for('event-list') }}">My Events</a></li>
+                        {% endif %}
                     </ul>
 
-                    {% if not username %}
+                    {% if not username %} <!-- TODO: Change this to user.is_authenticated() ?? -->
 
                         <a href="/auth/login" class="btn btn-primary pull-right">Login</a>
 
-                    {% endif %}
-
-                    {% if username %}
+                    {% else %}
                         <div class="pull-right">
                             Welcome, {{ username }}
                             <a href="/auth/logout" class="btn btn-primary">Logout</a>

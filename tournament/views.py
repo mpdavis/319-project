@@ -4,8 +4,9 @@ from flask.templating import render_template
 import auth
 import forms
 import models
+import actions
 
-class new_tournament(auth.UserAwareView):
+class New_Tournament(auth.UserAwareView):
     def get(self):
         context = {
             'fields':{'step':1},
@@ -50,3 +51,10 @@ class new_tournament(auth.UserAwareView):
             step = 1
         #self.render_response('new_tournament/new_tournament_%s.html' % step, context)
         return render_template('new_tournament/new_tournament_%s.html' % step, **context)
+
+
+class Event_List(auth.UserAwareView):
+    def get(self):
+        context = self.get_context()
+        context['user_events'] = actions.get_events_by_user(self.user)
+        return render_template('event_list.html', **context)
