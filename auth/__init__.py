@@ -1,10 +1,13 @@
-from flask.views import MethodView
-from flask import session, redirect, url_for
-
-#import lib.gaesessions
-#from lib.gaesessions import get_current_session
 
 from auth import models as auth_models
+
+from flask.views import MethodView
+
+from flask import session
+from flask import redirect
+from flask import url_for
+
+from libs import flask_login
 
 import settings
 
@@ -26,28 +29,14 @@ class UserAwareView(MethodView):
         return session
 
     @property
-    def auth(self):
-        return #webapp_auth.get_auth(request=self.request)
-
-    @property
     def user(self):
-        if 'user' in self.session:
-            return self.session['user']
+        if not flask_login.current_user.is_anonymous():
+            return flask_login.current_user
+        else:
+            return None
 
     def get_context(self):
         ctx = {
             'MEDIA_MERGED': settings.MEDIA_MERGED,
         }
         return ctx
-
-#    def render_response(self, temp, view_context={}, form=None, error=None):
-#        context = {}
-#        #put stuff in context here like base.get_context would normally have.
-#
-#        ##
-#        context.update(view_context)
-#
-#        if 'form' not in context:
-#            context['form'] = form
-#
-#        self.response.out.write(self.jinja2.render_template(temp, **context))

@@ -15,9 +15,19 @@ from auth import views as auth_views
 from tournament import views as tournament_views
 from tournament.templatetags import ttags
 
+from libs import flask_login
+from libs.flask_login import LoginManager
 
 app = Flask(__name__)
 
+login_manager = LoginManager()
+login_manager.setup_app(app)
+
+app.secret_key = 'this-is-just-our-dev-key-oh-so-secret'
+
+@login_manager.user_loader
+def load_user(userid):
+    return auth.models.WTUser.get_by_id(userid)
 
 class MainHandler(auth.UserAwareView):
     def get(self):
@@ -26,14 +36,13 @@ class MainHandler(auth.UserAwareView):
         if self.user:
             context['username'] = self.user.username
 
-#        self.render_response('home.html', context)
         return render_template('home.html', **context)
 
 #Define URLs
 app.add_url_rule('/', view_func=MainHandler.as_view('home'))
 app.add_url_rule('/auth/login/', view_func=auth_views.login.as_view('login'))
 app.add_url_rule('/auth/logout/', view_func=auth_views.logout.as_view('logout'))
-app.add_url_rule('/auth/register/', view_func=auth_views.logout.as_view('register'))
+app.add_url_rule('/auth/register/', view_func=auth_views.register.as_view('register'))
 app.add_url_rule('/auth/check_username/', view_func=auth_views.logout.as_view('check_username'))
 
 app.add_url_rule('/tournament/new/', view_func=tournament_views.new_tournament.as_view('new-tourney'))

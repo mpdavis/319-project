@@ -12,3 +12,15 @@ class WTUser(db.Model):
 
     def get_display_name(self):
         return "% %" % (self.first_name, self.last_name)
+
+    def get_id(self):
+        return self.key().id()
+
+    def is_active(self):
+        return True
+
+    def is_authenticated(self):
+        return True
+
+    def is_anonymous(self):
+        return False
