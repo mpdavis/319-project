@@ -9,7 +9,7 @@ from flask import redirect
 from flask import request
 from flask.templating import render_template
 
-from libs import flask_login
+from lib import flask_login
 
 
 class register(auth.UserAwareView):

@@ -15,8 +15,8 @@ from auth import views as auth_views
 from tournament import views as tournament_views
 from tournament.templatetags import ttags
 
-from libs import flask_login
-from libs.flask_login import LoginManager
+from lib import flask_login
+from lib.flask_login import LoginManager
 
 app = Flask(__name__)
 

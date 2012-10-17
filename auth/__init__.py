@@ -7,7 +7,7 @@ from flask import session
 from flask import redirect
 from flask import url_for
 
-from libs import flask_login
+from lib import flask_login
 
 import settings
 
