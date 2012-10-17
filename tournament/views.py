@@ -11,8 +11,7 @@ class New_Tournament(auth.UserAwareView):
         context = {
             'fields':{'step':1},
         }
-        thing = models.Match(round=1, has_been_played=False, next_match=None)
-        thing.put()
+
         return self.render_new_tourney(context)
 
     def post(self):
@@ -52,7 +51,7 @@ class New_Tournament(auth.UserAwareView):
         return render_template('new_tournament/new_tournament_%s.html' % step, **context)
 
 
-class Event_List(auth.UserAwareView):
+class Tournament_List(auth.UserAwareView):
     def get(self):
         context = self.get_context()
         context['user_events'] = actions.get_events_by_user(self.user)

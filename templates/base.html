@@ -34,18 +34,18 @@
 
                     <ul class="nav">
                         <li><a href="/">Home</a></li>
-                        {% if username %} <!-- TODO: Change this to user.is_authenticated() ?? -->
-                        <li><a href="{{ url_for('event-list') }}">My Events</a></li>
+                        {% if user %}
+                        <li><a href="{{ url_for('event-list') }}">My Tournaments</a></li>
                         {% endif %}
                     </ul>
 
-                    {% if not username %} <!-- TODO: Change this to user.is_authenticated() ?? -->
+                    {% if not user %}
 
                         <a href="/auth/login" class="btn btn-primary pull-right">Login</a>
 
                     {% else %}
                         <div class="pull-right">
-                            Welcome, {{ username }}
+                            Welcome, {{ user.username }}
                             <a href="/auth/logout" class="btn btn-primary">Logout</a>
                         </div>
 
