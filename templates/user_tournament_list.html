@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Web Tournaments - My Events{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="span12" style="margin-top: 50px;">
+        <h1 style="display: inline;margin:35px 0 60px 0;">My Events</h1>
+        <a id="create-event-button" href="{{ url_for('new-tourney') }}" class="btn btn-primary pull-right" style="display: inline;margin-top:5px;" role="button" data-toggle="modal">Create New Event</a>
+        <table class="table table-bordered table-striped table-hover" id="event-table" style="margin-top:5px;">
+            <thead class="header">
+            <tr>
+                <th>Name</th>
+                <th>Date & Time</th>
+                <th>Location</th>
+                <th>Owner</th>
+                <th>!More Here!</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for event in user_events %}
+                <tr onClick="javascript:document.location='#'">
+                    <td>{{ event.name }}</td>
+                    <td>{{ event.date }}</td>
+                    <td>{{ event.location }}</td>
+                    <td>{{ event.owner }}</td>
+                    <td>!More Here!</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5" style="text-align: center;">You don't have access to any events yet!  Click the blue button to get started.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+
+</div>
+{% endblock %}

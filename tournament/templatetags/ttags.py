@@ -1,24 +1,19 @@
-import webapp2
+from jinja2.ext import  contextfunction, Markup
+import wtforms
 
-from webapp2_extras import jinja2
-from jinja2 import nodes
-from jinja2.ext import Extension, contextfunction, Markup
 
-import wtforms as forms
-
-def jinja2_factory(app):
-    j = jinja2.Jinja2(app)
-    j.environment.filters.update({
+def setup_jinja2_environment(app):
+    jenv = app.jinja_env
+    jenv.filters.update({
         # Set filters.
         # ...
     })
-    j.environment.extensions.update({
+    jenv.extensions.update({
         # Set Extensions.
 #        'csrf_token': CsrfExtension(j.environment),
         })
-    j.environment.globals.update({
+    jenv.globals.update({
         # Set global variables.
-        'uri_for': webapp2.uri_for,
         'render_hidden_fields': render_hidden_fields,
         'render_feild': render_field,
         'render_form': render_form,
@@ -26,7 +21,7 @@ def jinja2_factory(app):
 #        'csrf_token':csrf_token,
         # ...
     })
-    return j
+    return
 
 @contextfunction
 def render_hidden_fields(context):
@@ -46,7 +41,7 @@ def render_hidden_fields(context):
 @contextfunction
 def render_field(context, field, label=None, single_input=False):
     #shortcut for hidden fields
-    if isinstance(field.widget, forms.widgets.HiddenInput):
+    if isinstance(field.widget, wtforms.widgets.HiddenInput):
         return '<li id="li_%(name)s" class="hidden">%(widget)s</li>' % {'name': field.name, 'widget': field.widget}
 
     classes = ['control-group']
@@ -58,7 +53,7 @@ def render_field(context, field, label=None, single_input=False):
     # setup the required indicator
     is_required = True
     for validator in field.validators:
-        if isinstance(validator, forms.validators.Optional):
+        if isinstance(validator, wtforms.validators.Optional):
             is_required = False
             break;
     if is_required and field.label:
@@ -68,9 +63,17 @@ def render_field(context, field, label=None, single_input=False):
 
     # setup the label
     if field.label:
-        final_label = "%s:%s" % ((label or field.label.text), required_indicator)
+        if isinstance(field.widget, wtforms.widgets.CheckboxInput):
+            final_label = "%s%s" % ((label or field.label.text), required_indicator)
+        else:
+            final_label = "%s:%s" % ((label or field.label.text), required_indicator)
     else:
         final_label = ""
+
+    #setup div_attrs
+    div_attrs = ''
+    if hasattr(field, 'div_attrs'):
+        div_attrs = field.div_attrs
 
     # render the row
     ctx = {
@@ -79,11 +82,12 @@ def render_field(context, field, label=None, single_input=False):
         'classes': ' '.join(classes),
         'widget': field(),
         'error': errors,
+        'div_attrs': div_attrs,
         }
 
-    template='<div class="control-group %(classes)s"><label class="control-label" for="id_%(name)s">%(label)s</label><div class="controls">%(widget)s<span class="help-inline">%(error)s</span></div></div>'
-    checkbox_template='<div class="control-group %(classes)s"><label class="checkbox">%(widget)s%(label)s</label></div>'
-    if isinstance(field.widget, forms.widgets.CheckboxInput):
+    template='<div class="%(classes)s" %(div_attrs)s><label class="control-label" for="id_%(name)s">%(label)s</label><div class="controls">%(widget)s<span class="help-inline">%(error)s</span></div></div>'
+    checkbox_template='<div class="%(classes)s" %(div_attrs)s><div class="controls"><label class="checkbox">%(widget)s%(label)s</label></div></div>'
+    if isinstance(field.widget, wtforms.widgets.CheckboxInput):
         return Markup(checkbox_template % ctx)
 
     return Markup(template % ctx)
@@ -95,7 +99,7 @@ def render_form(context, form):
     def get_visible_inputs(form):
         visible_inputs = []
         for field in form.__iter__():
-            if not isinstance(field.widget, forms.widgets.HiddenInput):
+            if not isinstance(field.widget, wtforms.widgets.HiddenInput):
                 visible_inputs.append(field)
         return visible_inputs
 

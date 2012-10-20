@@ -2,7 +2,7 @@ application: 319-project
 version: 1
 runtime: python27
 api_version: 1
-threadsafe: yes
+threadsafe: no
 
 handlers:
 - url: /favicon\.ico
@@ -13,11 +13,8 @@ handlers:
   static_dir: static
 
 - url: /.*
-  script: main.app
+  script: main.py
 
 libraries:
-- name: webapp2
-  version: "2.5.1"
-
 - name: jinja2
   version: "2.6"

@@ -1,55 +1,41 @@
-import os
-
-import webapp2
-from webapp2_extras import sessions
-from webapp2_extras import auth as webapp_auth
-from webapp2_extras import jinja2
-
-import lib.gaesessions
-
-from lib.gaesessions import get_current_session
 
 from auth import models as auth_models
 
-from tournament.templatetags import ttags
+from flask.views import MethodView
+
+from flask import session, redirect, url_for
+
+from lib import flask_login
+
+import settings
+
 
 def login_required(handler):
     "Requires that a user be logged in to access the resource"
     def check_login(self, *args, **kwargs):
         if not self.user:
-            return self.redirect_to('login')
+            return redirect(url_for('login'))
         else:
             return handler(self, *args, **kwargs)
     return check_login
 
 
-class UserAwareHandler(webapp2.RequestHandler):
+class UserAwareView(MethodView):
 
-    @webapp2.cached_property
+    @property
     def session(self):
-        return get_current_session()
+        return session
 
-    @webapp2.cached_property
-    def auth(self):
-        return webapp_auth.get_auth(request=self.request)
-
-    @webapp2.cached_property
+    @property
     def user(self):
-        if 'user' in self.session:
-            return self.session['user']
+        if not flask_login.current_user.is_anonymous():
+            return flask_login.current_user._get_current_object()
+        else:
+            return None
 
-    @webapp2.cached_property
-    def jinja2(self):
-        return jinja2.get_jinja2(factory=ttags.jinja2_factory, app=self.app)
-
-    def render_response(self, temp, view_context={}, form=None, error=None):
-        context = {}
-        #put stuff in context here like base.get_context would normally have.
-
-        ##
-        context.update(view_context)
-
-        if 'form' not in context:
-            context['form'] = form
-
-        self.response.out.write(self.jinja2.render_template(temp, **context))
+    def get_context(self):
+        ctx = {
+            'MEDIA_MERGED': settings.MEDIA_MERGED,
+            'user': self.user,
+        }
+        return ctx

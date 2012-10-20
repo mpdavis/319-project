@@ -1,4 +1,5 @@
-from wtforms import Form, TextField, PasswordField, validators
+from wtforms import Form, TextField, PasswordField
+from wtforms import validators
 
 class SignupForm(Form):
     username = TextField('Username',
