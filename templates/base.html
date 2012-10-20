@@ -2,19 +2,27 @@
 
 <html>
     <head>
-        <title>319 Project</title>
+        <title>{% block title %}319 Project{% endblock %}</title>
 
         <link rel="author" href="humans.txt" />
 
+        {% if MEDIA_MERGED %}
+        <link rel="stylesheet" type="text/css" href="/static/merged/merged.css" />
+
+        <script type="text/javascript" src="/static/merged/merged.js"></script>
+        {% else %}
         <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.css" />
         <link rel="stylesheet" type="text/css" href="/static/css/chosen.css" />
         <link rel="stylesheet" type="text/css" href="/static/css/styles.css" />
-        {% block style %}{% endblock %}
 
         <script type="text/javascript" src="/static/js/jquery-1.7.1.min.js"></script>
         <script type="text/javascript" src="/static/js/bootstrap-modal.js"></script>
         <script type="text/javascript" src="/static/js/chosen.jquery.min.js"></script>
         <script type="text/javascript" src="/static/js/chosen.autoload.js"></script>
+        <script type="text/javascript" src="/static/js/jquery.datatable.js"></script>
+        {% endif %}
+
+        {% block style %}{% endblock %}
         {% block script %}{% endblock %}
     </head>
 
@@ -26,17 +34,18 @@
 
                     <ul class="nav">
                         <li><a href="/">Home</a></li>
+                        {% if user %}
+                        <li><a href="{{ url_for('event-list') }}">My Tournaments</a></li>
+                        {% endif %}
                     </ul>
 
-                    {% if not username %}
+                    {% if not user %}
 
                         <a href="/auth/login" class="btn btn-primary pull-right">Login</a>
 
-                    {% endif %}
-
-                    {% if username %}
+                    {% else %}
                         <div class="pull-right">
-                            Welcome, {{ username }}
+                            Welcome, {{ user.username }}
                             <a href="/auth/logout" class="btn btn-primary">Logout</a>
                         </div>
 
