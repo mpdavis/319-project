@@ -15,29 +15,42 @@ from lib import flask_login
 
 class register(auth.UserAwareView):
     def get(self):
-        return render_template("register.html", form=auth_forms.SignupForm())
+        return render_template("auth/register.html", form=auth_forms.SignupForm())
 
     def post(self):
         form = auth_forms.SignupForm(request.form)
-        error = None
+        message = None
+        registered = False
         if form.validate():
             password, salt = auth_utils.encode_password(form.password.data)
 
-            new_user = auth_models.WTUser(username=form.username.data,
-                                          email=form.email.data,
-                                          password=password,
-                                          salt=salt)
-            new_user.save()
+            current_user = auth_models.WTUser.all().filter('email', form.email.data).count()
 
-            if new_user:
-                auth_utils.send_registration_email(form.email.data, form.username.data)
+            if not current_user:
+                new_user = auth_models.WTUser(username=form.username.data,
+                                              email=form.email.data,
+                                              password=password,
+                                              salt=salt)
+                new_user.save()
 
-        return render_template("register.html", form=form, error=error)
+                if new_user:
+                    registered = True
+                    auth_utils.send_registration_email(form.email.data, form.username.data)
+                    flask_login.login_user(auth_models.WTUser.all().filter('email =', form.email.data).fetch(1)[0])
+
+            if current_user:
+                message = "Whoops! An account has already been registered with that email."
+
+        if form.errors:
+            message = form.errors
+
+        response = json.dumps({'registered': registered, 'error_message': message})
+        return response
 
 
 class login(auth.UserAwareView):
     def get(self):
-        return render_template("login.html", form=auth_forms.LoginForm())
+        return render_template("auth/login.html", form=auth_forms.LoginForm())
 
     def post(self):
 
@@ -56,7 +69,8 @@ class login(auth.UserAwareView):
                 flask_login.login_user(auth_models.WTUser.all().filter('email =', form.email.data).fetch(1)[0],
                                        remember=form.remember_me.data)
 
-        response = json.dumps({'loggedin': loggedin, 'error_message': message})
+        next_url = '/tournament/list'
+        response = json.dumps({'loggedin': loggedin, 'error_message': message, 'next_url': next_url})
         return response
 
 
@@ -69,7 +83,7 @@ class logout(auth.UserAwareView):
 
 class check_username(auth.UserAwareView):
     def get(self):
-        username = self.request.GET.get('username', None)
+        username = request.args.get('username', None)
 
         output = {"valid" : True}
         count = auth_models.WTUser.all().filter('username =', username).count()
@@ -78,4 +92,8 @@ class check_username(auth.UserAwareView):
             output['valid'] = False
 
         return json.dumps(output)
+
+class welcome(auth.UserAwareView):
+    def get(self):
+        return render_template('auth/welcome.html')
 
