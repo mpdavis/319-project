@@ -8,7 +8,7 @@
                 <div class="alert alert-error" id="error" style="display: none">
                     This is a test
                 </div>
-                <form class="form-horizontal" method="post" action="">
+                <form class="form-horizontal" method="post" action="" id="login_form">
                     <div class="control-group">
                         <label class="control-label">Email</label>
                         <div class="controls">
@@ -24,7 +24,7 @@
                     <div class="control-group">
                         <div class="controls">
                             <label class="checkbox">
-                                <input type="checkbox"> Remember me
+                                {{ form.remember_me|safe }} Remember Me
                             </label>
                             <div style="margin-top: 20px;">
                                 <button type="button" class="btn btn-primary" onclick="login();">Login</button> or <a href="/auth/register"> register an account.</a>
@@ -42,7 +42,7 @@
     <script>
     function login()
     {
-        $.post("/auth/login/", {email: $("#email").val(), password: $("#password").val()},
+        $.post("/auth/login/", $("#login_form").serialize(),
                 function(responseText)
                 {
                     var data = $.parseJSON(responseText);

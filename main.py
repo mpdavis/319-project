@@ -27,7 +27,7 @@ app.secret_key = 'this-is-just-our-dev-key-oh-so-secret'
 
 @login_manager.user_loader
 def load_user(userid):
-    return auth.models.WTUser.get_by_id(userid)
+    return auth.models.WTUser.get_by_id(int(userid))
 
 class MainHandler(auth.UserAwareView):
     def get(self):
