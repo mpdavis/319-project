@@ -1,4 +1,5 @@
 import json
+import logging
 
 import auth
 from auth import forms as auth_forms
@@ -59,12 +60,14 @@ class login(auth.UserAwareView):
         message = None
 
         if form.validate():
+
             loggedin = auth_utils.check_password(form.password.data, form.email.data)
 
             if not loggedin:
                 message = "Invalid Email / Password"
             else:
-                flask_login.login_user(auth_models.WTUser.all().filter('email =', form.email.data).fetch(1)[0])
+                flask_login.login_user(auth_models.WTUser.all().filter('email =', form.email.data).fetch(1)[0],
+                                       remember=form.remember_me.data)
 
         next_url = '/tournament/list'
         response = json.dumps({'loggedin': loggedin, 'error_message': message, 'next_url': next_url})
