@@ -5,11 +5,11 @@
     <div class="row" style="margin-top:80px;">
         <div class="span6 offset3">
             <div class="well">
-                {% if error %}
-                    <div class="alert alert-error">
-                        Whoops.  Something went wrong.
-                    </div>
-                {% endif %}
+
+                <div class="alert alert-error" id="error_message" style="display: none;">
+                    Whoops!
+                </div>
+
                 <form class="form-horizontal" method="post" action="">
                     <div class="control-group">
                         <label class="control-label">Email</label>
@@ -24,21 +24,22 @@
                             <div class="help-inline" id="username_text"></div>
                         </div>
                     </div>
-                    <div class="control-group">
+                    <div class="control-group" id="password_control">
                         <label class="control-label">Password</label>
                         <div class="controls">
                             {{ form.password|safe }}
                         </div>
                     </div>
-                    <div class="control-group">
+                    <div class="control-group" id="password_confirm_control">
                         <label class="control-label">Confirm</label>
                         <div class="controls">
                             {{ form.password_confirm|safe }}
+                            <div class="help-inline" id="password_confirm_text"></div>
                         </div>
                     </div>
                     <div class="control-group">
                         <div class="controls">
-                            <button type="submit" class="btn btn-primary">Register</button>
+                            <button type="button" class="btn btn-primary" id="submit">Register</button>
                         </div>
                     </div>
                 </form>
@@ -50,12 +51,11 @@
     </div>
 
     <script>
-    $(function() {
 
-
+    $(document).ready(function(){
 
         $("#username").blur(function () {
-            var page = "/auth/check_username?"
+            var page = "/auth/check_username?";
             var output;
             $.getJSON(page,
                 {
@@ -64,19 +64,44 @@
                 function(data) {
 
                     if (data.valid) {
-                        $("#username_control").removeClass("error").addClass("success")
+                        $("#username_control").removeClass("error").addClass("success");
                         $("#username_text").text("Available");
 
                     } else {
-                        $("#username_control").removeClass("success").addClass("error")
+                        $("#username_control").removeClass("success").addClass("error");
                         $("#username_text").text("Unavailable");
                     }
                 })
-
-
-
         })
-    })
+
+        $("#password_confirm").blur(function() {
+            if ($("#password").val() == $("#password_confirm").val()) {
+                $("#password_confirm_control").removeClass("error").addClass("success");
+                $("#password_confirm_text").text("Passwords match!");
+            } else {
+                $("#password_confirm_control").removeClass("success").addClass("error");
+                $("#password_confirm_text").text("Passwords don't match!");
+            }
+        });
+
+        $("#submit").click(function() {
+            $.post("/auth/register/", {email: $("#email").val(), username: $("#username").val(), password: $("#password").val(), password_confirm: $("#password_confirm").val()},
+            function(responseText)
+            {
+                var data = $.parseJSON(responseText);
+
+                if (data.registered) {
+                    window.location.replace("/auth/welcome/");
+                } else {
+                    if (data.error_message) {
+                        $("#error_message").html(data.error_message);
+                        $("#error_message").show();
+                    }
+                }
+
+            });
+        });
+    });
 
 
     </script>
