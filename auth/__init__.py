@@ -1,23 +1,28 @@
-
+import auth
 from auth import models as auth_models
 
+from flask import session, redirect, url_for
 from flask.views import MethodView
 
-from flask import session, redirect, url_for
-
 from lib import flask_login
+from lib.flask_login import LoginManager
 
 import settings
 
 
-def login_required(handler):
-    "Requires that a user be logged in to access the resource"
-    def check_login(self, *args, **kwargs):
-        if not self.user:
-            return redirect(url_for('login'))
-        else:
-            return handler(self, *args, **kwargs)
-    return check_login
+def initialize(app):
+    login_manager = LoginManager()
+    login_manager.init_app(app)
+    login_manager.unauthorized_handler(user_unauthorized_callback)
+    login_manager.user_loader(load_user)
+
+
+def user_unauthorized_callback():
+    return redirect(url_for('login'))
+
+
+def load_user(userid):
+    return auth_models.WTUser.get_by_id(int(userid))
 
 
 class UserAwareView(MethodView):
@@ -33,9 +38,12 @@ class UserAwareView(MethodView):
         else:
             return None
 
-    def get_context(self):
+    def get_context(self, extra_ctx=None, **kwargs):
         ctx = {
             'MEDIA_MERGED': settings.MEDIA_MERGED,
             'user': self.user,
         }
+        if extra_ctx:
+            ctx.update(extra_ctx)
+        ctx.update(kwargs)
         return ctx
