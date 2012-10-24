@@ -1,6 +1,8 @@
 from flask import request
 from flask.templating import render_template
 
+from lib.flask_login import login_required
+
 import auth
 import forms
 import models
@@ -8,14 +10,14 @@ import actions
 
 class New_Tournament(auth.UserAwareView):
     def get(self):
-        context = {
+        context = self.get_context({
             'fields':{'step':1},
-        }
+        })
 
         return self.render_new_tourney(context)
 
     def post(self):
-        context = {'fields':{}}
+        context = self.get_context({'fields':{}})
         step = int(request.form.get('step'))
         if step == 1:
             form = forms.NewTournamentStep1(request.form)
@@ -52,6 +54,8 @@ class New_Tournament(auth.UserAwareView):
 
 
 class Tournament_List(auth.UserAwareView):
+    decorators = [login_required]
+
     def get(self):
         context = self.get_context()
         context['user_events'] = actions.get_events_by_user(self.user)

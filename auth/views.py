@@ -1,5 +1,4 @@
 import json
-import logging
 
 import auth
 from auth import forms as auth_forms
@@ -11,11 +10,14 @@ from flask import request
 from flask.templating import render_template
 
 from lib import flask_login
+from lib.flask_login import login_required
 
 
 class register(auth.UserAwareView):
     def get(self):
-        return render_template("auth/register.html", form=auth_forms.SignupForm())
+        context = self.get_context()
+        context['form'] = auth_forms.SignupForm()
+        return render_template("auth/register.html", **context)
 
     def post(self):
         form = auth_forms.SignupForm(request.form)
@@ -50,7 +52,8 @@ class register(auth.UserAwareView):
 
 class login(auth.UserAwareView):
     def get(self):
-        return render_template("auth/login.html", form=auth_forms.LoginForm())
+        context = self.get_context(form = auth_forms.LoginForm())
+        return render_template("auth/login.html", **context)
 
     def post(self):
 
@@ -75,7 +78,8 @@ class login(auth.UserAwareView):
 
 
 class logout(auth.UserAwareView):
-    @auth.login_required
+    decorators = [login_required]
+
     def get(self):
         flask_login.logout_user()
         return redirect('/auth/login')
@@ -95,5 +99,6 @@ class check_username(auth.UserAwareView):
 
 class welcome(auth.UserAwareView):
     def get(self):
-        return render_template('auth/welcome.html')
+        context = self.get_context()
+        return render_template('auth/welcome.html', **context)
 
