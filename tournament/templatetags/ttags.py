@@ -48,13 +48,15 @@ def render_field(context, field, label=None, single_input=False):
     errors = ''
     if field.errors:
         classes.append('error')
-        errors = field.errors
+        errors = ' '.join(field.errors)
+        if errors[-1] == '.':
+            errors = errors[:-1]
 
     # setup the required indicator
-    is_required = True
+    is_required = False
     for validator in field.validators:
-        if isinstance(validator, wtforms.validators.Optional):
-            is_required = False
+        if isinstance(validator, wtforms.validators.Required):
+            is_required = True
             break;
     if is_required and field.label:
         required_indicator =  '<span class="required-indicator" title="This Field is Required">*</span>'
