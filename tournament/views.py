@@ -25,17 +25,17 @@ class New_Tournament(auth.UserAwareView):
                 context['fields'].update(form.data)
                 context['fields'].update({'step':2})
                 context['form'] = forms.NewTournamentStep2(prefix="step2")
-                context['form2'] = forms.NewTournamentStep3(prefix="step3")
                 return self.render_new_tourney(context)
             else:
                 return self.render_new_tourney({'fields':{'step':1}, 'form':form})
         elif step == 2:
-            form = forms.NewTournamentStep2(request.form)
+            form = forms.NewTournamentStep2(request.form, prefix="step2")
             if form.validate():
                 context['fields'].update(form.data)
                 context['fields'].update({
                     'tournament_security':request.form.get('tournament_security')})
                 context['fields'].update({'step':3})
+                context['form'] = forms.NewTournamentStep3(prefix="step3")
                 #TODO finish processing
 
                 return self.render_new_tourney(context)
