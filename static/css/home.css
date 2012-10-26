@@ -5,7 +5,7 @@ body {
 
 .home {
     background-image: url(/static/img/hilton.jpeg);
-    background-size: 100%;
+    background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
     background-attachment: scroll;
@@ -22,7 +22,8 @@ body {
 .blackback {
 
     margin-top: 90px;
-    background: rgba(0,0,0,0.75);
+    background: rgba(0,0,0,0.85);
+    border-radius: 25px;
     }
 
 .home h1 {

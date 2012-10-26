@@ -1,18 +1,5 @@
 {% extends 'base.html' %}
 
-{% block style %}
-<style>
-#newt-step-3 label{
-    width: 150px;
-}
-
-#newt-step-3 label.checkbox {
-    width: 200px;
-    margin-left: 40px;
-}
-</style>
-{% endblock %}
-
 {% block content %}
 <div class="row">
 
@@ -20,7 +7,7 @@
 
     <div class="span12">
         <form id="new-tourney-form" action='' method='POST' class="form-horizontal">
-            <div class="well" style="min-height: 345px;">
+            <div class="well">
                 {{ render_hidden_fields() }}
 
                 <div class="page-header" style="margin-top: -5px;">
@@ -30,15 +17,6 @@
                 <div style="margin-left: 250px; margin-top: 10px;">
                     {{ render_form(form) }}
                 </div>
-                <div class="page-header" style="margin-top: 10px;">
-                    <h3>Setup Participants/Teams</h3>
-                </div>
-                <div id="newt-step-3" style="float:left; width:450px;">
-                    {{ render_form(form2) }}
-                </div>
-                <div id="dynamic-names" style="display:inline-block;width:425px;">
-
-                 </div>
 
             </div>
             <input type="submit" class="btn btn-primary pull-right" value="Next" style="width:120px;font-size:20px;" />
@@ -46,58 +24,5 @@
     </div>
 
 </div>
-
-<script>
-
-function toggle_seeds(){
-    if($("#step3-show_seeds").is(':checked')){
-        $(".participant-seed").show();
-        $(".participant-seed > input").val('');
-    }
-    else{
-        $(".participant-seed").hide();
-    }
-
-}
-
-function gen_participant_fields(){
-    var num = $("#step3-number_participants").val();
-    if($("#step3-type").val() == 'RR'){
-        $("#show-seeds-div").hide();
-        $("#step3-show_seeds").removeAttr('checked');
-    }
-    else{
-        $("#show-seeds-div").show();
-        $("#step3-show_seeds").attr('checked', 'checked');
-    }
-
-    if(num < 2){
-        num = 2;
-        $("#step3-number_participants").val(num);
-    }
-    $("#dynamic-names").html('');
-    var html_string = '';
-    for(var i=0; i<num; i++){
-        var real_num = i + 1;
-        var string = '<h4 style="margin-bottom: 6px;">Participant/Team '+ real_num +'</h4>'
-                +' <div class="form-inline" style="margin-left:20px;margin-bottom:20px;">'
-                + '<label for="id_participant'+i+'name">Name:<span class="required-indicator" title="This Field is Required">*&nbsp;</span><input type="text" name="participant'+i+'name" id="id_participant'+i+'name" style="width:160px" /></label>'
-                + '<label class="participant-seed" style="margin-left:10px;" for="id_participant'+i+'seed">Seed: <input type="text" name="participant'+i+'seed" id="id_participant'+i+'seed" style="width:40px" /></label>'
-                + '</div>';
-        html_string = html_string + string;
-    }
-    $("#dynamic-names").html(html_string);
-    toggle_seeds();
-}
-
-$(document).ready(function(){
-    $("#step3-number_participants").blur(gen_participant_fields);
-    $("#step3-type").chosen().change(gen_participant_fields);
-    $("#step3-show_seeds").change(toggle_seeds);
-
-    $("#step3-number_participants").val(4);
-    $("#step3-number_participants").trigger('blur');
-});
-</script>
 
 {% endblock %}
