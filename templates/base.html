@@ -45,14 +45,14 @@
                             <a class="dropdown-toggle btn btn-primary" data-toggle="dropdown" href="#">Login</a>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel" style="padding: 15px; padding-bottom: 0px;">
                                 <form accept-charset="UTF-8" id="nav_login">
-                                    <input style="margin-bottom: 15px;" type="text" placeholder="Email" id="email" name="email">
-                                    <input style="margin-bottom: 15px;" type="password" placeholder="Password" id="password" name="password">
+                                    <input style="margin-bottom: 15px;" type="text" placeholder="Email" id="dropdown_email" name="dropdown_email">
+                                    <input style="margin-bottom: 15px;" type="password" placeholder="Password" id="dropdown_password" name="dropdown_password">
                                     <input style="float: left; margin-right: 10px;" type="checkbox" name="remember_me" id="remember_me" value="1">
                                     <label class="string optional" for="remember_me"> Remember me</label>
                                     <input class="btn btn-primary btn-block" type="button" id="sign-in" value="Sign In">
                                     <label style="text-align: center;padding-top:5px">or</label>
-                                    <input class="btn btn-primary btn-block" type="button" id="sign-in-google" value="Sign Up">
-                                    <input class="btn btn-primary btn-block" type="button" id="sign-in-twitter" value="Reset Password">
+                                    <input class="btn btn-primary btn-block" type="button" value="Sign Up" onclick="window.location.replace('{{ url_for('register') }}')">
+                                    <input class="btn btn-primary btn-block" type="button" value="Reset Password">
                                 </form>
                             </ul>
                         </div>
