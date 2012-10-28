@@ -24,6 +24,8 @@ app.secret_key = 'this-is-just-our-dev-key-oh-so-secret'
 
 
 class MainHandler(auth.UserAwareView):
+    active_nav = 'home'
+
     def get(self):
         context = self.get_context()
 

@@ -55,6 +55,7 @@ class New_Tournament(auth.UserAwareView):
 
 class Tournament_List(auth.UserAwareView):
     decorators = [login_required]
+    active_nav = 'my_tournaments'
 
     def get(self):
         context = self.get_context()

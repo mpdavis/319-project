@@ -34,9 +34,9 @@
                 <div class="container">
 
                     <ul class="nav">
-                        <li><a href="/">Home</a></li>
+                        <li {% if active_nav == 'home' %}class="active"{% endif %}><a href="/">Home</a></li>
                         {% if user %}
-                        <li><a href="{{ url_for('event-list') }}">My Tournaments</a></li>
+                        <li {% if active_nav == 'my_tournaments' %}class="active"{% endif %}><a href="{{ url_for('event-list') }}">My Tournaments</a></li>
                         {% endif %}
                     </ul>
 
