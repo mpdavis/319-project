@@ -16,6 +16,7 @@
         <link rel="stylesheet" type="text/css" href="/static/css/styles.css" />
 
         <script type="text/javascript" src="/static/js/jquery-1.7.1.min.js"></script>
+        <script type="text/javascript" src="/static/js/bootstrap.js"></script>
         <script type="text/javascript" src="/static/js/bootstrap-modal.js"></script>
         <script type="text/javascript" src="/static/js/chosen.jquery.min.js"></script>
         <script type="text/javascript" src="/static/js/chosen.autoload.js"></script>
@@ -40,8 +41,21 @@
                     </ul>
 
                     {% if not user %}
-
-                        <a href="/auth/login" class="btn btn-primary pull-right">Login</a>
+                        <div class="dropdown pull-right">
+                            <a class="dropdown-toggle btn btn-primary" data-toggle="dropdown" href="#">Login</a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel" style="padding: 15px; padding-bottom: 0px;">
+                                <form accept-charset="UTF-8" id="nav_login">
+                                    <input style="margin-bottom: 15px;" type="text" placeholder="Email" id="email" name="email">
+                                    <input style="margin-bottom: 15px;" type="password" placeholder="Password" id="password" name="password">
+                                    <input style="float: left; margin-right: 10px;" type="checkbox" name="remember_me" id="remember_me" value="1">
+                                    <label class="string optional" for="remember_me"> Remember me</label>
+                                    <input class="btn btn-primary btn-block" type="button" id="sign-in" value="Sign In">
+                                    <label style="text-align: center;padding-top:5px">or</label>
+                                    <input class="btn btn-primary btn-block" type="button" id="sign-in-google" value="Sign Up">
+                                    <input class="btn btn-primary btn-block" type="button" id="sign-in-twitter" value="Reset Password">
+                                </form>
+                            </ul>
+                        </div>
 
                     {% else %}
                         <div class="pull-right">
@@ -94,6 +108,28 @@
                 });
                 //Sets the min-height on initial page load.
                 $(window).trigger('resize');
+
+                // Ajax request for login
+                function login() {
+                    $.post("/auth/login/", $("#nav_login").serialize(),
+                            function(responseText)
+                            {
+                                var data = $.parseJSON(responseText);
+                                if (data.loggedin) {
+                                    window.location.reload();
+                                }
+                            });
+                }
+
+                $("#nav_login").click(function() {
+                    login();
+                });
+
+                $("#nav_login").keypress(function(e) {
+                    if (e && e.which == 13) {
+                        login();
+                    }
+                })
             });
         </script>
     </body>

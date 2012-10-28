@@ -27,7 +27,7 @@
                                 {{ form.remember_me|safe }} Remember Me
                             </label>
                             <div style="margin-top: 20px;">
-                                <button type="button" class="btn btn-primary" onclick="login();">Login</button> or <a href="/auth/register"> register an account.</a>
+                                <button type="button" class="btn btn-primary">Login</button> or <a href="/auth/register"> register an account.</a>
                             </div>
                         </div>
                     </div>
@@ -40,22 +40,28 @@
     </div>
 
     <script>
-    function login()
-    {
-        $.post("/auth/login/", $("#login_form").serialize(),
-                function(responseText)
-                {
-                    var data = $.parseJSON(responseText);
+        // Ajax request for login
+        function login() {
+            $.post("/auth/login/", $("#login_form").serialize(),
+                    function(responseText)
+                    {
+                        var data = $.parseJSON(responseText);
+                        if (data.loggedin) {
+                            window.location.replace("/tournament/list");
+                        }
+                    });
+        }
 
-                    if (data.loggedin) {
-                        window.location.replace("/tournament/list");
-                    } else {
-                        $("#error").html(data.error_message);
-                        $("#error").show();
-                    }
 
-                });
-    }
+        $("#login_form").click(function() {
+            login();
+        });
+
+        $("#login_form").keypress(function(e) {
+            if (e && e.which == 13) {
+                login();
+            }
+        })
 
 
     </script>
