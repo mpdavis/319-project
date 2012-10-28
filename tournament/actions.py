@@ -12,17 +12,15 @@ def get_events_by_user(user):
 
 
 def create_tournament(form_data, p_form_data, user):
-    f=form_data
-    p=p_form_data
     e = models.Event(
-        name=f.get('name'),
-        date=f.get('date'),
-        location=f.get('location'),
+        name=form_data.get('name'),
+        date=form_data.get('date'),
+        location=form_data.get('location'),
         owner=user,
-        perms=f.get('tournament_security'))
+        perms=form_data.get('tournament_security'))
     e.put()
     t = models.Tournament(
-        type=f.get('type'),
+        type=form_data.get('type'),
         order=0,
         win_method=models.Tournament.HIGHEST_WINS,
         parent=e)
@@ -50,16 +48,28 @@ def create_tournament(form_data, p_form_data, user):
                 name_dict[num] = value
                 seeds.append(num)
 
-    logging.warning(seeds)
-    #TODO Optimize puts
+    #TODO Optimize puts: I'm putting the Match in the loop because I need it so I can set it
+    #TODO                as the parent on the Participants. There should be a way to do this.
     ps_to_put = []
     round = 1
     for i in range(len(seeds)/2):
         m = models.Match(round=round, has_been_played=False, parent=t)
         m.put()
-        p1 = models.Participant(seed=int(seeds[i]), name=name_dict.get(seeds[i]), parent=m, event_key=e.key())
-        p2 = models.Participant(seed=int(seeds[len(seeds)-i-1]), name=name_dict.get(seeds[len(seeds)-i-1]), parent=m, event_key=e.key())
+
+        p1 = models.Participant(
+            seed=int(seeds[i]),
+            name=name_dict.get(seeds[i]),
+            event_key=e.key(),
+            parent=m)
         ps_to_put.append(p1)
+
+        p2_seed = int(seeds[len(seeds)-i-1])
+        p2 = models.Participant(
+            seed=p2_seed,
+            name=name_dict.get(p2_seed),
+            event_key=e.key(),
+            parent=m)
         ps_to_put.append(p2)
+
         round += 1
     db.put(ps_to_put)

@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, redirect, url_for
 from flask.templating import render_template
 
 from lib.flask_login import login_required
@@ -58,12 +58,11 @@ class New_Tournament(auth.UserAwareView):
 
                 p_form = forms.handle_participant_forms(request.form,num_participants,include_seeds)
                 p_form.validate() #TODO: if here?
-                logging.warning(p_form.data) #TODO: REMOVE
 
                 actions.create_tournament(context['fields'], p_form.data, self.user)
 
                 #TEMP REDIRECT TO HOME TODO: Redirect to Tournament Overview Page once it exists
-                return render_template('home.html', **self.get_context())
+                return redirect(url_for('event-list'))
             else:
                 context.update({'fields':{'step':3}, 'form':form})
                 return self.render_new_tourney(context)
