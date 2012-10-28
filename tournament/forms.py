@@ -17,10 +17,29 @@ class NewTournamentStep2(forms.Form):
 
 
 class NewTournamentStep3(forms.Form):
-    type = forms.SelectField("Tourney Type", choices=models.Tournament.TOURNAMENT_TYPES)
+    TOURNAMENT_TYPES = [('SE', 'Single Elimination'),
+                        ('DE', 'Double Elimination'),
+                        ('RR', 'Round Robin'),]
+    type = forms.SelectField("Tourney Type", choices=TOURNAMENT_TYPES)
     number_participants = forms.IntegerField("Number of Participants")
     show_seeds = forms.BooleanField("Enter seeds for each participant", default=True)
 
     def __init__(self, *args, **kwargs):
         super(NewTournamentStep3, self).__init__(*args, **kwargs)
         setattr(self.show_seeds, 'div_attrs', 'id=show-seeds-div')
+
+
+def handle_participant_forms(request_form, num_participants, include_seeds):
+    class ParticipantForm(forms.Form):
+        pass
+    for index in range(num_participants):
+        name_field_name = "participant%sname" % index
+        name_field = forms.StringField("", validators=[forms.validators.Required()])
+        setattr(ParticipantForm, name_field_name, name_field)
+        if include_seeds:
+            seed_field_name = "participant%sseed" % index
+            seed_field = forms.IntegerField("", validators=[forms.validators.Optional()])
+            setattr(ParticipantForm, seed_field_name, seed_field)
+
+    p_form = ParticipantForm(formdata=request_form)
+    return p_form
