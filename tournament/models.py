@@ -9,16 +9,12 @@ class Event(db.Model):
 
     owner = db.ReferenceProperty(auth_models.WTUser)
     admins = db.ListProperty(db.Key)
-    PERMISSION_CHOICES = [('public', 'Public'),
-                          ('protected', 'Protected'),
-                          ('private', 'Private')]
+    PERMISSION_CHOICES = ['public','protected','private']
     perms = db.StringProperty(choices=PERMISSION_CHOICES)
 
 
 class Tournament(db.Model):
-    TOURNAMENT_TYPES = [('SE', 'Single Elimination'),
-                        ('DE', 'Double Elimination'),
-                        ('RR', 'Round Robin'),]
+    TOURNAMENT_TYPES = ['SE','DE','RR']
     type = db.StringProperty(choices=TOURNAMENT_TYPES)
 
     order = db.IntegerProperty()
