@@ -45,14 +45,14 @@
                             <a class="dropdown-toggle btn btn-primary" data-toggle="dropdown" href="#">Login</a>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel" style="padding: 15px; padding-bottom: 0px;">
                                 <form accept-charset="UTF-8" id="nav_login">
-                                    <input style="margin-bottom: 15px;" type="text" placeholder="Email" id="email" name="email">
-                                    <input style="margin-bottom: 15px;" type="password" placeholder="Password" id="password" name="password">
+                                    <input style="margin-bottom: 15px;" type="text" placeholder="Email" id="dropdown_email" name="dropdown_email">
+                                    <input style="margin-bottom: 15px;" type="password" placeholder="Password" id="dropdown_password" name="dropdown_password">
                                     <input style="float: left; margin-right: 10px;" type="checkbox" name="remember_me" id="remember_me" value="1">
                                     <label class="string optional" for="remember_me"> Remember me</label>
                                     <input class="btn btn-primary btn-block" type="button" id="sign-in" value="Sign In">
                                     <label style="text-align: center;padding-top:5px">or</label>
-                                    <input class="btn btn-primary btn-block" type="button" id="sign-in-google" value="Sign Up">
-                                    <input class="btn btn-primary btn-block" type="button" id="sign-in-twitter" value="Reset Password">
+                                    <input class="btn btn-primary btn-block" type="button" value="Sign Up" onclick="window.location.replace('{{ url_for('register') }}')">
+                                    <input class="btn btn-primary btn-block" type="button" value="Reset Password">
                                 </form>
                             </ul>
                         </div>
@@ -83,14 +83,12 @@
         <footer class="footer">
             <div class="container">
                 <p class="pull-right"><a href="#">Back to top</a></p>
-                <p>Designed and built with all the love in the world <a href="http://twitter.com/twitter" target="_blank">@twitter</a> by <a href="http://twitter.com/mdo" target="_blank">@mdo</a> and <a href="http://twitter.com/fat" target="_blank">@fat</a>.</p>
-                <p>Code licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">Apache License v2.0</a>. Documentation licensed under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</p>
-                <p>Icons from <a href="http://glyphicons.com">Glyphicons Free</a>, licensed under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</p>
-                <ul class="footer-links">
-                    <li><a href="http://blog.getbootstrap.com">Read the blog</a></li>
-                    <li><a href="https://github.com/twitter/bootstrap/issues?state=open">Submit issues</a></li>
-                    <li><a href="https://github.com/twitter/bootstrap/wiki">Roadmap and changelog</a></li>
-                </ul>
+                <p><a href="#">About Us</a></p>
+                <p><a href="#">Contact Us</a></p>
+                <p><a href="#">Terms of Service</a></p>
+                <p><a href="#">Privacy Policy</a></p>
+                <p></p>
+
             </div>
         </footer>
 
@@ -102,8 +100,8 @@
                 $(window).resize(function(){
                     var new_height = $(window).height() - 191 - $('.footer').height();
                     //The 'jumbotron' is not in main-content so we have to account for that separately.
-                    if($(".jumbotron").length > 0){
-                        new_height = new_height - $('.jumbotron').height() - 150; //150 is for top and bottom padding.
+                    if($(".home").length > 0){
+                        new_height = new_height - $('.home').height() - 150; //150 is for top and bottom padding.
                     }
                     if(new_height < 300) new_height = 300;
                     $("#main-content").css('min-height', new_height);
