@@ -1,6 +1,7 @@
 from google.appengine.ext import db
 
 from tournament import models
+from auth import auth_models
 
 import logging
 
@@ -10,6 +11,17 @@ def get_events_by_user(user):
     #TODO: account for the admins who should also be able to see the event in their list.
     return events
 
+def get_event_by_id(id):
+	return models.Event.get_by_id(id)
+
+def get_user_by_key(id):
+    return auth_models.WTUser.get_by_id(id)
+
+def get_user_by_email(email):
+    user = auth_models.WTUser.all().filter('email =', email).fetch(1)
+    if len(user) == 1:
+        return user[0]
+    return None
 
 def create_tournament(form_data, p_form_data, user):
     e = models.Event(

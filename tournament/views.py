@@ -1,6 +1,8 @@
 from flask import request, redirect, url_for
 from flask.templating import render_template
 
+import json
+
 from lib.flask_login import login_required
 
 import wtforms
@@ -83,3 +85,71 @@ class Tournament_List(auth.UserAwareView):
         context = self.get_context()
         context['user_events'] = actions.get_events_by_user(self.user)
         return render_template('user_tournament_list.html', **context)
+
+class Tournament_Edit(auth.UserAwareView):
+    decorators = [login_required]
+
+    def get(self):
+        context = self.get_context()
+
+        event_id = request.args.get('id')
+        event = actions.get_event_by_id(int(event_id))
+        html_to_show = ""
+
+        # if event belongs to our user allow them to edit else redirect them
+        if context['user'].key().id() == event.owner.key().id():
+
+            context['event'] = event
+
+            # preload our forms with data
+            form = forms.EditTournament()
+            form.name.data = event.name
+            form.date.data = event.date
+            form.location.data = event.location
+            form.tournament_security.data = event.perms
+
+            # find all the admins by id :)
+            admin_list = [actions.get_user_by_key(admin_key.id()) for admin_key in event.admins]
+
+            context['admins'] = admin_list
+            context['form'] = form
+
+            html_to_show = render_template('edit_tournament.html', **context)
+        else:
+            html_to_show = render_template('home.html',**context)# need to redirect to another page
+
+        return html_to_show
+
+    def post(self):
+        form = forms.EditTournament(request.form)
+        error = 0
+        event = actions.get_event_by_id(int(form.event_id.data))
+
+
+        if event is not None:
+            new_admins=form.new_admins.data.split(":")
+            event.admins = [actions.get_user_by_email(new_guy).key() for new_guy in new_admins if new_guy != ""]
+
+            event.name = form.name.data
+            event.date = form.date.data
+            event.location = form.location.data
+            event.perms = form.tournament_security.data
+            event.put()
+        else:
+            error = 1
+
+        return json.dumps({'error': error})
+
+class check_email(auth.UserAwareView):
+    def get(self):
+        email = request.args.get('email', None)
+
+        output = {"exists" : False, "username" : None, "email" : email}
+        found_user = actions.get_user_by_email(email)
+
+
+        if found_user is not None:
+            output['exists'] = True
+            output['username'] = found_user.username
+
+        return json.dumps(output)

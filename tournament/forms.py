@@ -29,6 +29,19 @@ class NewTournamentStep3(forms.Form):
         setattr(self.show_seeds, 'div_attrs', 'id=show-seeds-div')
 
 
+class EditTournament(forms.Form):
+    SECURITY_CHOICES = [('public', 'Public'),
+                    ('protected', 'Protected'),
+                    ('private', 'Private')]
+
+    tournament_security = forms.RadioField(choices=SECURITY_CHOICES)
+    name = forms.StringField("Name", [validators.Required()])
+    location = forms.StringField("Location")
+    date = forms.DateTimeField("Date", [validators.Optional()])
+    admins = forms.StringField()
+    event_id = forms.StringField()
+    new_admins = forms.StringField()
+
 def handle_participant_forms(request_form, num_participants, include_seeds):
     class ParticipantForm(forms.Form):
         pass
@@ -43,3 +56,4 @@ def handle_participant_forms(request_form, num_participants, include_seeds):
 
     p_form = ParticipantForm(formdata=request_form)
     return p_form
+
