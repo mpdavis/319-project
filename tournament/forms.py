@@ -30,17 +30,15 @@ class NewTournamentStep3(forms.Form):
 
 
 class EditTournament(forms.Form):
-    SECURITY_CHOICES = [('public', 'Public'),
-                    ('protected', 'Protected'),
-                    ('private', 'Private')]
-
-    tournament_security = forms.RadioField(choices=SECURITY_CHOICES)
-    name = forms.StringField("Name", [validators.Required()])
-    location = forms.StringField("Location")
+    name = forms.StringField("Name", [validators.Optional()])
+    location = forms.StringField("Location", [validators.Optional()])
     date = forms.DateTimeField("Date", [validators.Optional()])
-    admins = forms.StringField()
-    event_id = forms.StringField()
-    new_admins = forms.StringField()
+
+    SECURITY_CHOICES = [('public', 'Public'),
+                ('protected', 'Protected'),
+                ('private', 'Private')]
+    tournament_security = forms.RadioField(choices=SECURITY_CHOICES)
+
 
 def handle_participant_forms(request_form, num_participants, include_seeds):
     class ParticipantForm(forms.Form):

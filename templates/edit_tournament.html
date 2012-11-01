@@ -12,35 +12,11 @@
                     error
                 </div>
 
+                {{ render_form(form) }}
 
 
                 <div class="control-group">
-                    <label class="control-label">Name</label>
-                    <div class="controls">
-                        {{form.name}}
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label">Date</label>
-                    <div class="controls">
-                        {{form.date}}
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label">Location</label>
-                    <div class="controls">
-                        {{form.location}}
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label">Permission</label>
-                    <div class="controls">
-                        {{form.tournament_security}}
-                    </div>
-                </div>
-
-                <div class="control-group">
-                    <label class="control-label">Admins</label>
+                    <label class="control-label">Admins:</label>
                     <div class="controls">
                         <table class="table table-bordered table-striped " id="admin-table" >
                             <thead class="header">
@@ -97,7 +73,7 @@
             });
 
             // post data!
-            $.post("/tournament/edit/", {new_admins: admins_to_save,event_id: {{event.key().id()}}, name: $("#name").val(), date: $("#date").val(), location: $("#location").val(),tournament_security: $('input[name=tournament_security]').filter(':checked').val()},
+            $.post("/tournament/edit/?id={{event.key().id()}}&new_admins="+admins_to_save, {name: $("#name").val(), date: $("#date").val(), location: $("#location").val(),tournament_security: $('input[name=tournament_security]').filter(':checked').val()},
             function(responseText)
             {
                 var data = $.parseJSON(responseText);
@@ -118,7 +94,7 @@
             window.location = '/tournament/list/';
         });
 
-        // the dange buttons on this page represents every remove button on the admins table
+        // the danger buttons on this page represents every remove button on the admins table
         $('.btn-danger').click(function() {
             // on click remove the table that the button is attatched to
             $("#"+$(this).val()).remove();

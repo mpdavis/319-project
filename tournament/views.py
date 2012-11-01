@@ -123,18 +123,22 @@ class Tournament_Edit(auth.UserAwareView):
     def post(self):
         form = forms.EditTournament(request.form)
         error = 0
-        event = actions.get_event_by_id(int(form.event_id.data))
 
+        event_id = request.args.get('id')
+        event = actions.get_event_by_id(int(event_id))
 
         if event is not None:
-            new_admins=form.new_admins.data.split(":")
-            event.admins = [actions.get_user_by_email(new_guy).key() for new_guy in new_admins if new_guy != ""]
+            if form.validate():
+                new_admins = request.args.get('new_admins').split(":")
+                event.admins = [actions.get_user_by_email(new_guy).key() for new_guy in new_admins if new_guy != ""]
 
-            event.name = form.name.data
-            event.date = form.date.data
-            event.location = form.location.data
-            event.perms = form.tournament_security.data
-            event.put()
+                event.name = form.name.data
+                event.date = form.date.data
+                event.location = form.location.data
+                event.perms = form.tournament_security.data
+                event.put()
+            else:
+                error = 2
         else:
             error = 1
 

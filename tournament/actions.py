@@ -19,7 +19,7 @@ def get_user_by_key(id):
 
 def get_user_by_email(email):
     user = auth_models.WTUser.all().filter('email =', email).fetch(1)
-    if len(user) == 1:
+    if user:
         return user[0]
     return None
 
