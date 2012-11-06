@@ -5,10 +5,13 @@ from tournament import models
 import logging
 
 
-def get_events_by_user(user):
-    events = models.Event.all().filter('owner =', user).fetch(200)
+def get_tournaments_by_user(user_key):
+    events = models.Event.all(keys_only=True).filter('owner =', user_key).fetch(500)
+    logging.warning(events)
+    tournaments = models.Tournament.all().filter('parent IN', events).fetch(500)
+    logging.warning(tournaments)
     #TODO: account for the admins who should also be able to see the event in their list.
-    return events
+    return tournaments
 
 
 def create_tournament(form_data, p_form_data, user):

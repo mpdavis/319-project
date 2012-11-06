@@ -25,6 +25,10 @@ class Tournament(db.Model):
     HIGHEST_WINS = 0
     LOWEST_WINS = 1
 
+    def get_type_verbose(self):
+        results = [item[1] for item in self.TOURNAMENT_TYPES if item[0] == self.type]
+        return ''.join(results)
+
 
 class Match(db.Model):
     round = db.IntegerProperty()

@@ -59,7 +59,7 @@ class New_Tournament(auth.UserAwareView):
                 p_form = forms.handle_participant_forms(request.form,num_participants,include_seeds)
                 p_form.validate() #TODO: if here?
 
-                actions.create_tournament(context['fields'], p_form.data, self.user)
+                actions.create_tournament(context['fields'], p_form.data, self.user.key())
 
                 #TEMP REDIRECT TO HOME TODO: Redirect to Tournament Overview Page once it exists
                 return redirect(url_for('event-list'))
@@ -82,5 +82,5 @@ class Tournament_List(auth.UserAwareView):
 
     def get(self):
         context = self.get_context()
-        context['user_events'] = actions.get_events_by_user(self.user)
+        context['user_tournaments'] = actions.get_tournaments_by_user(self.user)
         return render_template('user_tournament_list.html', **context)
