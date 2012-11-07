@@ -14,7 +14,78 @@
 
                 {{ render_form(form) }}
 
+                <div class="control-group">
+                    <label class="control-label">Tournaments:</label>
+                    <div class="controls">
+                        <table class="table table-bordered table-striped " id="tournament-table" >
+                            <thead class="header">
+                                <tr>
+                                    <th>Type</th>
+                                    <th>order</th>
+                                    <th>Win Method</th>      
+                                </tr>
+                            </thead>
+                            <tbody id="tournament_table_body">
+                            {% for tournament in tournaments %}
+                                <tr > 
+                                    <td>{{ tournament.type }}</td>
+                                    <td>{{ tournament.order }}</td>
+                                    <td>{{ tournament.win_method }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
+                <div class="control-group">
+                    <label class="control-label">Matches:</label>
+                    <div class="controls">
+                        <table class="table table-bordered table-striped " id="match-table" >
+                            <thead class="header">
+                                <tr>
+                                    <th>Round</th>
+                                    <th>Played</th>
+                                    <th>Players</th>      
+                                </tr>
+                            </thead>
+                            <tbody id="match_table_body">
+                                {% for match in matches %}
+                                    <tr > 
+                                        <td>{{ match.round }}</td>
+                                        <td>{{ match.has_been_played }}</td>
+                                        {% for particpant in participants_by_match[match] %}
+                                            <td>{{particpant.name}}</td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Participants:</label>
+                    <div class="controls">
+                        <table class="table table-bordered table-striped " id="participant-table" >
+                            <thead class="header">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Seed</th>  
+                                </tr>
+                            </thead>
+                            <tbody id="participant_table_body">
+                                {% for participant in participants %}
+                                    <tr> 
+                                        <td>{{ participant.name }}</td>
+                                        <td>{{ participant.seed }}</td>                                                       
+                                    </tr>
+                                {% endfor %}          
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+               
                 <div class="control-group">
                     <label class="control-label">Admins:</label>
                     <div class="controls">

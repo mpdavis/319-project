@@ -14,7 +14,7 @@ def get_events_by_user(user):
 def get_event_by_id(id):
 	return models.Event.get_by_id(id)
 
-def get_user_by_key(id):
+def get_user_by_id(id):
     return auth_models.WTUser.get_by_id(id)
 
 def get_user_by_email(email):
@@ -22,6 +22,18 @@ def get_user_by_email(email):
     if user:
         return user[0]
     return None
+
+def get_tournaments_by_event(event, limit = 200):
+    tournaments = models.Tournament.all().ancestor(event).fetch(limit)
+    return tournaments
+
+def get_matches_by_tournament(tournament, limit = 200):
+    matches = models.Match.all().ancestor(tournament).fetch(limit)
+    return matches
+
+def get_participants_by_match(match, limit = 200):
+    participants = models.Participant.all().ancestor(match).fetch(limit)
+    return participants
 
 def create_tournament(form_data, p_form_data, user):
     e = models.Event(
