@@ -2,7 +2,7 @@ from flask import request, redirect, url_for
 from flask.templating import render_template
 
 import json
-
+from operator import attrgetter
 from lib.flask_login import login_required
 
 import wtforms
@@ -99,8 +99,6 @@ class Tournament_Edit(auth.UserAwareView):
         # if event belongs to our user allow them to edit else redirect them
         if context['user'].key().id() == event.owner.key().id():
 
-            context['event'] = event
-
             # preload our forms with data
             form = forms.EditTournament()
             form.name.data = event.name
@@ -108,9 +106,28 @@ class Tournament_Edit(auth.UserAwareView):
             form.location.data = event.location
             form.tournament_security.data = event.perms
 
-            # find all the admins by id :)
-            admin_list = [actions.get_user_by_key(admin_key.id()) for admin_key in event.admins]
+            admin_list = [actions.get_user_by_id(admin_key.id()) for admin_key in event.admins]
 
+            tournaments = actions.get_tournaments_by_event(event)
+
+            matches = []
+            for tournament in tournaments:
+                matches.extend(actions.get_matches_by_tournament(tournament))
+
+            participants = []
+            participants_by_match = {}
+            for match in matches:
+                found_participants = actions.get_participants_by_match(match)
+                participants_by_match[match] = found_participants
+                participants.extend(found_participants)
+
+            participants.sort(key=attrgetter('seed')) 
+
+            context['event'] = event
+            context['tournaments'] = tournaments
+            context['matches'] = matches
+            context['participants'] = participants
+            context['participants_by_match'] = participants_by_match
             context['admins'] = admin_list
             context['form'] = form
 
