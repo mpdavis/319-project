@@ -63,7 +63,7 @@
             $("#step3-show_seeds").attr('checked', 'checked');
         }
 
-        if(num < 2){
+        if(num < 2 || isNaN(num)){
             num = 2;
             $("#step3-number_participants").val(num);
         }
@@ -74,7 +74,7 @@
             var string = '<h4 style="margin-bottom: 6px;">Participant/Team '+ real_num +'</h4>'
                     +' <div class="form-inline" style="margin-left:20px;margin-bottom:20px;">'
                     + '<label for="id_participant'+i+'name">Name:<span class="required-indicator" title="This Field is Required">*&nbsp;</span><input type="text" name="participant'+i+'name" id="id_participant'+i+'name" style="width:160px" /></label>'
-                    + '<label class="participant-seed" style="margin-left:10px;" for="id_participant'+i+'seed">Seed: <input type="text" name="participant'+i+'seed" id="id_participant'+i+'seed" style="width:40px" /></label>'
+                    + '<label class="participant-seed" style="margin-left:10px;" for="id_participant'+i+'seed">Seed: <input type="number" min="1" max="'+num+'" name="participant'+i+'seed" id="id_participant'+i+'seed" style="width:40px" /></label>'
                     + '</div>';
             html_string = html_string + string;
         }
