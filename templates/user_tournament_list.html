@@ -14,7 +14,7 @@
                 <th>Date & Time</th>
                 <th>Location</th>
                 <th>Owner</th>
-                <th>!More Here!</th>
+                <th></th>
             </tr>
             </thead>
 
@@ -25,7 +25,7 @@
                     <td>{{ event.date }}</td>
                     <td>{{ event.location }}</td>
                     <td>{{ event.owner }}</td>
-                    <td>!More Here!</td>
+                    <td><a  href="/tournament/edit/?id={{event.key().id()}}" class="btn pull-right" style="display: inline;margin-top:5px;" role="button" data-toggle="modal">Edit</a></td>
                 </tr>
             {% else %}
                 <tr>

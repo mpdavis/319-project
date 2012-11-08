@@ -3,32 +3,10 @@ import logging
 import string
 import random
 
-from google.appengine.api import mail
-
 from auth import models as auth_models
 
 ALPHABET = string.ascii_lowercase + string.ascii_uppercase + string.digits
 
-
-def send_registration_email(email, username):
-
-    mail.send_mail(sender="Web Tournament Support <computmaxer@gmail.com>",
-                   to=email,
-                   subject="Welcome to Web Tournaments!",
-                   body="""
-Hi,
-
-Thanks for signing up for Web Tournaments.
-
-Your username: %s
-
-If you have any problems, contact us at our website and we'll do what we can to help.
-
-We hope you enjoy using Web Tournaments.
-
-Thanks,
-The Web Tournament Team
-""" % (username))
 
 def generate_salt(size=64):
     random.seed()
@@ -56,4 +34,3 @@ def check_password(raw_password, email):
 
     else:
         return False
-
