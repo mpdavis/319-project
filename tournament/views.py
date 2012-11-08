@@ -49,7 +49,7 @@ class New_Tournament(auth.UserAwareView):
                 return self.render_new_tourney(context)
         elif step == 3:
             form = forms.NewTournamentStep3(request.form, prefix="step3")
-            step2form = forms.NewTournamentStep2(request.form)
+            step2form = forms.NewTournamentStep2DATEHACK(request.form)
             step1form = forms.NewTournamentStep1(request.form)
             context['fields'].update(step2form.data)
             context['fields'].update(step1form.data)
