@@ -1,4 +1,7 @@
+from base import widgets as base_widgets
+
 from tournament import models
+
 import wtforms as forms
 from wtforms import validators
 
@@ -13,7 +16,14 @@ class NewTournamentStep1(forms.Form):
 class NewTournamentStep2(forms.Form):
     name = forms.StringField("Name", [validators.Required()])
     location = forms.StringField("Location")
-    date = forms.DateTimeField("Date", [validators.Optional()])
+    date = forms.DateTimeField("Date", [validators.Optional()],
+                               widget=base_widgets.DateTimeInput(), format="%m/%d/%Y %H:%M")
+
+class NewTournamentStep2DATEHACK(forms.Form):
+    #This is so I can have a different format on the date field.  TODO: somehow make into one form.
+    name = forms.StringField("Name", [validators.Required()])
+    location = forms.StringField("Location")
+    date = forms.DateTimeField("Date", [validators.Optional()], widget=base_widgets.DateTimeInput())
 
 
 class NewTournamentStep3(forms.Form):
@@ -27,6 +37,17 @@ class NewTournamentStep3(forms.Form):
     def __init__(self, *args, **kwargs):
         super(NewTournamentStep3, self).__init__(*args, **kwargs)
         setattr(self.show_seeds, 'div_attrs', 'id=show-seeds-div')
+
+
+class EditTournament(forms.Form):
+    name = forms.StringField("Name", [validators.Optional()])
+    location = forms.StringField("Location", [validators.Optional()])
+    date = forms.DateTimeField("Date", [validators.Optional()])
+
+    SECURITY_CHOICES = [('public', 'Public'),
+                ('protected', 'Protected'),
+                ('private', 'Private')]
+    tournament_security = forms.RadioField(choices=SECURITY_CHOICES)
 
 
 def handle_participant_forms(request_form, num_participants, include_seeds):
@@ -43,3 +64,4 @@ def handle_participant_forms(request_form, num_participants, include_seeds):
 
     p_form = ParticipantForm(formdata=request_form)
     return p_form
+

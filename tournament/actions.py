@@ -1,6 +1,7 @@
 from google.appengine.ext import db
 
 from tournament import models
+from auth import auth_models
 
 import logging
 
@@ -11,6 +12,75 @@ def get_tournaments_by_user(user_key):
     #TODO: account for the admins who should also be able to see the event in their list.
     return tournaments
 
+def get_event_by_id(id):
+	return models.Event.get_by_id(id)
+
+def get_user_by_id(id):
+    return auth_models.WTUser.get_by_id(id)
+
+def get_user_by_email(email):
+    user = auth_models.WTUser.all().filter('email =', email).fetch(1)
+    if user:
+        return user[0]
+    return None
+
+def get_tournaments_by_event(event, limit = 200):
+    tournaments = models.Tournament.all().ancestor(event).fetch(limit)
+    return tournaments
+
+def get_matches_by_tournament(tournament, limit = 200):
+    matches = models.Match.all().ancestor(tournament).fetch(limit)
+    return matches
+
+def get_participants_by_match(match, limit = 200):
+    participants = models.Participant.all().ancestor(match).fetch(limit)
+    return participants
+
+def get_json_by_tournament(tournament):
+    
+    def participants_to_bracket(participants, match_size):
+        if len(participants) > match_size and match_size > 1:
+            matches = []
+            for i in range(len(participants) / match_size):
+                matches.append(participants[(i*match_size):((i+1)*match_size)])
+            remainder = len(participants) % match_size
+            if remainder > 0:
+                matches.append(participants[((-1)*remainder):])
+            matches = participants_to_bracket(matches, match_size)
+        else:
+            matches = participants
+        return matches
+    
+    def bracket_to_json(bracket):
+        assert (type(bracket) == list) and (len(bracket) > 0), \
+            "Invalid hierarchal bracket list format."
+        json_format = {"winner":"?"}
+        if type(bracket[0]) == list:
+            for i in range(len(bracket)):
+                json_format["tier_%s" % str(i)] = bracket_to_json(bracket[i])
+        else:
+            for i in range(len(bracket)):
+                json_format["player_%s" % str(i)] = bracket[i]
+        return json_format
+    
+    # Grab all participants
+    all_participants = []
+    matches = get_matches_by_tournament(tournament)
+    for match in matches:
+        participants = get_participants_by_match(match)
+        all_participants.extend(participants)
+    all_participants.sort(key=lambda x: x.seed, reverse=False)
+    
+    # Pair by seeds
+    participant_names = []
+    for i in range(len(all_participants)/2):
+        participant_names.append(all_participants[i].name)
+        participant_names.append(
+            all_participants[len(all_participants)-1-i].name)
+    
+    # NOTE: Currently only supports matches of two players each.
+    bracket = participants_to_bracket(participant_names, 2)
+    return bracket_to_json(bracket)
 
 def create_tournament(form_data, p_form_data, user):
     e = models.Event(
@@ -27,50 +97,58 @@ def create_tournament(form_data, p_form_data, user):
         parent=e)
     t.put()
 
-    name_dict = {}
-    seeds = []
+    seeded_list = []
     if form_data.get('show_seeds', False):
-        raw_seeds = []
+        name_dict = {}
+        seeds_dict = {}
+
         for field, value in p_form_data.items():
             if 'seed' in field:
                 num = field[11:-4]
-                raw_seeds.append((value, num))
+                seeds_dict[int(num)] = value
             if 'name' in field:
                 num = field[11:-4]
-                name_dict[num] = value
-        raw_seeds.sort()
-        for raw in raw_seeds:
-            seeds.append(raw[1])
+                name_dict[int(num)] = value
 
+        seeded_list = [{'name':None,'seed':None}]*len(seeds_dict)
+        for i in range(len(seeds_dict)):
+            seed_index = seeds_dict[i]
+            if seed_index is not None:
+                seeded_list[seed_index-1] = {'name':name_dict[i],'seed':seeds_dict[i]}
     else:
         for field, value in p_form_data.items():
             if 'name' in field:
                 num = field[11:-4]
-                name_dict[num] = value
-                seeds.append(num)
+                seeded_list.append({'name':value,'seed':int(num)})  
 
-    #TODO Optimize puts: I'm putting the Match in the loop because I need it so I can set it
-    #TODO                as the parent on the Participants. There should be a way to do this.
+    if len(seeded_list) % 2 == 1:
+        seeded_list.append({'name':None,'seed':None})
+    
+    upper = seeded_list[:len(seeded_list)/2]
+    lower = seeded_list[len(seeded_list)/2:]
+    lower.reverse()
+
     ps_to_put = []
     round = 1
-    for i in range(len(seeds)/2):
+    for u,l in zip(upper,lower):
         m = models.Match(round=round, has_been_played=False, parent=t)
         m.put()
+        round +=1
+        if u['seed'] is not None and u['name'] is not None:
+            p1 = models.Participant(
+                seed=u['seed'],
+                name=u['name'],
+                event_key=e.key(),
+                parent=m)
+            ps_to_put.append(p1)
 
-        p1 = models.Participant(
-            seed=int(seeds[i]),
-            name=name_dict.get(seeds[i]),
-            event_key=e.key(),
-            parent=m)
-        ps_to_put.append(p1)
+        if l['seed'] is not None and l['name'] is not None:
+            p2 = models.Participant(
+                seed=l['seed'],
+                name=l['name'],
+                event_key=e.key(),
+                parent=m)
+            ps_to_put.append(p2)
 
-        p2_seed = int(seeds[len(seeds)-i-1])
-        p2 = models.Participant(
-            seed=p2_seed,
-            name=name_dict.get(p2_seed),
-            event_key=e.key(),
-            parent=m)
-        ps_to_put.append(p2)
 
-        round += 1
     db.put(ps_to_put)

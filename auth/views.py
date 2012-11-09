@@ -5,6 +5,8 @@ from auth import forms as auth_forms
 from auth import utils as auth_utils
 from auth import models as auth_models
 
+from base import mail
+
 from flask import redirect
 from flask import request
 from flask.templating import render_template
@@ -37,8 +39,13 @@ class register(auth.UserAwareView):
 
                 if new_user:
                     registered = True
-                    auth_utils.send_registration_email(form.email.data, form.username.data)
-                    flask_login.login_user(auth_models.WTUser.all().filter('email =', form.email.data).fetch(1)[0])
+
+                    subject = "Welcome to Web Tournaments"
+                    body = mail.generate_email_body("email/auth/registration_email.txt", username=new_user.username)
+
+                    mail.send_email(new_user.email, subject, body)
+
+                    flask_login.login_user(new_user)
 
             if current_user:
                 message = "Whoops! An account has already been registered with that email."

@@ -1,0 +1,231 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div class="row" >
+        <div class="span8 offset2" style="margin-top:40px;">
+            <h1 style="display: inline;">Edit Event</h1>
+            <form class="form-horizontal" method="post" action="" id="edit_form">
+            <div class="well">
+
+                <div class="alert alert-error" id="save_confirmation" style="display: none;">
+                    error
+                </div>
+
+                {{ render_form(form) }}
+
+                <div class="control-group">
+                    <label class="control-label">Tournaments:</label>
+                    <div class="controls">
+                        <table class="table table-bordered table-striped " id="tournament-table" >
+                            <thead class="header">
+                                <tr>
+                                    <th>Type</th>
+                                    <th>order</th>
+                                    <th>Win Method</th>      
+                                </tr>
+                            </thead>
+                            <tbody id="tournament_table_body">
+                            {% for tournament in tournaments %}
+                                <tr > 
+                                    <td>{{ tournament.type }}</td>
+                                    <td>{{ tournament.order }}</td>
+                                    <td>{{ tournament.win_method }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Matches:</label>
+                    <div class="controls">
+                        <table class="table table-bordered table-striped " id="match-table" >
+                            <thead class="header">
+                                <tr>
+                                    <th>Round</th>
+                                    <th>Played</th>
+                                    <th>Players</th>      
+                                </tr>
+                            </thead>
+                            <tbody id="match_table_body">
+                                {% for match in matches %}
+                                    <tr > 
+                                        <td>{{ match.round }}</td>
+                                        <td>{{ match.has_been_played }}</td>
+                                        {% for particpant in participants_by_match[match] %}
+                                            <td>{{particpant.name}}</td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Participants:</label>
+                    <div class="controls">
+                        <table class="table table-bordered table-striped " id="participant-table" >
+                            <thead class="header">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Seed</th>  
+                                </tr>
+                            </thead>
+                            <tbody id="participant_table_body">
+                                {% for participant in participants %}
+                                    <tr> 
+                                        <td>{{ participant.name }}</td>
+                                        <td>{{ participant.seed }}</td>                                                       
+                                    </tr>
+                                {% endfor %}          
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+               
+                <div class="control-group">
+                    <label class="control-label">Admins:</label>
+                    <div class="controls">
+                        <table class="table table-bordered table-striped " id="admin-table" >
+                            <thead class="header">
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th></th>      
+                                </tr>
+                            </thead>
+                            <tbody id="admin_table_body">
+                            {% for admin in admins %}
+                                <tr id ="{{admin.username}}"  > <!-- associate table row id with button value -->
+                                    <td>{{ admin.username }}</td>
+                                    <td>{{ admin.email }}</td>
+                                    <td><button type="button" class="btn btn-danger pull-right" value ="{{admin.username}}">Remove</button></td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <button type="button" class="btn btn-success " id="add_admin">Add</button>
+                        <input id="new_admin_name" name="new_admint_name" type="text" value="">
+                        <div class="alert alert-error" id="admin_check" style="display: none;margin-top:10px;">
+                            error
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <div class="controls">
+                    <button type="button" style="margin-left:5px;" class="btn pull-right" id="cancel">Cancel</button>
+                    <button type="button" class="btn btn-success pull-right" id="save">Save</button>
+                </div>
+            </div>
+            </form>
+        </div>
+
+    </div>
+   <script>
+
+    $(document).ready(function(){
+
+        $("#save").click(function() {
+            $("#save_confirmation").hide();
+
+            var admins_to_save = ""
+            // get all amdins and delimeter them in a string using :'s
+            $('#admin-table tr').each(function(){
+                  user_emails_to_save= $(this).find("td").eq(1).html();    
+                  if( user_emails_to_save != null)
+                  {
+                        admins_to_save += user_emails_to_save+":"
+                  }
+            });
+
+            // post data!
+            $.post("/tournament/edit/?id={{event.key().id()}}&new_admins="+admins_to_save, {name: $("#name").val(), date: $("#date").val(), location: $("#location").val(),tournament_security: $('input[name=tournament_security]').filter(':checked').val()},
+            function(responseText)
+            {
+                var data = $.parseJSON(responseText);
+                // alert(data.alert);
+                if(data.error == 0)
+                {
+                    notifictions('save_confirmation',false, 'Save Complete');
+                }
+                else
+                {
+                    notifictions('save_confirmation',true, 'Save Error');
+                }
+            });
+        });
+
+        // on cancel redirect back to the user's tournament list
+        $("#cancel").click(function() {
+            window.location = '/tournament/list/';
+        });
+
+        // the danger buttons on this page represents every remove button on the admins table
+        $('.btn-danger').click(function() {
+            // on click remove the table that the button is attatched to
+            $("#"+$(this).val()).remove();
+        });
+
+        // go through the steps of adding an admin
+        $("#add_admin").click(function() {
+            
+            $("#admin_check").hide();
+
+            var new_admin_email = $("#new_admin_name").val()
+            var already_exists_localy = false;
+
+            // check if the email already exists in our table
+            $('#admin-table tr').each(function(){
+                  user_emails_to_save= $(this).find("td").eq(1).html();    
+                  if( user_emails_to_save == new_admin_email)
+                  {
+                    notifictions('admin_check', true, 'already an admin');
+                    already_exists_localy = true;
+                  }
+            });
+
+            if (!already_exists_localy)
+            {
+                var page = "/tournament/check_email?email="+new_admin_email
+                $.getJSON(page,
+                    {},
+                    function(data) {
+
+                        if (data.exists) {
+                            $('#admin_table_body').append("<tr id =\""+data.username+"\"  ><td>"+data.username+"</td><td>"+data.email+"</td><td><button type=\"button\" class=\"btn btn-danger pull-right \" id=\"remove_admin\" value =\""+data.username+"\" >Remove</button></td></tr>");
+
+                            notifictions('admin_check',false, 'admin added');
+
+                        } else {
+                            notifictions('admin_check',true, 'user not found');
+                        }
+                    })
+            }
+
+        });
+        function notifictions(id, isError, updateMessage )
+        {
+            if(isError)
+            {
+                $("#"+id).attr('class', 'alert alert-error');
+            }
+            else
+            {
+                $("#"+id).attr('class', 'alert alert-success');
+            }
+
+            $("#"+id).html(updateMessage);
+            $("#"+id).show("fast");
+        }
+
+    });
+
+    </script>
+
+
+{% endblock %}
