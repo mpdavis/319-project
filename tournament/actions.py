@@ -7,9 +7,7 @@ import logging
 
 def get_tournaments_by_user(user_key):
     events = models.Event.all(keys_only=True).filter('owner =', user_key).fetch(500)
-    logging.warning(events)
-    tournaments = models.Tournament.all().filter('parent IN', events).fetch(500)
-    logging.warning(tournaments)
+    tournaments = models.Tournament.all().filter('parent', events).fetch(500)
     #TODO: account for the admins who should also be able to see the event in their list.
     return tournaments
 
