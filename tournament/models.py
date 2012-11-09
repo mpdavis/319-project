@@ -3,6 +3,9 @@ from auth import models as auth_models
 
 
 class Event(db.Model):
+    """
+    Children: Tournaments
+    """
     name = db.StringProperty()
     date = db.DateTimeProperty()
     location = db.StringProperty()
@@ -14,6 +17,10 @@ class Event(db.Model):
 
 
 class Tournament(db.Model):
+    """
+    Parent: Event
+    Children: Matches
+    """
     TOURNAMENT_TYPES = ['SE','DE','RR']
     type = db.StringProperty(choices=TOURNAMENT_TYPES)
 
@@ -31,6 +38,10 @@ class Tournament(db.Model):
 
 
 class Match(db.Model):
+    """
+    Parent: Tournament
+    Children: Participants
+    """
     round = db.IntegerProperty()
     has_been_played = db.BooleanProperty()
     next_match = db.SelfReferenceProperty()
@@ -52,6 +63,9 @@ class Match(db.Model):
 
 
 class Participant(db.Model):
+    """
+    Parent: Match
+    """
     seed = db.IntegerProperty()
     user = db.ReferenceProperty(auth_models.WTUser)
     name = db.StringProperty()
