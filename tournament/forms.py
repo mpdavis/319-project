@@ -1,4 +1,7 @@
+from base import widgets as base_widgets
+
 from tournament import models
+
 import wtforms as forms
 from wtforms import validators
 
@@ -13,7 +16,14 @@ class NewTournamentStep1(forms.Form):
 class NewTournamentStep2(forms.Form):
     name = forms.StringField("Name", [validators.Required()])
     location = forms.StringField("Location")
-    date = forms.DateTimeField("Date", [validators.Optional()])
+    date = forms.DateTimeField("Date", [validators.Optional()],
+                               widget=base_widgets.DateTimeInput(), format="%m/%d/%Y %H:%M")
+
+class NewTournamentStep2DATEHACK(forms.Form):
+    #This is so I can have a different format on the date field.  TODO: somehow make into one form.
+    name = forms.StringField("Name", [validators.Required()])
+    location = forms.StringField("Location")
+    date = forms.DateTimeField("Date", [validators.Optional()], widget=base_widgets.DateTimeInput())
 
 
 class NewTournamentStep3(forms.Form):
