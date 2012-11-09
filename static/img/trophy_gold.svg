@@ -1,0 +1,652 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!--
+  WebTournaments Vector Trophy Logo - Gold
+  Copyright 2012 Mark R. Gollnick <mrgoll12@iastate.edu>
+    and WebTournaments <?>.
+  Created with Gimp (http://www.gimp.org/)
+    and Sublime (http://www.sublimetext.com/)
+    (because Inkscape creates bloated SVG files).
+  Originally modified from the Public Domain version found here:
+    http://openclipart.org/detail/120343/trophy-by-netalloy
+-->
+
+<svg
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   width="200"
+   height="300"
+   id="Trophy"
+   version="1.1">
+  <title
+     id="TrophyTitle">Trophy</title>
+  <defs
+     id="TrophyDefs">
+    <linearGradient
+       id="TrophyPlaqueGradientColors">
+      <stop
+         style="stop-color:#f0be63;stop-opacity:1;"
+         offset="0"
+         id="TrophyPlaqueGradientColor0" />
+      <stop
+         style="stop-color:#b88100;stop-opacity:1"
+         offset="1"
+         id="TrophyPlaqueGradientColor1" />
+    </linearGradient>
+    <linearGradient
+       id="TrophyCupRimGradientColors">
+      <stop
+         style="stop-color:#804d00;stop-opacity:1;"
+         offset="0"
+         id="TrophyCupRimGradientColor0" />
+      <stop
+         style="stop-color:#b98304;stop-opacity:1"
+         offset="1"
+         id="TrophyCupRimGradientColor1" />
+    </linearGradient>
+    <linearGradient
+       id="TrophyPedestalFrontGradientColors">
+      <stop
+         style="stop-color:#692017;stop-opacity:1;"
+         offset="0"
+         id="TrophyPedestalFrontGradientColor0" />
+      <stop
+         style="stop-color:#46150f;stop-opacity:1"
+         offset="1"
+         id="TrophyPedestalFrontGradientColor1" />
+    </linearGradient>
+    <linearGradient
+       id="TrophyCupBaseBlendingGradientColors">
+      <stop
+         style="stop-color:#fcca77;stop-opacity:1;"
+         offset="0"
+         id="TrophyCupBaseBlendingGradientColor0" />
+      <stop
+         style="stop-color:#fcca77;stop-opacity:0;"
+         offset="1"
+         id="TrophyCupBaseBlendingGradientColor1" />
+    </linearGradient>
+    <linearGradient
+       id="TrophyCupBaseGradientColors">
+      <stop
+         style="stop-color:#f6c374;stop-opacity:1;"
+         offset="0"
+         id="TrophyCupBaseGradientColor0" />
+      <stop
+         style="stop-color:#b88100;stop-opacity:1"
+         offset="1"
+         id="TrophyCupBaseGradientColor1" />
+    </linearGradient>
+    <linearGradient
+       id="TrophyCupHandleLightGradientColors">
+      <stop
+         style="stop-color:#e7bc77;stop-opacity:1;"
+         offset="0"
+         id="TrophyCupHandleLightGradientColor0" />
+      <stop
+         style="stop-color:#e7bc77;stop-opacity:0;"
+         offset="1"
+         id="TrophyCupHandleLightGradientColor1" />
+    </linearGradient>
+    <linearGradient
+       id="TrophyCupReflectionGradientColors">
+      <stop
+         style="stop-color:#dcac62;stop-opacity:1;"
+         offset="0"
+         id="TrophyCupReflectionGradientColor0" />
+      <stop
+         style="stop-color:#b88100;stop-opacity:1"
+         offset="1"
+         id="TrophyCupReflectionGradientColor1" />
+    </linearGradient>
+    <linearGradient
+       id="TrophyCupGradientColors">
+      <stop
+         style="stop-color:#b88100;stop-opacity:1;"
+         offset="0"
+         id="TrophyCupGradientColor0" />
+      <stop
+         style="stop-color:#fecd7b;stop-opacity:1"
+         offset="1"
+         id="TrophyCupGradientColor1" />
+    </linearGradient>
+    <linearGradient
+       id="TrophyPlaqueTextGradientColors">
+       <stop
+         style="stop-color:#4a2700;stop-opacity:1;"
+         offset="0"
+         id="TrophyPlaqueTextGradientColor0" />
+       <stop
+         style="stop-color:#714713;stop-opacity:1;"
+         offset="1"
+         id="TrophyPlaqueTextGradientColor1" />
+    </linearGradient>
+    <filter
+       id="TrophyCupShadingLBlur"
+       x="-0.13795282"
+       width="1.2759056"
+       y="-0.051161319"
+       height="1.1023226"
+       color-interpolation-filters="sRGB">
+      <feGaussianBlur
+         stdDeviation="2.2515796"
+         id="TrophyCupShadingLBlurGauss" />
+    </filter>
+    <filter
+       id="TrophyCupShadingRBlur"
+       x="-0.12734108"
+       width="1.2546821"
+       y="-0.047225833"
+       height="1.0944517"
+       color-interpolation-filters="sRGB">
+      <feGaussianBlur
+         stdDeviation="2.0014581"
+         id="TrophyCupShadingRBlurGauss" />
+    </filter>
+    <filter
+       id="TrophyCupReflectionBlur"
+       color-interpolation-filters="sRGB">
+      <feGaussianBlur
+         stdDeviation="1.7321539"
+         id="TrophyCupReflectionBlurGauss" />
+    </filter>
+    <linearGradient
+       xlink:href="#TrophyCupGradientColors"
+       id="TrophyCupGradient"
+       gradientUnits="userSpaceOnUse"
+       x1="-211.12189"
+       y1="245.25031"
+       x2="-201.02036"
+       y2="389.70212"
+       gradientTransform="matrix(0.6338819,0,0,0.6089088,221.83905,-107.52995)" />
+    <radialGradient
+       xlink:href="#TrophyCupBaseGradientColors"
+       id="TrophyCupBaseGradient"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(-0.09790279,7.1628508e-8,-4.410403e-7,-0.69933743,83.202705,487.13222)"
+       cx="-188.89853"
+       cy="456.47113"
+       fx="-188.89853"
+       fy="456.47113"
+       r="62.046875" />
+    <radialGradient
+       xlink:href="#TrophyCupReflectionGradientColors"
+       id="TrophyCupReflectionGradient"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(-0.70882429910863,0.0551342,-0.09068266,-1.52319705424896,100.0,50.0)"
+       cx="0"
+       cy="0"
+       fx="0"
+       fy="0"
+       r="42.421329" />
+    <radialGradient
+       xlink:href="#TrophyCupHandleLightGradientColors"
+       id="TrophyCupHandleLLightGradient"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(-0.6182757,-1.9302312,1.0464712,-0.30930642,-456.36859,-327.17668)"
+       cx="-273.75134"
+       cy="320.53235"
+       fx="-273.75134"
+       fy="320.53235"
+       r="49.711224" />
+    <radialGradient
+       xlink:href="#TrophyCupHandleLightGradientColors"
+       id="TrophyCupHandleRLightGradient"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.6182757,-1.9302312,-1.0464712,-0.30930642,657.36721,-326.56159)"
+       cx="-273.75134"
+       cy="320.53235"
+       fx="-273.75134"
+       fy="320.53235"
+       r="49.711224" />
+    <radialGradient
+       xlink:href="#TrophyCupBaseBlendingGradientColors"
+       id="TrophyCupBaseBlendingGradient"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(-6.2412045e-8,0.41681683,-0.7528527,-9.9457215e-8,403.49427,210.47404)"
+       cx="-192.93913"
+       cy="403.7388"
+       fx="-192.93913"
+       fy="403.7388"
+       r="62.046875" />
+    <linearGradient
+       xlink:href="#TrophyPedestalFrontGradientColors"
+       id="TrophyPedestalFrontGradient"
+       x1="65.5"
+       y1="235.0"
+       x2="64.5"
+       y2="287.00002"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.98544976,0,0,1.0180642,0.72159872,-21.779314)" />
+    <linearGradient
+       xlink:href="#TrophyCupRimGradientColors"
+       id="TrophyCupRimGradient"
+       x1="107.5"
+       y1="28.0"
+       x2="106.5"
+       y2="36.5"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       xlink:href="#TrophyPlaqueGradientColors"
+       id="TrophyPlaqueGradient"
+       x1="98.5"
+       y1="241.5"
+       x2="64.5"
+       y2="243.0"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1,0,0,1.216216,0,-213.44294)" />
+    <linearGradient
+       xlink:href="#TrophyPlaqueTextGradientColors"
+       id="TrophyPlaqueTextGradient"
+       x1="70.0"
+       y1="218.0"
+       x2="130.0"
+       y2="218.0"
+       gradientUnits="userSpaceOnUse" />
+    <filter
+       id="TrophyCupBaseShadingLBlur"
+       x="-0.28636364"
+       width="1.5727273"
+       y="-0.067379679"
+       height="1.1347594">
+      <feGaussianBlur
+         stdDeviation="1.6477273"
+         id="TrophyCupBaseShadingLBlurGauss" />
+    </filter>
+    <filter
+       id="TrophyShadowBlur"
+       x="-0.13295501"
+       width="1.26591"
+       y="-4.0853449"
+       height="9.1706899">
+      <feGaussianBlur
+         stdDeviation="9.3622488"
+         id="TrophyShadowBlurGauss" />
+    </filter>
+  </defs>
+  <metadata
+     id="TrophyMeta">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Trophy</dc:title>
+        <dc:date>2012-10-29</dc:date>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Mark R. Gollnick</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>achievement</rdf:li>
+            <rdf:li>award</rdf:li>
+            <rdf:li>bout</rdf:li>
+            <rdf:li>cup</rdf:li>
+            <rdf:li>match</rdf:li>
+            <rdf:li>merit</rdf:li>
+            <rdf:li>player</rdf:li>
+            <rdf:li>prize</rdf:li>
+            <rdf:li>tournament</rdf:li>
+            <rdf:li>trophy</rdf:li>
+            <rdf:li>victory</rdf:li>
+            <rdf:li>win</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+        <dc:description>Trophy vector image for WebTournaments</dc:description>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/publicdomain/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/by-nc-sa/3.0/">
+        <cc:prohibits
+           rdf:resource="http://creativecommons.org/ns#CommercialUse" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g id="Trophy Layer 1">
+  <path id="TrophyShadow"
+        fill="#2d2d2d" stroke="black" stroke-width="0.66332495000000002px"
+        d="m 13.5,1025.8822 31,-2.86 114.5,-0.66 23.5,3.08 -20,2.42 -113.5,0 z"
+        transform="matrix(1,0,0,-0.3448984,-1.4142136,600.73962)"
+        filter="url(#TrophyShadowBlur)" />
+  <path id="TrophyCupHandleR"
+        fill="#b88100" stroke="none" stroke-width="0"
+        d="M 166.56,32.66
+           C 166.56,32.66 166.56,30.78 169.69,30.78
+             169.69,30.78 184.06,30.78 184.06,30.78
+             184.06,30.78 185.94,30.78 186.56,31.41
+             187.19,32.03 187.19,33.91 187.19,33.91
+             186.56,82.66 125.89,120.16 125.94,120.16
+             125.99,120.16 125.94,105.78 125.94,105.78
+             125.94,105.78 135.31,105.78 135.31,105.78
+             135.31,105.78 184.06,75.16 184.06,33.91
+             184.06,33.91 169.69,33.91 169.69,33.91
+             169.69,33.91 165.94,53.28 153.44,53.28
+             145.31,53.28 145.31,44.84 145.31,44.84
+             145.31,44.84 145.94,39.84 149.69,39.84
+             153.44,39.84 155.63,42.66 153.44,44.84
+             149.69,44.84 152.50,42.66 149.69,42.66
+             146.88,42.66 147.81,50.16 153.44,50.16
+             164.34,50.16 166.56,32.66 166.56,32.66 Z" />
+  <path id="TrophyCupHandleRLight"
+        fill="url(#TrophyCupHandleRLightGradient)" stroke="none" stroke-width="0"
+        d="M 134.06,105.94
+           C 134.40,105.94 134.83,105.95 135.16,105.86
+             135.82,105.67 137.61,104.31 138.28,103.85
+             141.30,101.77 144.21,99.50 147.03,97.15
+             158.65,87.47 169.85,75.57 176.83,62.03
+             180.19,55.53 182.90,47.92 183.77,40.63
+             183.77,40.63 184.08,37.03 184.08,37.03
+             184.08,37.03 184.22,35.16 184.22,35.16
+             184.22,34.79 184.26,34.10 184.06,33.80
+             183.77,33.37 183.11,33.44 182.66,33.44
+             182.66,33.44 170.47,33.44 170.47,33.44
+             168.96,33.47 169.06,34.39 168.73,35.63
+             168.20,37.65 167.48,39.64 166.65,41.56
+             164.27,47.13 159.74,52.89 153.13,52.81
+             148.60,52.76 145.81,49.54 145.50,45.16
+             145.34,43.01 147.05,40.17 149.38,40.01
+             150.64,39.93 152.57,40.51 153.34,41.57
+             153.84,42.26 153.97,43.74 153.09,44.24
+             152.85,44.34 152.60,44.32 152.35,44.24
+             151.40,44.07 151.48,43.52 151.12,42.98
+             150.63,42.25 149.70,41.97 148.91,42.37
+             148.68,42.48 148.49,42.65 148.32,42.83
+             147.48,43.73 147.61,45.00 147.89,46.09
+             148.64,49.02 151.30,50.58 154.22,50.29
+             160.34,49.67 163.58,43.65 165.31,38.44
+             165.78,37.02 166.19,35.53 166.47,34.06
+             166.59,33.40 166.68,32.26 167.11,31.75
+             167.73,31.02 168.95,30.94 169.84,30.94
+             169.84,30.94 181.56,30.94 181.56,30.94
+             182.66,30.94 185.24,30.77 186.05,31.49
+             186.81,32.15 186.73,34.05 186.72,35.00
+             186.72,35.00 186.58,36.56 186.58,36.56
+             186.04,44.39 184.20,51.67 181.16,58.91
+             173.79,76.46 160.55,91.48 146.41,103.93
+             142.02,107.79 137.41,111.51 132.66,114.91
+             132.66,114.91 126.09,119.38 126.09,119.38
+             126.09,119.38 126.09,105.94 126.09,105.94
+             126.09,105.94 134.06,105.94 134.06,105.94 Z" />
+  <path id="TrophyCupHandleL"
+        fill="#b88100" stroke="none" stroke-width="0"
+        d="M 33.44,32.66
+           C 33.44,32.66 33.44,30.78 30.31,30.78
+             30.31,30.78 15.94,30.78 15.94,30.78
+             15.94,30.78 14.06,30.78 13.44,31.41
+             12.81,32.03 12.81,33.91 12.81,33.91
+             13.44,82.66 74.11,120.16 74.06,120.16
+             74.01,120.16 74.06,105.78 74.06,105.78
+             74.06,105.78 64.69,105.78 64.69,105.78
+             64.69,105.78 15.94,75.16 15.94,33.91
+             15.94,33.91 30.31,33.91 30.31,33.91
+             30.31,33.91 34.06,53.28 46.56,53.28
+             54.69,53.28 54.69,44.84 54.69,44.84
+             54.69,44.84 54.06,39.84 50.31,39.84
+             46.56,39.84 44.38,42.66 46.56,44.84
+             50.31,44.84 47.50,42.66 50.31,42.66
+             53.13,42.66 52.19,50.16 46.56,50.16
+             35.66,50.16 33.44,32.66 33.44,32.66 Z" />
+  <path id="TrophyCupHandleLLight"
+        fill="url(#TrophyCupHandleLLightGradient)" stroke="none" stroke-width="0"
+        d="M 65.94,105.94
+           C 65.60,105.94 65.17,105.95 64.84,105.86
+             64.18,105.67 62.39,104.31 61.72,103.85
+             58.70,101.77 55.79,99.50 52.97,97.15
+             41.35,87.47 30.15,75.57 23.17,62.03
+             19.81,55.53 17.10,47.92 16.23,40.63
+             16.23,40.63 15.92,37.03 15.92,37.03
+             15.92,37.03 15.78,35.16 15.78,35.16
+             15.78,34.79 15.74,34.10 15.94,33.80
+             16.23,33.37 16.89,33.44 17.34,33.44
+             17.34,33.44 29.53,33.44 29.53,33.44
+             31.04,33.47 30.94,34.39 31.27,35.63
+             31.80,37.65 32.52,39.64 33.35,41.56
+             35.73,47.13 40.26,52.89 46.88,52.81
+             51.40,52.76 54.19,49.54 54.50,45.16
+             54.66,43.01 52.95,40.17 50.63,40.01
+             49.36,39.93 47.43,40.51 46.66,41.57
+             46.16,42.26 46.03,43.74 46.91,44.24
+             47.15,44.34 47.40,44.32 47.65,44.24
+             48.60,44.07 48.52,43.52 48.88,42.98
+             49.37,42.25 50.30,41.97 51.09,42.37
+             51.32,42.48 51.51,42.65 51.68,42.83
+             52.52,43.73 52.39,45.00 52.11,46.09
+             51.36,49.02 48.70,50.58 45.78,50.29
+             39.66,49.67 36.42,43.65 34.69,38.44
+             34.22,37.02 33.81,35.53 33.53,34.06
+             33.41,33.40 33.32,32.26 32.89,31.75
+             32.27,31.02 31.05,30.94 30.16,30.94
+             30.16,30.94 18.44,30.94 18.44,30.94
+             17.34,30.94 14.76,30.77 13.95,31.49
+             13.19,32.15 13.27,34.05 13.28,35.00
+             13.28,35.00 13.42,36.56 13.42,36.56
+             13.96,44.39 15.80,51.67 18.84,58.91
+             26.21,76.46 39.45,91.48 53.59,103.93
+             57.98,107.79 62.59,111.51 67.34,114.91
+             67.34,114.91 73.91,119.38 73.91,119.38
+             73.91,119.38 73.91,105.94 73.91,105.94
+             73.91,105.94 65.94,105.94 65.94,105.94 Z" />
+  <path id="TrophyPedestalFootTop"
+        fill="#310e0a" stroke="#918d89" stroke-width="0"
+        d="M 143.44,231.41
+           C 143.44,231.41 145.94,234.53 145.94,234.53
+             145.94,234.53 54.06,234.53 54.06,234.53
+             54.06,234.53 56.56,231.41 56.56,231.41
+             56.56,231.41 143.44,231.41 143.44,231.41 Z" />
+  <path id="TrophyCupRim"
+        fill="url(#TrophyCupRimGradient)" stroke="black" stroke-width="0"
+        d="M 100.00,29.22
+           C 145.31,29.22 145.94,35.16 145.94,35.16
+             145.94,35.16 145.94,40.16 145.94,40.16
+             145.94,40.16 145.31,35.16 100.00,35.16
+             54.69,35.16 54.06,40.16 54.06,40.16
+             54.06,40.16 54.06,35.16 54.06,35.16
+             54.06,35.16 54.69,29.22 100.00,29.22 Z" />
+  <path id="TrophyCup"
+        fill="url(#TrophyCupGradient)" stroke="black" stroke-width="0"
+        d="M 97.50,33.81
+           C 98.27,33.86 99.04,33.90 99.80,33.93
+             100.56,33.90 101.32,33.86 102.09,33.81
+             102.09,33.81 102.09,33.98 102.09,33.98
+             115.45,34.33 127.63,33.18 145.54,39.35
+             145.54,39.35 146.96,70.44 142.33,87.32
+             138.87,99.91 132.97,114.67 123.11,123.61
+             110.49,134.24 90.49,134.60 76.48,123.61
+             66.62,114.67 60.74,99.91 57.29,87.32
+             52.66,70.44 54.08,39.35 54.08,39.35
+             71.98,33.18 84.15,34.34 97.50,34.00
+             97.50,34.00 97.50,33.81 97.50,33.81
+             97.50,33.81 97.50,33.81 97.50,33.81 Z" />
+  <path id="TrophyCupBase"
+        fill="url(#TrophyCupBaseGradient)" stroke="black" stroke-width="0"
+        d="M 92.50,129.84
+           C 92.50,129.84 94.06,131.41 100.00,131.41
+             105.94,131.41 107.50,129.84 107.50,129.84
+             107.50,129.84 105.94,139.22 105.94,152.66
+             105.94,152.66 107.50,153.91 107.50,154.84
+             107.50,155.78 105.94,157.03 105.94,157.03
+             105.94,180.16 129.06,180.16 129.06,180.16
+             129.06,180.16 135.94,188.28 135.94,188.28
+             135.94,188.28 135.94,191.41 100.00,191.41
+             64.06,191.41 64.22,188.28 64.22,188.28
+             64.22,188.28 70.94,180.16 70.94,180.16
+             70.94,180.16 94.06,180.16 94.06,157.03
+             94.06,157.03 92.50,155.78 92.50,154.84
+             92.50,153.91 94.06,152.66 94.06,152.66
+             94.06,139.22 92.50,129.84 92.50,129.84 Z" />
+  <path id="TrophyPedestalTop"
+        fill="#3a0704" stroke="black" stroke-width="0"
+        d="M 55.31,197.03
+           C 55.31,197.03 63.75,187.97 63.75,187.97
+             63.75,187.97 64.51,187.97 64.53,187.97
+             64.55,187.97 64.53,191.09 100.00,191.09
+             135.47,191.09 135.63,187.97 135.63,187.97
+             135.63,187.97 136.25,187.97 136.25,187.97
+             136.25,187.97 144.69,197.03 144.69,197.03
+             144.69,197.03 55.31,197.03 55.31,197.03 Z" />
+  <path id="TrophyCupBaseShadows"
+        fill="#804d00" stroke="#918d89" stroke-width="0"
+        d="M 94.06,157.03
+           C 94.06,157.03 97.08,156.41 100.00,156.41
+             103.02,156.41 105.94,157.03 105.94,157.03
+             107.50,155.78 102.97,155.78 100.00,155.78
+             97.03,155.78 92.50,155.78 94.06,157.03 Z
+           M 70.94,180.16
+           C 70.94,180.16 70.94,180.78 100.00,180.78
+             129.06,180.78 129.06,180.16 129.06,180.16
+             129.06,180.16 129.06,181.41 100.00,181.41
+             70.94,181.41 70.94,180.16 70.94,180.16 Z" />
+  <path id="TrophyCupShadingL"
+        fill="#804d00" stroke="black" stroke-width="0"
+        filter="url(#TrophyCupShadingLBlur)"
+        d="M 87.37,125.46
+           C 56.73,99.83 62.39,71.75 61.76,38.11
+             61.76,38.11 57.92,39.34 57.92,39.34
+             61.80,110.87 71.94,112.56 87.37,125.46
+             87.37,125.46 87.37,125.46 87.37,125.46 Z" />
+  <path id="TrophyCupShadingR"
+        fill="#804d00" stroke="black" stroke-width="0"
+        filter="url(#TrophyCupShadingRBlur)"
+        d="M 138.60,38.73
+           C 138.60,38.73 142.44,39.96 142.44,39.96
+             138.56,111.48 122.01,118.71 106.58,131.61
+             137.22,105.98 137.97,72.37 138.60,38.73 Z" />
+  <path id="TrophyCupReflection"
+        fill="url(#TrophyCupReflectionGradient)" stroke="black" stroke-width="0"
+        filter="url(#TrophyCupReflectionBlur)"
+        d="M 73.29,38.89
+           C 90.53,35.38 107.54,30.30 126.43,37.50
+             126.43,37.50 120.03,89.09 120.03,89.09
+             120.03,89.09 81.61,89.78 81.61,89.78
+             81.61,89.78 73.29,38.89 73.29,38.89
+             73.29,38.89 73.29,38.89 73.29,38.89 Z" />
+  <path id="TrophyCupBaseBlending"
+        fill="url(#TrophyCupBaseBlendingGradient)" stroke="black" stroke-width="0"
+        d="M 94.69,129.93
+           C 95.85,130.28 98.01,130.61 99.22,130.62
+             101.20,130.65 103.75,130.52 105.63,129.83
+             106.28,129.59 107.38,128.71 108.01,129.33
+             108.34,129.66 108.27,130.21 108.21,130.63
+             108.21,130.63 107.84,133.44 107.84,133.44
+             107.84,133.44 107.17,140.78 107.17,140.78
+             107.17,140.78 107.03,142.34 107.03,142.34
+             107.03,142.34 106.88,145.31 106.88,145.31
+             106.88,145.31 106.72,150.78 106.72,150.78
+             106.72,153.14 108.27,152.82 108.27,154.84
+             108.27,156.54 106.87,157.03 106.75,158.13
+             106.75,158.13 107.01,160.94 107.01,160.94
+             107.42,163.88 108.36,166.87 109.98,169.38
+             112.86,173.84 117.41,176.87 122.50,178.26
+             124.03,178.68 125.61,179.02 127.19,179.19
+             127.98,179.28 129.20,179.28 129.84,179.75
+             130.33,180.12 131.28,181.35 131.74,181.88
+             131.74,181.88 135.45,186.25 135.45,186.25
+             136.03,186.92 137.09,187.91 136.54,188.88
+             136.15,189.55 134.93,189.89 134.22,190.09
+             132.10,190.69 129.84,190.94 127.66,191.21
+             127.66,191.21 122.66,191.58 122.66,191.58
+             122.66,191.58 121.09,191.72 121.09,191.72
+             121.09,191.72 118.13,191.88 118.13,191.88
+             118.13,191.88 115.94,191.88 115.94,191.88
+             115.94,191.88 114.06,192.03 114.06,192.03
+             114.06,192.03 110.47,192.03 110.47,192.03
+             110.47,192.03 107.81,192.19 107.81,192.19
+             107.81,192.19 91.88,192.19 91.88,192.19
+             91.88,192.19 89.53,192.03 89.53,192.03
+             89.53,192.03 85.94,192.03 85.94,192.03
+             85.94,192.03 84.06,191.88 84.06,191.88
+             84.06,191.88 82.19,191.88 82.19,191.88
+             82.19,191.88 79.84,191.72 79.84,191.72
+             76.67,191.68 70.09,191.07 67.03,190.37
+             65.89,190.11 63.11,189.63 63.51,187.97
+             63.66,187.35 65.58,185.16 66.11,184.53
+             66.11,184.53 68.82,181.25 68.82,181.25
+             69.23,180.75 69.91,179.84 70.47,179.56
+             70.90,179.34 73.36,179.13 74.06,179.02
+             75.92,178.73 77.76,178.22 79.53,177.60
+             84.67,175.80 89.42,171.64 91.49,166.56
+             92.30,164.59 92.71,162.72 93.03,160.63
+             93.03,160.63 93.23,157.97 93.23,157.97
+             93.01,156.99 91.64,156.40 91.74,154.69
+             91.84,152.75 93.28,153.11 93.27,150.78
+             93.27,150.78 93.27,148.44 93.27,148.44
+             93.27,148.44 93.13,146.56 93.13,146.56
+             93.13,146.56 92.81,140.94 92.81,140.94
+             92.81,140.94 92.81,139.69 92.81,139.69
+             92.81,139.69 91.99,132.03 91.99,132.03
+             91.87,131.14 91.36,129.79 92.22,129.18
+             93.18,128.98 93.73,129.64 94.69,129.93 Z" />
+  <path id="TrophyPedestalFront"
+        fill="url(#TrophyPedestalFrontGradient)" stroke="918d89" stroke-width="0"
+        d="M 55.31,197.03
+           C 55.31,197.03 144.69,197.03 144.69,197.03
+             144.69,197.03 144.69,233.91 144.69,233.91
+             144.69,233.91 55.31,233.91 55.31,233.91
+             55.31,233.91 55.31,197.03 55.31,197.03 Z" />
+  <path id="TrophyPedestalFootFront"
+        fill="#692017" stroke="#918d89" stroke-width="0"
+        d="M 54.06,243.91
+           C 54.06,243.91 54.06,234.53 54.06,234.53
+             54.06,234.53 145.94,234.53 145.94,234.53
+             145.94,234.53 145.94,243.91 145.94,243.91
+             145.94,243.91 145.94,245.16 144.69,245.16
+             144.69,245.16 55.31,245.16 55.31,245.16
+             54.06,245.16 54.06,243.91 54.06,243.91 Z" />
+  <path id="TrophyPlaque"
+        fill="url(#TrophyPlaqueGradient)" stroke="918d89" stroke-width="0"
+        d="M 125.25,204.66
+           C 125.19,204.82 125.12,204.99 125.12,205.16
+             125.12,206.84 124.23,208.25 128.56,208.75
+             128.56,208.75 128.56,215.53 128.56,215.53
+             128.56,215.67 128.33,215.78 128.03,215.78
+             128.33,215.78 128.56,215.89 128.56,216.03
+             128.56,216.03 128.56,222.97 128.56,222.97
+             124.23,223.48 125.12,224.92 125.12,226.63
+             125.12,226.81 125.19,226.99 125.25,227.16
+             125.25,227.16 74.57,227.16 74.57,227.16
+             74.57,227.11 74.60,227.07 74.60,227.03
+             74.60,224.99 76.66,223.30 71.56,223.05
+             71.56,223.05 71.56,216.03 71.56,216.03
+             71.56,215.89 71.79,215.78 72.09,215.78
+             71.79,215.78 71.56,215.67 71.56,215.53
+             71.56,215.53 71.56,208.67 71.56,208.67
+             76.66,208.42 74.60,206.78 74.60,204.78
+             74.60,204.74 74.57,204.70 74.57,204.66
+             74.57,204.66 125.25,204.66 125.25,204.66 Z" />
+  <path id="TrophyCupBaseShadingL"
+        fill="none" stroke="black" stroke-width="1px"
+        filter="url(#TrophyCupBaseShadingLBlur)"
+        d="M 77.25,111.41
+           C 79.14,118.01 83.22,123.29 91.75,125.91
+             91.75,125.91 95.31,152.66 95.31,152.66
+             95.31,152.66 93.75,154.84 93.75,154.84
+             93.75,154.84 95.31,157.03 95.31,157.03
+             95.31,157.03 93.75,180.16 93.75,180.16
+             93.75,180.16 91.88,188.28 91.88,188.28"
+       style="opacity:0.22439025000000001;" />
+  <text id="TrophyPlaqueText"
+        fill="url(#TrophyPlaqueTextGradient)" stroke="none" stroke-width="0"
+        x="100" y="218"
+        style="font-family:'Lucida Grande','Constantia',serif;font-weight:bold;font-style:italic;font-size:5;text-anchor:middle;">
+        WebTournaments
+  </text>
+  </g>
+</svg>

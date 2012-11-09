@@ -6,6 +6,7 @@ class Event(db.Model):
     name = db.StringProperty()
     date = db.DateTimeProperty()
     location = db.StringProperty()
+    created = db.DateTimeProperty(auto_now_add=True)
 
     owner = db.ReferenceProperty(auth_models.WTUser)
     admins = db.ListProperty(db.Key)
