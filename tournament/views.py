@@ -161,6 +161,22 @@ class Tournament_Edit(auth.UserAwareView):
 
         return json.dumps({'error': error})
 
+class Tournament_View(auth.UserAwareView):
+    # TODO: Make perms work
+    decorators = [login_required]
+    
+    def get(self):
+        context = self.get_context()
+        
+        event_id = request.args.get('id')
+        event = actions.get_event_by_id(int(event_id))
+        
+        tournament = actions.get_tournaments_by_event(event)[0]
+        bracket_json = actions.get_json_by_tournament(tournament)
+        
+        context['bracket_json'] = bracket_json
+        return render_template('view_tournament.html', **context)
+
 class check_email(auth.UserAwareView):
     def get(self):
         email = request.args.get('email', None)

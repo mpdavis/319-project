@@ -14,6 +14,7 @@
                 <th>Date & Time</th>
                 <th>Location</th>
                 <th>Owner</th>
+                <th>Created</th>
                 <th></th>
             </tr>
             </thead>
@@ -24,8 +25,9 @@
                     <td>{{ event.name }}</td>
                     <td>{{ event.date }}</td>
                     <td>{{ event.location }}</td>
-                    <td>{{ event.owner }}</td>
-                    <td><a  href="/tournament/edit/?id={{event.key().id()}}" class="btn pull-right" style="display: inline;margin-top:5px;" role="button" data-toggle="modal">Edit</a></td>
+                    <td>{{ event.owner.username }}</td>
+                    <td>{{ event.created.strftime("%Y-%m-%d %H:%M:%S") }}</td>
+                    <td><a href="/tournament/view/?id={{event.key().id()}}" class="btn" style="display:inline;margin-top:5px;" role="button" data-toggle="modal">View</a><a href="/tournament/edit/?id={{event.key().id()}}" class="btn" style="display:inline;margin-top:5px;" role="button" data-toggle="modal">Edit</a></td>
                 </tr>
             {% else %}
                 <tr>

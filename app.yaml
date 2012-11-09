@@ -5,9 +5,9 @@ api_version: 1
 threadsafe: no
 
 handlers:
-- url: /favicon\.ico
-  static_files: favicon.ico
-  upload: favicon\.ico
+- url: /(.*)\.(ico|png|txt)
+  static_files: \1.\2
+  upload: (.*)\.(ico|png|txt)
 
 - url: /static
   static_dir: static
