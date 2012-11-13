@@ -2,9 +2,9 @@ from google.appengine.ext import db
 from auth import models as auth_models
 
 
-class Event(db.Model):
+class Tournament(db.Model):
     """
-    Children: Tournaments
+    Children: Matches
     """
     name = db.StringProperty()
     date = db.DateTimeProperty()
@@ -16,12 +16,6 @@ class Event(db.Model):
     PERMISSION_CHOICES = ['public','protected','private']
     perms = db.StringProperty(choices=PERMISSION_CHOICES)
 
-
-class Tournament(db.Model):
-    """
-    Parent: Event
-    Children: Matches
-    """
     TOURNAMENT_TYPES = ['SE','DE','RR']
     type = db.StringProperty(choices=TOURNAMENT_TYPES)
 
@@ -70,8 +64,6 @@ class Participant(db.Model):
     seed = db.IntegerProperty()
     user = db.ReferenceProperty(auth_models.WTUser)
     name = db.StringProperty()
-
-    event_key = db.Key()
 
     def get_participant_name(self):
         if self.user:

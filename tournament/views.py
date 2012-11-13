@@ -93,23 +93,23 @@ class Tournament_Edit(auth.UserAwareView):
     def get(self):
         context = self.get_context()
 
-        event_id = request.args.get('id')
-        event = actions.get_event_by_id(int(event_id))
+        tournament_id = request.args.get('id')
+        tournament = actions.get_tournament_by_id(int(tournament_id))
         html_to_show = ""
 
         # if event belongs to our user allow them to edit else redirect them
-        if context['user'].key().id() == event.owner.key().id():
+        if context['user'].key().id() == tournament.owner.key().id():
 
             # preload our forms with data
             form = forms.EditTournament()
-            form.name.data = event.name
-            form.date.data = event.date
-            form.location.data = event.location
-            form.tournament_security.data = event.perms
+            form.name.data = tournament.name
+            form.date.data = tournament.date
+            form.location.data = tournament.location
+            form.tournament_security.data = tournament.perms
 
-            admin_list = [actions.get_user_by_id(admin_key.id()) for admin_key in event.admins]
+            admin_list = [actions.get_user_by_id(admin_key.id()) for admin_key in tournament.admins]
 
-            tournaments = actions.get_tournaments_by_event(event)
+            tournaments = actions.get_linked_tournaments(tournament)
 
             matches = []
             for tournament in tournaments:
@@ -124,7 +124,7 @@ class Tournament_Edit(auth.UserAwareView):
 
             participants.sort(key=attrgetter('seed')) 
 
-            context['event'] = event
+            context['event'] = tournament
             context['tournaments'] = tournaments
             context['matches'] = matches
             context['participants'] = participants

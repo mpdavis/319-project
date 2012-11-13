@@ -23,13 +23,13 @@
             <tbody>
             {% for tournament in user_tournaments %}
                 <tr onClick="javascript:document.location='#'">
-                    <td>{{ tournament.parent.name }}</td>
-                    <td>{{ tournament.get_type_verbose }}</td>
-                    <td>{{ tournament.parent.date }}</td>
-                    <td>{{ tournament.parent.location }}</td>
-                    <td>{{ tournament.parent.owner.username }}</td>
-                    <td>{{ tournament.parent.created.strftime("%Y-%m-%d %H:%M:%S") }}</td>
-                    <td><a href="/tournament/view/?id={{event.key().id()}}" class="btn" style="display:inline;margin-top:5px;" role="button" data-toggle="modal">View</a><a href="/tournament/edit/?id={{event.key().id()}}" class="btn" style="display:inline;margin-top:5px;" role="button" data-toggle="modal">Edit</a></td>
+                    <td>{{ tournament.name }}</td>
+                    <td>{{ tournament.get_type_verbose() }}</td>
+                    <td>{{ tournament.date }}</td>
+                    <td>{{ tournament.location }}</td>
+                    <td>{{ tournament.owner.username }}</td>
+                    <td>{{ tournament.created.strftime("%Y-%m-%d %H:%M:%S") }}</td>
+                    <td><a href="/tournament/view/?id={{tournament.key().id()}}" class="btn" style="display:inline;margin-top:5px;" role="button" data-toggle="modal">View</a><a href="/tournament/edit/?id={{tournament.key().id()}}" class="btn" style="display:inline;margin-top:5px;" role="button" data-toggle="modal">Edit</a></td>
                 </tr>
             {% else %}
                 <tr>

@@ -7,13 +7,12 @@ import logging
 
 
 def get_tournaments_by_user(user_key):
-    events = models.Event.all(keys_only=True).filter('owner =', user_key).fetch(500)
-    tournaments = models.Tournament.all().filter('parent', events).fetch(500)
-    #TODO: account for the admins who should also be able to see the event in their list.
+    tournaments = models.Tournament.all().filter('owner =', user_key).filter('order', 1).fetch(1000)
+    #TODO: account for the admins who should also be able to see the tournament in their list.
     return tournaments
 
-def get_event_by_id(id):
-	return models.Event.get_by_id(id)
+def get_tournament_by_id(id):
+	return models.Tournament.get_by_id(id)
 
 def get_user_by_id(id):
     return auth_models.WTUser.get_by_id(id)
@@ -24,9 +23,16 @@ def get_user_by_email(email):
         return user[0]
     return None
 
-def get_tournaments_by_event(event, limit = 200):
-    tournaments = models.Tournament.all().ancestor(event).fetch(limit)
-    return tournaments
+def get_linked_tournaments(tournament):
+    linked = []
+    t = tournament
+    while True:
+        if t.next_tournament:
+            linked.append(t.next_tournament)
+            t = t.next_tournament
+        else:
+            break
+    return linked
 
 def get_matches_by_tournament(tournament, limit = 200):
     matches = models.Match.all().ancestor(tournament).fetch(limit)
@@ -83,18 +89,15 @@ def get_json_by_tournament(tournament):
     return bracket_to_json(bracket)
 
 def create_tournament(form_data, p_form_data, user):
-    e = models.Event(
+    t = models.Tournament(
         name=form_data.get('name'),
         date=form_data.get('date'),
         location=form_data.get('location'),
         owner=user,
-        perms=form_data.get('tournament_security'))
-    e.put()
-    t = models.Tournament(
+        perms=form_data.get('tournament_security'),
         type=form_data.get('type'),
-        order=0,
-        win_method=models.Tournament.HIGHEST_WINS,
-        parent=e)
+        order=1,
+        win_method=models.Tournament.HIGHEST_WINS)
     t.put()
 
     seeded_list = []
@@ -138,7 +141,6 @@ def create_tournament(form_data, p_form_data, user):
             p1 = models.Participant(
                 seed=u['seed'],
                 name=u['name'],
-                event_key=e.key(),
                 parent=m)
             ps_to_put.append(p1)
 
@@ -146,7 +148,6 @@ def create_tournament(form_data, p_form_data, user):
             p2 = models.Participant(
                 seed=l['seed'],
                 name=l['name'],
-                event_key=e.key(),
                 parent=m)
             ps_to_put.append(p2)
 
