@@ -26,6 +26,7 @@ def load_user(userid):
 
 
 class UserAwareView(MethodView):
+    active_nav = None
 
     @property
     def session(self):
@@ -42,6 +43,7 @@ class UserAwareView(MethodView):
         ctx = {
             'MEDIA_MERGED': settings.MEDIA_MERGED,
             'user': self.user,
+            'active_nav': self.active_nav,
         }
         if extra_ctx:
             ctx.update(extra_ctx)

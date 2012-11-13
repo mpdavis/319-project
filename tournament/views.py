@@ -61,10 +61,10 @@ class New_Tournament(auth.UserAwareView):
                 p_form = forms.handle_participant_forms(request.form,num_participants,include_seeds)
                 p_form.validate() #TODO: if here?
 
-                actions.create_tournament(context['fields'], p_form.data, self.user)
+                actions.create_tournament(context['fields'], p_form.data, self.user.key())
 
                 #TEMP REDIRECT TO HOME TODO: Redirect to Tournament Overview Page once it exists
-                return redirect(url_for('event-list'))
+                return redirect(url_for('tournament-list'))
             else:
                 context.update({'fields':{'step':3}, 'form':form})
                 return self.render_new_tourney(context)
@@ -80,10 +80,11 @@ class New_Tournament(auth.UserAwareView):
 
 class Tournament_List(auth.UserAwareView):
     decorators = [login_required]
+    active_nav = 'my_tournaments'
 
     def get(self):
         context = self.get_context()
-        context['user_events'] = actions.get_events_by_user(self.user)
+        context['user_tournaments'] = actions.get_tournaments_by_user(self.user)
         return render_template('user_tournament_list.html', **context)
 
 class Tournament_Edit(auth.UserAwareView):
@@ -92,23 +93,23 @@ class Tournament_Edit(auth.UserAwareView):
     def get(self):
         context = self.get_context()
 
-        event_id = request.args.get('id')
-        event = actions.get_event_by_id(int(event_id))
+        tournament_id = request.args.get('id')
+        tournament = actions.get_tournament_by_id(int(tournament_id))
         html_to_show = ""
 
         # if event belongs to our user allow them to edit else redirect them
-        if context['user'].key().id() == event.owner.key().id():
+        if context['user'].key().id() == tournament.owner.key().id():
 
             # preload our forms with data
             form = forms.EditTournament()
-            form.name.data = event.name
-            form.date.data = event.date
-            form.location.data = event.location
-            form.tournament_security.data = event.perms
+            form.name.data = tournament.name
+            form.date.data = tournament.date
+            form.location.data = tournament.location
+            form.tournament_security.data = tournament.perms
 
-            admin_list = [actions.get_user_by_id(admin_key.id()) for admin_key in event.admins]
+            admin_list = [actions.get_user_by_id(admin_key.id()) for admin_key in tournament.admins]
 
-            tournaments = actions.get_tournaments_by_event(event)
+            tournaments = actions.get_linked_tournaments(tournament)
 
             matches = []
             for tournament in tournaments:
@@ -123,8 +124,8 @@ class Tournament_Edit(auth.UserAwareView):
 
             participants.sort(key=attrgetter('seed')) 
 
-            context['event'] = event
-            context['tournaments'] = tournaments
+            context['tournament'] = tournament
+            context['linked_tournaments'] = tournaments
             context['matches'] = matches
             context['participants'] = participants
             context['participants_by_match'] = participants_by_match
@@ -141,19 +142,19 @@ class Tournament_Edit(auth.UserAwareView):
         form = forms.EditTournament(request.form)
         error = 0
 
-        event_id = request.args.get('id')
-        event = actions.get_event_by_id(int(event_id))
+        tournament_id = request.args.get('id')
+        tournament = actions.get_tournament_by_id(int(tournament_id))
 
-        if event is not None:
+        if tournament is not None:
             if form.validate():
                 new_admins = request.args.get('new_admins').split(":")
-                event.admins = [actions.get_user_by_email(new_guy).key() for new_guy in new_admins if new_guy != ""]
+                tournament.admins = [actions.get_user_by_email(new_guy).key() for new_guy in new_admins if new_guy != ""]
 
-                event.name = form.name.data
-                event.date = form.date.data
-                event.location = form.location.data
-                event.perms = form.tournament_security.data
-                event.put()
+                tournament.name = form.name.data
+                tournament.date = form.date.data
+                tournament.location = form.location.data
+                tournament.perms = form.tournament_security.data
+                tournament.put()
             else:
                 error = 2
         else:
@@ -177,10 +178,9 @@ class Tournament_Json(auth.UserAwareView):
     def get(self):
         context = self.get_context()
         
-        event_id = request.args.get('id')
-        event = actions.get_event_by_id(int(event_id))
-        
-        tournament = actions.get_tournaments_by_event(event)[0]
+        tournament_id = request.args.get('id')
+        tournament = actions.get_tournament_by_id(int(tournament_id))
+
         bracket_json = actions.get_json_by_tournament(tournament)
         
         return jsonify(bracket_json)
