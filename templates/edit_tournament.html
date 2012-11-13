@@ -4,7 +4,7 @@
 
     <div class="row" >
         <div class="span8 offset2" style="margin-top:40px;">
-            <h1 style="display: inline;">Edit Event</h1>
+            <h1>Edit Tournament</h1>
             <form class="form-horizontal" method="post" action="" id="edit_form">
             <div class="well">
 
@@ -15,7 +15,7 @@
                 {{ render_form(form) }}
 
                 <div class="control-group">
-                    <label class="control-label">Tournaments:</label>
+                    <label class="control-label">Linked Tournaments:</label>
                     <div class="controls">
                         <table class="table table-bordered table-striped " id="tournament-table" >
                             <thead class="header">
@@ -26,11 +26,15 @@
                                 </tr>
                             </thead>
                             <tbody id="tournament_table_body">
-                            {% for tournament in tournaments %}
+                            {% for tournament in linked_tournaments %}
                                 <tr > 
                                     <td>{{ tournament.type }}</td>
                                     <td>{{ tournament.order }}</td>
                                     <td>{{ tournament.win_method }}</td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="3" style="text-align: center;">No linked tournaments!  TODO: add link to link a tourney here.</td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -119,7 +123,7 @@
             <div class="control-group">
                 <div class="controls">
                     <button type="button" style="margin-left:5px;" class="btn pull-right" id="cancel">Cancel</button>
-                    <button type="button" class="btn btn-success pull-right" id="save">Save</button>
+                    <button type="button" class="btn btn-primary pull-right" id="save">Save</button>
                 </div>
             </div>
             </form>
@@ -144,7 +148,7 @@
             });
 
             // post data!
-            $.post("/tournament/edit/?id={{event.key().id()}}&new_admins="+admins_to_save, {name: $("#name").val(), date: $("#date").val(), location: $("#location").val(),tournament_security: $('input[name=tournament_security]').filter(':checked').val()},
+            $.post("/tournament/edit/?id={{tournament.key().id()}}&new_admins="+admins_to_save, {name: $("#name").val(), date: $("#date").val(), location: $("#location").val(),tournament_security: $('input[name=tournament_security]').filter(':checked').val()},
             function(responseText)
             {
                 var data = $.parseJSON(responseText);

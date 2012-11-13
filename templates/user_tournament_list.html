@@ -1,37 +1,39 @@
 {% extends 'base.html' %}
 
-{% block title %}Web Tournaments - My Events{% endblock %}
+{% block title %}Web Tournaments - My Tournaments{% endblock %}
 
 {% block content %}
 <div class="row">
     <div class="span12" style="margin-top: 50px;">
-        <h1 style="display: inline;margin:35px 0 60px 0;">My Events</h1>
-        <a id="create-event-button" href="{{ url_for('new-tourney') }}" class="btn btn-primary pull-right" style="display: inline;margin-top:5px;" role="button" data-toggle="modal">Create New Event</a>
-        <table class="table table-bordered table-striped table-hover" id="event-table" style="margin-top:5px;">
+        <h1 style="display: inline;margin:35px 0 60px 0;">My Tournaments</h1>
+        <a id="create-tournament-button" href="{{ url_for('new-tourney') }}" class="btn btn-primary pull-right" style="display: inline;margin-top:5px;" role="button" data-toggle="modal">Create New Tournament</a>
+        <table class="table table-bordered table-striped table-hover" id="tournament-table" style="margin-top:5px;">
             <thead class="header">
             <tr>
                 <th>Name</th>
+                <th>Type</th>
                 <th>Date & Time</th>
                 <th>Location</th>
                 <th>Owner</th>
                 <th>Created</th>
-                <th></th>
+                <th>Actions</th>
             </tr>
             </thead>
 
             <tbody>
-            {% for event in user_events %}
+            {% for tournament in user_tournaments %}
                 <tr onClick="javascript:document.location='#'">
-                    <td>{{ event.name }}</td>
-                    <td>{{ event.date }}</td>
-                    <td>{{ event.location }}</td>
-                    <td>{{ event.owner.username }}</td>
-                    <td>{{ event.created.strftime("%Y-%m-%d %H:%M:%S") }}</td>
-                    <td><a href="/tournament/view/?id={{event.key().id()}}" class="btn" style="display:inline;margin-top:5px;" role="button" data-toggle="modal">View</a><a href="/tournament/edit/?id={{event.key().id()}}" class="btn" style="display:inline;margin-top:5px;" role="button" data-toggle="modal">Edit</a></td>
+                    <td>{{ tournament.name }}</td>
+                    <td>{{ tournament.get_type_verbose() }}</td>
+                    <td>{{ tournament.date }}</td>
+                    <td>{{ tournament.location }}</td>
+                    <td>{{ tournament.owner.username }}</td>
+                    <td>{{ tournament.created.strftime("%Y-%m-%d %H:%M:%S") }}</td>
+                    <td><a href="/tournament/view/?id={{tournament.key().id()}}" class="btn" style="display:inline;margin-top:5px;" role="button" data-toggle="modal">View</a><a href="/tournament/edit/?id={{tournament.key().id()}}" class="btn" style="display:inline;margin-top:5px;" role="button" data-toggle="modal">Edit</a></td>
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="5" style="text-align: center;">You don't have access to any events yet!  Click the blue button to get started.</td>
+                    <td colspan="7" style="text-align: center;">You don't have access to any tournaments yet!  Click the blue button to get started.</td>
                 </tr>
             {% endfor %}
             </tbody>
