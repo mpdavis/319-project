@@ -7,12 +7,31 @@ from auth import models as auth_models
 
 from base import mail
 
+from flask import url_for
 from flask import redirect
 from flask import request
+from flask import session
 from flask.templating import render_template
 
 from lib import flask_login
 from lib.flask_login import login_required
+
+from lib import flask_oauth
+from lib.flask_oauth import OAuth
+
+import settings
+
+oauth = OAuth()
+
+facebook = oauth.remote_app('facebook',
+                            base_url='https://graph.facebook.com/',
+                            request_token_url=None,
+                            access_token_url='/oauth/access_token',
+                            authorize_url='https://www.facebook.com/dialog/oauth',
+                            consumer_key=settings.FACEBOOK_APP_ID,
+                            consumer_secret=settings.FACEBOOK_APP_SECRET,
+                            request_token_params={'scope': 'email'}
+)
 
 
 class register(auth.UserAwareView):
@@ -83,6 +102,12 @@ class login(auth.UserAwareView):
         response = json.dumps({'loggedin': loggedin, 'error_message': message, 'next_url': next_url})
         return response
 
+class facebook_login(auth.UserAwareView):
+
+    def get(self):
+         return facebook.authorize(callback=url_for('facebook_authorized',
+                                                   next=request.args.get('next') or request.referrer or None,
+                                                   _external=True))
 
 class logout(auth.UserAwareView):
     decorators = [login_required]
@@ -109,3 +134,18 @@ class welcome(auth.UserAwareView):
         context = self.get_context()
         return render_template('auth/welcome.html', **context)
 
+@facebook.tokengetter
+def get_facebook_oauth_token():
+    return session.get('oauth_token'), settings.FACEBOOK_APP_SECRET
+
+
+class facebook_authorized(auth.UserAwareView):
+
+    @facebook.authorized_handler
+    def get(self, other):
+
+        session['oauth_token'] = str(self.get('access_token', ''))
+
+        me = facebook.get('/me')
+        return 'Logged in as id=%s name=%s redirect=%s' %\
+               (me.data['id'], me.data['name'], request.args.get('next'))
