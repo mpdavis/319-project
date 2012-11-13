@@ -1,4 +1,4 @@
-from flask import request, redirect, url_for
+from flask import request, redirect, url_for, jsonify
 from flask.templating import render_template
 
 import json
@@ -168,6 +168,15 @@ class Tournament_View(auth.UserAwareView):
     
     def get(self):
         context = self.get_context()
+        context['tournament_id'] = request.args.get('id')
+        return render_template('view_tournament.html', **context)
+
+class Tournament_Json(auth.UserAwareView):
+    # TODO: Make perms work
+    decorators = [login_required]
+    
+    def get(self):
+        context = self.get_context()
         
         event_id = request.args.get('id')
         event = actions.get_event_by_id(int(event_id))
@@ -175,8 +184,7 @@ class Tournament_View(auth.UserAwareView):
         tournament = actions.get_tournaments_by_event(event)[0]
         bracket_json = actions.get_json_by_tournament(tournament)
         
-        context['bracket_json'] = bracket_json
-        return render_template('view_tournament.html', **context)
+        return jsonify(bracket_json)
 
 class check_email(auth.UserAwareView):
     def get(self):
