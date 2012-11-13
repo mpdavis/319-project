@@ -55,23 +55,27 @@
     $(document).ready(function(){
 
         $("#username").blur(function () {
-            var page = "/auth/check_username?";
-            var output;
-            $.getJSON(page,
-                {
-                  username: $("#username").val()
-                },
-                function(data) {
+            $("#username_control").removeClass("error").removeClass("success");
+            $("#username_text").text("");
+            if ($("#username").val().length > 0) {
+                var page = "/auth/check_username?";
+                var output;
+                $.getJSON(page,
+                    {
+                      username: $("#username").val()
+                    },
+                    function(data) {
 
-                    if (data.valid) {
-                        $("#username_control").removeClass("error").addClass("success");
-                        $("#username_text").text("Available");
+                        if (data.valid) {
+                            $("#username_control").removeClass("error").addClass("success");
+                            $("#username_text").text("Available");
 
-                    } else {
-                        $("#username_control").removeClass("success").addClass("error");
-                        $("#username_text").text("Unavailable");
-                    }
-                })
+                        } else {
+                            $("#username_control").removeClass("success").addClass("error");
+                            $("#username_text").text("Unavailable");
+                        }
+                    })
+            }
         })
 
         $("#password_confirm").blur(function() {
