@@ -41,7 +41,7 @@
                     <ul class="nav">
                         <li {% if active_nav == 'home' %}class="active"{% endif %}><a href="/">Home</a></li>
                         {% if user %}
-                        <li {% if active_nav == 'my_tournaments' %}class="active"{% endif %}><a href="{{ url_for('event-list') }}">My Tournaments</a></li>
+                        <li {% if active_nav == 'my_tournaments' %}class="active"{% endif %}><a href="{{ url_for('tournament-list') }}">My Tournaments</a></li>
                         {% endif %}
                     </ul>
 
@@ -74,7 +74,7 @@
                                 <ul class="dropdown-menu">
 
                                     <li>
-                                        <a href="{{ url_for('event-list') }}">Tournaments</a>
+                                        <a href="{{ url_for('tournament-list') }}">Tournaments</a>
                                     </li>
                                     <li>
                                         <a href="#">Profile</a>

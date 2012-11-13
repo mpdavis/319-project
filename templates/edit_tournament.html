@@ -26,7 +26,7 @@
                                 </tr>
                             </thead>
                             <tbody id="tournament_table_body">
-                            {% for tournament in tournaments %}
+                            {% for tournament in linked_tournaments %}
                                 <tr > 
                                     <td>{{ tournament.type }}</td>
                                     <td>{{ tournament.order }}</td>
@@ -148,7 +148,7 @@
             });
 
             // post data!
-            $.post("/tournament/edit/?id={{event.key().id()}}&new_admins="+admins_to_save, {name: $("#name").val(), date: $("#date").val(), location: $("#location").val(),tournament_security: $('input[name=tournament_security]').filter(':checked').val()},
+            $.post("/tournament/edit/?id={{tournament.key().id()}}&new_admins="+admins_to_save, {name: $("#name").val(), date: $("#date").val(), location: $("#location").val(),tournament_security: $('input[name=tournament_security]').filter(':checked').val()},
             function(responseText)
             {
                 var data = $.parseJSON(responseText);
