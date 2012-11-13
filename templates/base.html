@@ -47,9 +47,10 @@
 
                     {% if not user %}
                         <div class="dropdown pull-right">
-                            <a class="dropdown-toggle btn btn-primary" data-toggle="dropdown" href="#">Login</a>
+                            <a id="login_dropdown" class="dropdown-toggle btn btn-primary" data-toggle="dropdown" href="#">Login</a>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel" style="padding: 15px; padding-bottom: 0px;">
                                 <form accept-charset="UTF-8" id="nav_login">
+                                    <div id="login_message" class="alert alert-danger" style="display: none"></div>
                                     <input style="margin-bottom: 15px;" type="text" placeholder="Email" id="dropdown_email" name="email">
                                     <input style="margin-bottom: 15px;" type="password" placeholder="Password" id="dropdown_password" name="password">
                                     <input style="float: left; margin-right: 10px;" type="checkbox" name="remember_me" id="remember_me" value="1">
@@ -144,18 +145,34 @@
                                 if (data.loggedin) {
                                     window.location.reload();
                                 }
+
+                                // Showing errors in the login dropdown
+                                if (data.error_message) {
+                                    var message_div = $("#login_message")
+                                    message_div.html(data.error_message);
+                                    message_div.show()
+                                }
+
                             });
                 }
 
-                $("#nav_login").click(function() {
+                // Calling the login function when the "Sign in" button is clicked
+                $("#sign-in").click(function() {
                     login();
                 });
 
+                // Calling the login function when enter is pressed
                 $("#nav_login").keypress(function(e) {
                     if (e && e.which == 13) {
                         login();
                     }
-                })
+                });
+
+                // Setting focus on the email field when the dropdown is opened
+                $("#login_dropdown").click(function () {
+                    setTimeout('$("#dropdown_email").focus()', 200);
+                });
+
             });
         </script>
     </body>
