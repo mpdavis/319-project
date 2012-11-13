@@ -50,8 +50,8 @@
                             <a class="dropdown-toggle btn btn-primary" data-toggle="dropdown" href="#">Login</a>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel" style="padding: 15px; padding-bottom: 0px;">
                                 <form accept-charset="UTF-8" id="nav_login">
-                                    <input style="margin-bottom: 15px;" type="text" placeholder="Email" id="dropdown_email" name="dropdown_email">
-                                    <input style="margin-bottom: 15px;" type="password" placeholder="Password" id="dropdown_password" name="dropdown_password">
+                                    <input style="margin-bottom: 15px;" type="text" placeholder="Email" id="dropdown_email" name="email">
+                                    <input style="margin-bottom: 15px;" type="password" placeholder="Password" id="dropdown_password" name="password">
                                     <input style="float: left; margin-right: 10px;" type="checkbox" name="remember_me" id="remember_me" value="1">
                                     <label class="string optional" for="remember_me"> Remember me</label>
                                     <input class="btn btn-primary btn-block" type="button" id="sign-in" value="Sign In">
@@ -63,10 +63,31 @@
                         </div>
 
                     {% else %}
-                        <div class="pull-right">
-                            Welcome, {{ user.username }}
-                            <a href="/auth/logout" class="btn btn-primary">Logout</a>
-                        </div>
+
+                        <ul class="nav pull-right">
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    {{ user.username }}
+                                    <b class="caret"></b>
+                                </a>
+                                <ul class="dropdown-menu">
+
+                                    <li>
+                                        <a href="{{ url_for('event-list') }}">Tournaments</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Profile</a>
+                                    </li>
+
+                                    <li class="divider"></li>
+
+                                    <li>
+                                        <a href="{{ url_for('logout') }}">Logout</a>
+                                    </li>
+
+                                </ul>
+                            </li>
+                        </ul>
 
                     {% endif %}
 
