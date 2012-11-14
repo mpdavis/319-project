@@ -147,5 +147,17 @@ class facebook_authorized(auth.UserAwareView):
         session['oauth_token'] = str(self.get('access_token', ''))
 
         me = facebook.get('/me')
-        return 'Logged in as id=%s name=%s redirect=%s' %\
-               (me.data['id'], me.data['name'], request.args.get('next'))
+
+        user = auth_models.WTUser.get_user_by_facebook_id(me.data['id'])
+        if user:
+            if not me.data['name'] == user.username:
+                user.username = me.data['name']
+                user.save()
+
+
+            flask_login.login_user(user, remember=False)
+
+        return redirect('/')
+
+#        return 'Logged in as id=%s name=%s redirect=%s' %\
+#               (me.data['id'], me.data['name'], request.args.get('next'))
