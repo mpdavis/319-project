@@ -47,7 +47,7 @@ class EditTournament(forms.Form):
     SECURITY_CHOICES = [('public', 'Public'),
                 ('protected', 'Protected'),
                 ('private', 'Private')]
-    tournament_security = forms.RadioField(choices=SECURITY_CHOICES)
+    tournament_security = forms.RadioField("Security", choices=SECURITY_CHOICES)
 
 
 def handle_participant_forms(request_form, num_participants, include_seeds):

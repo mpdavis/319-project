@@ -8,8 +8,9 @@ import logging
 
 def get_tournaments_by_user(user_key):
     tournaments = models.Tournament.all().filter('owner =', user_key).filter('order', 1).fetch(1000)
-    #TODO: account for the admins who should also be able to see the tournament in their list.
-    return tournaments
+    tournaments.extend(models.Tournament.all().filter('admins', user_key).filter('order', 1).fetch(1000))
+    t_set = set(tournaments)
+    return t_set
 
 def get_tournament_by_id(id):
 	return models.Tournament.get_by_id(id)
