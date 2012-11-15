@@ -106,22 +106,30 @@ class Tournament_Edit(auth.UserAwareView):
             form.date.data = tournament.date
             form.location.data = tournament.location
             form.tournament_security.data = tournament.perms
+            form.type.data = tournament.type
+            form.order.data = tournament.order
+            form.win_method.data = str(tournament.win_method)
 
             admin_list = [actions.get_user_by_id(admin_key.id()) for admin_key in tournament.admins]
 
             tournaments = actions.get_linked_tournaments(tournament)
 
             matches = []
-            for tournament in tournaments:
-                matches.extend(actions.get_matches_by_tournament(tournament))
+            matches.extend(actions.get_matches_by_tournament(tournament))
+
 
             participants = []
             participants_by_match = {}
             for match in matches:
                 found_participants = actions.get_participants_by_match(match)
-                participants_by_match[match] = found_participants
                 participants.extend(found_participants)
 
+                while(len(found_participants)<2):
+                    found_participants.append({'name':'To Be Determined'})
+                
+                participants_by_match[match] = found_participants
+
+            matches.sort(key=attrgetter('round'))
             participants.sort(key=attrgetter('seed')) 
 
             context['tournament'] = tournament
@@ -154,6 +162,10 @@ class Tournament_Edit(auth.UserAwareView):
                 tournament.date = form.date.data
                 tournament.location = form.location.data
                 tournament.perms = form.tournament_security.data
+                tournament.type = form.type.data
+                tournament.order = form.order.data
+                tournament.win_method = int(form.win_method.data)
+
                 tournament.put()
             else:
                 error = 2

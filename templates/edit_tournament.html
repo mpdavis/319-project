@@ -20,21 +20,25 @@
                         <table class="table table-bordered table-striped " id="tournament-table" >
                             <thead class="header">
                                 <tr>
-                                    <th>Type</th>
-                                    <th>order</th>
-                                    <th>Win Method</th>      
+                                    <th>Name</th>
+                                    <th>Location</th>
+                                    <th>Date</th>
+                                    <th>Permissions</th>  
+                                    <th>Actions</th>    
                                 </tr>
                             </thead>
                             <tbody id="tournament_table_body">
                             {% for tournament in linked_tournaments %}
                                 <tr > 
-                                    <td>{{ tournament.type }}</td>
-                                    <td>{{ tournament.order }}</td>
-                                    <td>{{ tournament.win_method }}</td>
+                                    <td>{{ tournament.name }}</td>
+                                    <td>{{ tournament.location }}</td>
+                                    <td>{{ tournament.date }}</td>
+                                    <td>{{ tournament.perms }}</td>
+                                    <td><a href="/tournament/view/?id={{tournament.key().id()}}" class="btn" style="display:inline;margin-top:5px;" role="button" data-toggle="modal">View</a><a href="/tournament/edit/?id={{tournament.key().id()}}" class="btn" style="display:inline;margin-top:5px;" role="button" data-toggle="modal">Edit</a></td>
                                 </tr>
                             {% else %}
                                 <tr>
-                                    <td colspan="3" style="text-align: center;">No linked tournaments!  TODO: add link to link a tourney here.</td>
+                                    <td colspan="5" style="text-align: center;">No linked tournaments!  TODO: add link to link a tourney here.</td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -106,7 +110,7 @@
                                 <tr id ="{{admin.username}}"  > <!-- associate table row id with button value -->
                                     <td>{{ admin.username }}</td>
                                     <td>{{ admin.email }}</td>
-                                    <td><button type="button" class="btn btn-danger pull-right" value ="{{admin.username}}">Remove</button></td>
+                                    <td><button type="button" class="btn btn-danger pull-right" id="remove{{admin.username}}" value ="{{admin.username}}">Remove</button></td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -148,11 +152,11 @@
             });
 
             // post data!
-            $.post("/tournament/edit/?id={{tournament.key().id()}}&new_admins="+admins_to_save, {name: $("#name").val(), date: $("#date").val(), location: $("#location").val(),tournament_security: $('input[name=tournament_security]').filter(':checked').val()},
+            $.post("/tournament/edit/?id={{tournament.key().id()}}&new_admins="+admins_to_save, {name: $("#name").val(), date: $("#date").val()+" "+$("#date_time").val(), location: $("#location").val(),tournament_security: $('#tournament_security').val(), type:$('#type').val(), order:$("#order").val(),win_method:$('#win_method').val()},
             function(responseText)
             {
                 var data = $.parseJSON(responseText);
-                // alert(data.alert);
+                // alert(data.error);
                 if(data.error == 0)
                 {
                     notifictions('save_confirmation',false, 'Save Complete');
@@ -201,7 +205,13 @@
                     function(data) {
 
                         if (data.exists) {
-                            $('#admin_table_body').append("<tr id =\""+data.username+"\"  ><td>"+data.username+"</td><td>"+data.email+"</td><td><button type=\"button\" class=\"btn btn-danger pull-right \" id=\"remove_admin\" value =\""+data.username+"\" >Remove</button></td></tr>");
+                            $('#admin_table_body').append("<tr id =\""+data.username+"\"  ><td>"+data.username+"</td><td>"+data.email+"</td><td><button type=\"button\" class=\"btn btn-danger pull-right \" id =\"remove"+data.username+"\" value =\""+data.username+"\" >Remove</button></td></tr>");
+
+
+                            $("#remove"+data.username).click(function() {
+                                $("#"+$(this).val()).remove();
+                            });
+
 
                             notifictions('admin_check',false, 'admin added');
 
