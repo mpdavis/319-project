@@ -35,8 +35,18 @@ class MainHandler(auth.UserAwareView):
         return render_template('home.html', **context)
 
 
+class DemoHandler(auth.UserAwareView):
+    active_nav = 'home'
+
+    def get(self):
+        context = self.get_context()
+
+        return render_template('demo.html', **context)
+
+
 #Define URLs
 app.add_url_rule('/', view_func=MainHandler.as_view('home'))
+app.add_url_rule('/demo/', view_func=DemoHandler.as_view('demo'))
 auth_urls.setup_urls(app)
 tournament_urls.setup_urls(app)
 

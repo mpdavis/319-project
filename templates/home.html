@@ -15,7 +15,7 @@
                     <h1>Web Tournaments</h1>
                     <h3>Easy, fast, and powerful tournament software. </h3>
 
-                    <p style="text-align: center;"><a href="/tournament/new" class="btn btn-primary btn-large">Start a Tournament</a></p> <!-- TODO: fix this link to not be hardcoded! -->
+                    <p style="text-align: center;"><a href="{{ url_for('new-tourney') }}" class="btn btn-primary btn-large">Start a Tournament</a></p> <!-- TODO: fix this link to not be hardcoded! -->
                 </div>
 
             </div>
@@ -49,7 +49,12 @@
                 </div>
 
                 <h2>Made for sharing</h2>
-                <p>Wheter you want an open tournament that anyone can see and edit, or a private tournament for your select friends, we have what you need. </p>
+                <p>
+                    Whether you want an open tournament that anyone can see and edit, or a private tournament for your select friends, we have what you need.
+                </p>
+                <p>
+                    <a href="{{ url_for('demo') }}">Check out the demo!</a>
+                </p>
             </div>
             <div class="span4">
                 <div style="font-size: 180px; text-align: center; line-height: 0.9;">
