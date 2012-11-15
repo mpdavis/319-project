@@ -89,8 +89,11 @@ def render_field(context, field, label=None, single_input=False):
 
     template='<div class="%(classes)s" %(div_attrs)s><label class="control-label" for="id_%(name)s">%(label)s</label><div class="controls">%(widget)s<span class="help-inline">%(error)s</span></div></div>'
     checkbox_template='<div class="%(classes)s" %(div_attrs)s><div class="controls"><label class="checkbox">%(widget)s%(label)s</label></div></div>'
+    radio_template='<div class="%(classes)s" %(div_attrs)s><label class="control-label" for="id_%(name)s">%(label)s</label><div class="controls radio">%(widget)s</div></div>'
     if isinstance(field.widget, wtforms.widgets.CheckboxInput):
         return Markup(checkbox_template % ctx)
+    if isinstance(field, wtforms.RadioField) and isinstance(field.widget, wtforms.widgets.ListWidget):
+        return Markup(radio_template % ctx)
 
     return Markup(template % ctx)
 

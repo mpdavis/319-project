@@ -28,8 +28,12 @@ class Tournament(db.Model):
     LOWEST_WINS = 1
 
     def get_type_verbose(self):
-        results = [item[1] for item in self.TOURNAMENT_TYPES if item[0] == self.type]
-        return ''.join(results)
+        TYPE_DICT = {
+            'SE': "Single Elimination",
+            'DE': "Double Elimination",
+            'RR': "Round Robin"
+        }
+        return TYPE_DICT.get(self.type)
 
 
 class Match(db.Model):
