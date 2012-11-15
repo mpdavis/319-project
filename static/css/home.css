@@ -14,6 +14,10 @@ body {
     padding-bottom: 130px;
 }
 
+.dusty {
+    background-image: url(/static/img/dusty.jpeg);
+}
+
 .shadow {
     -moz-box-shadow: 100px 0 30px 5px #999;
     -webkit-box-shadow: 100px 0 30px 5px #999;
