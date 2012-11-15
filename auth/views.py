@@ -33,6 +33,18 @@ facebook = oauth.remote_app('facebook',
                             request_token_params={'scope': 'email'}
 )
 
+google = oauth.remote_app('google',
+                          base_url='https://www.google.com/accounts/',
+                          authorize_url='https://accounts.google.com/o/oauth2/auth',
+                          request_token_url=None,
+                          request_token_params={'scope': 'https://www.googleapis.com/auth/userinfo.email',
+                                                'response_type': 'code'},
+                          access_token_url='https://accounts.google.com/o/oauth2/token',
+                          access_token_method='POST',
+                          access_token_params={'grant_type': 'authorization_code'},
+                          consumer_key=settings.GOOGLE_CLIENT_ID,
+                          consumer_secret=settings.GOOGLE_SECRET)
+
 
 class register(auth.UserAwareView):
     def get(self):
@@ -109,6 +121,12 @@ class facebook_login(auth.UserAwareView):
                                                    next=request.args.get('next') or request.referrer or None,
                                                    _external=True))
 
+class google_login(auth.UserAwareView):
+
+    def get(self):
+        callback=url_for('google_authorized', _external=True)
+        return google.authorize(callback=callback)
+
 class logout(auth.UserAwareView):
     decorators = [login_required]
 
@@ -134,30 +152,83 @@ class welcome(auth.UserAwareView):
         context = self.get_context()
         return render_template('auth/welcome.html', **context)
 
-@facebook.tokengetter
-def get_facebook_oauth_token():
-    return session.get('oauth_token'), settings.FACEBOOK_APP_SECRET
-
-
 class facebook_authorized(auth.UserAwareView):
 
     @facebook.authorized_handler
     def get(self, other):
 
+        # Setting the oauth token in the session
         session['oauth_token'] = str(self.get('access_token', ''))
 
+        # Receiving the user info from Facebook
         me = facebook.get('/me')
 
+        # Checking for the user associated with the user's facebook ID
         user = auth_models.WTUser.get_user_by_facebook_id(me.data['id'])
+
+        # If there is no record of this Facebook user logging in before, just make an account
+        if not user:
+            user = auth_models.WTUser(name=me.data['name'],
+                                          facebook_id=me.data['id'],
+                                          email=me.data['email'])
+            user.put()
+
+        # Log the user in
         if user:
-            if not me.data['name'] == user.username:
-                user.username = me.data['name']
-                user.save()
-
-
-            flask_login.login_user(user, remember=False)
+            flask_login.login_user(user)
 
         return redirect('/')
 
-#        return 'Logged in as id=%s name=%s redirect=%s' %\
-#               (me.data['id'], me.data['name'], request.args.get('next'))
+
+
+class google_authorized(auth.UserAwareView):
+
+    @google.authorized_handler
+    def get(self, other):
+
+        # Setting the oauth token in the session
+        session['oauth_token'] = str(self.get('access_token', ''))
+        access_token = session['oauth_token']
+
+        from urllib2 import Request, urlopen, URLError
+
+        headers = {'Authorization': 'OAuth '+ access_token}
+        req = Request('https://www.googleapis.com/oauth2/v1/userinfo',
+                      None, headers)
+        try:
+            res = urlopen(req)
+
+            if res:
+                output = json.loads(res.read())
+                if 'email' in output:
+                    email = output['email']
+
+                if email:
+                    user = auth_models.WTUser.get_user_by_email(email)
+
+                if not user:
+                    user = auth_models.WTUser(name=email,
+                                              email=email)
+                    user.save()
+
+                if user:
+                    flask_login.login_user(user)
+
+
+        except URLError, e:
+            if e.code == 401:
+                # Unauthorized - bad token
+                session.pop('access_token', None)
+                return redirect(url_for('google_login'))
+            return res.read()
+
+        return redirect('/')
+
+
+@facebook.tokengetter
+def get_facebook_oauth_token():
+    return session.get('oauth_token'), settings.FACEBOOK_APP_SECRET
+
+@google.tokengetter
+def get_access_token():
+    return session.get('access_token'), settings.GOOGLE_SECRET
