@@ -15,6 +15,7 @@
         <script type="text/javascript" src="/static/merged/merged.js"></script>
         {% else %}
         <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.css" />
+        <link rel="stylesheet" href="/static/css/font-awesome.css">
         <link rel="stylesheet" type="text/css" href="/static/css/chosen.css" />
         <link rel="stylesheet" type="text/css" href="/static/css/datepicker.css" />
         <link rel="stylesheet" type="text/css" href="/static/css/styles.css" />
@@ -57,8 +58,10 @@
                                     <label class="string optional" for="remember_me"> Remember me</label>
                                     <input class="btn btn-primary btn-block" type="button" id="sign-in" value="Sign In">
                                     <label style="text-align: center;padding-top:5px">or</label>
-                                    <input class="btn btn-primary btn-block" type="button" value="Sign Up" onclick="window.location.replace('{{ url_for('register') }}')">
-                                    <input class="btn btn-primary btn-block" type="button" value="Reset Password">
+                                    <input class="btn btn-primary btn-block" type="button" id="sign-in-facebook" value="Sign In with Facebook">
+                                    <input class="btn btn-primary btn-block" type="button" id="sign-in-google" value="Sign In with Google">
+{#                                    <input class="btn btn-primary btn-block" type="button" value="Sign Up" onclick="window.location.replace('{{ url_for('register') }}')">#}
+{#                                    <input class="btn btn-primary btn-block" type="button" value="Reset Password">#}
                                 </form>
                             </ul>
                         </div>
@@ -68,7 +71,7 @@
                         <ul class="nav pull-right">
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                    {{ user.username }}
+                                    {{ user.get_display_name() }}
                                     <b class="caret"></b>
                                 </a>
                                 <ul class="dropdown-menu">
@@ -172,6 +175,14 @@
                 $("#login_dropdown").click(function () {
                     setTimeout('$("#dropdown_email").focus()', 200);
                 });
+
+                $("#sign-in-facebook").click(function() {
+                    window.location.replace("/auth/facebook_login")
+                })
+
+                $("#sign-in-google").click(function() {
+                    window.location.replace("/auth/google_login ")
+                })
 
             });
         </script>
