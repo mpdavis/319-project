@@ -46,7 +46,7 @@ google = oauth.remote_app('google',
                           consumer_secret=settings.GOOGLE_SECRET)
 
 
-class register(auth.UserAwareView):
+class Register(auth.UserAwareView):
     def get(self):
         context = self.get_context()
         context['form'] = auth_forms.SignupForm()
@@ -88,7 +88,7 @@ class register(auth.UserAwareView):
         return response
 
 
-class login(auth.UserAwareView):
+class Login(auth.UserAwareView):
     def get(self):
         context = self.get_context(form = auth_forms.LoginForm())
         return render_template("auth/login.html", **context)
@@ -114,20 +114,20 @@ class login(auth.UserAwareView):
         response = json.dumps({'loggedin': loggedin, 'error_message': message, 'next_url': next_url})
         return response
 
-class facebook_login(auth.UserAwareView):
+class FacebookLogin(auth.UserAwareView):
 
     def get(self):
          return facebook.authorize(callback=url_for('facebook_authorized',
                                                    next=request.args.get('next') or request.referrer or None,
                                                    _external=True))
 
-class google_login(auth.UserAwareView):
+class GoogleLogin(auth.UserAwareView):
 
     def get(self):
         callback=url_for('google_authorized', _external=True)
         return google.authorize(callback=callback)
 
-class logout(auth.UserAwareView):
+class Logout(auth.UserAwareView):
     decorators = [login_required]
 
     def get(self):
@@ -147,12 +147,17 @@ class check_username(auth.UserAwareView):
 
         return json.dumps(output)
 
-class welcome(auth.UserAwareView):
+class Welcome(auth.UserAwareView):
     def get(self):
         context = self.get_context()
         return render_template('auth/welcome.html', **context)
 
-class facebook_authorized(auth.UserAwareView):
+@facebook.tokengetter
+def get_facebook_oauth_token():
+    return session.get('oauth_token'), settings.FACEBOOK_APP_SECRET
+
+
+class FacebookAuthorized(auth.UserAwareView):
 
     @facebook.authorized_handler
     def get(self, other):
@@ -181,7 +186,7 @@ class facebook_authorized(auth.UserAwareView):
 
 
 
-class google_authorized(auth.UserAwareView):
+class GoogleAuthorized(auth.UserAwareView):
 
     @google.authorized_handler
     def get(self, other):
