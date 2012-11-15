@@ -48,7 +48,8 @@ class EditTournament(forms.Form):
     SECURITY_CHOICES = [('public', 'Public'),
                 ('protected', 'Protected'),
                 ('private', 'Private')]
-    tournament_security = forms.SelectField(choices=SECURITY_CHOICES)
+
+    tournament_security = forms.RadioField("Security", choices=SECURITY_CHOICES)
 
     TOURNAMENT_TYPES = [('SE', 'Single Elimination'),
                         ('DE', 'Double Elimination'),

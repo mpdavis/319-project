@@ -11,12 +11,12 @@
             <thead class="header">
             <tr>
                 <th>Name</th>
-                <th>Type</th>
-                <th>Date & Time</th>
+                <th style="width:118px;">Type</th>
+                <th style="width:125px;">Date & Time</th>
                 <th>Location</th>
                 <th>Owner</th>
-                <th>Created</th>
-                <th>Actions</th>
+                <th style="width:125px;">Created</th>
+                <th style="width:113px;">Actions</th>
             </tr>
             </thead>
 
@@ -25,11 +25,16 @@
                 <tr onClick="javascript:document.location='#'">
                     <td>{{ tournament.name }}</td>
                     <td>{{ tournament.get_type_verbose() }}</td>
-                    <td>{{ tournament.date }}</td>
+                    <td>{{ tournament.date.strftime("%m/%d/%y %I:%M %p") }}</td>
                     <td>{{ tournament.location }}</td>
                     <td>{{ tournament.owner.username }}</td>
-                    <td>{{ tournament.created.strftime("%Y-%m-%d %H:%M:%S") }}</td>
-                    <td><a href="/tournament/view/?id={{tournament.key().id()}}" class="btn" style="display:inline;margin-top:5px;" role="button" data-toggle="modal">View</a><a href="/tournament/edit/?id={{tournament.key().id()}}" class="btn" style="display:inline;margin-top:5px;" role="button" data-toggle="modal">Edit</a></td>
+                    <td>{{ tournament.created.strftime("%m/%d/%y %I:%M %p") }}</td>
+                    <td>
+                        <div class="btn-group">
+                            <a href="/tournament/view/?id={{tournament.key().id()}}" class="btn" style="display:inline;margin-top:5px;" role="button" data-toggle="modal">View</a>
+                            <a href="/tournament/edit/?id={{tournament.key().id()}}" class="btn" style="display:inline;margin-top:5px;" role="button" data-toggle="modal">Edit</a>
+                        </div>
+                    </td>
                 </tr>
             {% else %}
                 <tr>
