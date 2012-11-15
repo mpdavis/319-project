@@ -25,10 +25,10 @@
                 <tr onClick="javascript:document.location='#'">
                     <td>{{ tournament.name }}</td>
                     <td>{{ tournament.get_type_verbose() }}</td>
-                    <td>{{ tournament.date.strftime("%m/%d/%y %I:%M %p") }}</td>
+                    <td>{{ tournament.get_date_formatted() }}</td>
                     <td>{{ tournament.location }}</td>
                     <td>{{ tournament.owner.username }}</td>
-                    <td>{{ tournament.created.strftime("%m/%d/%y %I:%M %p") }}</td>
+                    <td>{{ tournament.get_created_formatted() }}</td>
                     <td>
                         <div class="btn-group">
                             <a href="/tournament/view/?id={{tournament.key().id()}}" class="btn" style="display:inline;margin-top:5px;" role="button" data-toggle="modal">View</a>

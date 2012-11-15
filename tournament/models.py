@@ -35,6 +35,16 @@ class Tournament(db.Model):
         }
         return TYPE_DICT.get(self.type)
 
+    def get_date_formatted(self):
+        if self.date:
+            return self.date.strftime("%m/%d/%y %I:%M %p")
+        return ''
+
+    def get_created_formatted(self):
+        if self.created:
+            return self.created.strftime("%m/%d/%y %I:%M %p")
+        return ''
+
 
 class Match(db.Model):
     """
