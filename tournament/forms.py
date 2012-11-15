@@ -42,12 +42,22 @@ class NewTournamentStep3(forms.Form):
 class EditTournament(forms.Form):
     name = forms.StringField("Name", [validators.Optional()])
     location = forms.StringField("Location", [validators.Optional()])
-    date = forms.DateTimeField("Date", [validators.Optional()])
+    date = forms.DateTimeField("Date", [validators.Optional()],
+                               widget=base_widgets.DateTimeInput(), format="%m/%d/%Y %H:%M")
 
     SECURITY_CHOICES = [('public', 'Public'),
                 ('protected', 'Protected'),
                 ('private', 'Private')]
-    tournament_security = forms.RadioField(choices=SECURITY_CHOICES)
+    tournament_security = forms.SelectField(choices=SECURITY_CHOICES)
+
+    TOURNAMENT_TYPES = [('SE', 'Single Elimination'),
+                        ('DE', 'Double Elimination'),
+                        ('RR', 'Round Robin')]
+    type = forms.SelectField("Tourney Type", choices=TOURNAMENT_TYPES)
+    order = forms.IntegerField("Order", [validators.Optional()])
+    WIN_TYPES = [('0', 'High Wins'),
+                 ('1', 'Low Wins')]
+    win_method = forms.SelectField("Win Method", choices=WIN_TYPES)  
 
 
 def handle_participant_forms(request_form, num_participants, include_seeds):
