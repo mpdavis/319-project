@@ -27,7 +27,7 @@
                     <td>{{ tournament.get_type_verbose() }}</td>
                     <td>{{ tournament.get_date_formatted() }}</td>
                     <td>{{ tournament.location }}</td>
-                    <td>{{ tournament.owner.username }}</td>
+                    <td>{{ tournament.owner.get_display_name() }}</td>
                     <td>{{ tournament.get_created_formatted() }}</td>
                     <td>
                         <div class="btn-group">
