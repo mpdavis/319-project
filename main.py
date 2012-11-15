@@ -33,7 +33,7 @@ class MainHandler(auth.UserAwareView):
         if self.user:
             context['username'] = self.user.username
 
-        context['dusty'] = request.args.get('dusty_mode', None)
+        context['login_mode'] = request.args.get('login_mode', None)
 
         return render_template('home.html', **context)
 
