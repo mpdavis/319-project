@@ -94,11 +94,10 @@ class Tournament_List(auth.UserAwareView):
 class Tournament_Edit(auth.UserAwareView):
     decorators = [login_required]
 
-    def get(self):
+    def get(self, tournament_key):
         context = self.get_context()
 
-        tournament_id = request.args.get('id')
-        tournament = actions.get_tournament_by_id(int(tournament_id))
+        tournament = actions.get_tournament_by_key(tournament_key)
         html_to_show = ""
 
         # if event belongs to our user allow them to edit else redirect them
