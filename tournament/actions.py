@@ -51,8 +51,13 @@ def get_json_by_tournament(tournament):
             for i in range(len(participants) / match_size):
                 matches.append(participants[(i*match_size):((i+1)*match_size)])
             remainder = len(participants) % match_size
-            if remainder > 0:
+            if remainder > 1:
                 matches.append(participants[((-1)*remainder):])
+            elif remainder > 0:
+                if type(participants[-1]) != list:
+                    matches.append([participants[-1]])
+                else:
+                    matches.append(participants[-1])
             matches = participants_to_bracket(matches, match_size)
         else:
             matches = participants
@@ -66,8 +71,11 @@ def get_json_by_tournament(tournament):
             for i in range(len(bracket)):
                 json_format["children"].append(bracket_to_json(bracket[i]))
         else:
-            for i in range(len(bracket)):
-                json_format["children"].append({"name":bracket[i]})
+            if len(bracket) > 1:
+                for i in range(len(bracket)):
+                    json_format["children"].append({"name":bracket[i]})
+            else:
+                json_format = {"name":bracket[0]}
         return json_format
     
     # Grab all participants
@@ -84,6 +92,10 @@ def get_json_by_tournament(tournament):
         participant_names.append(all_participants[i].name)
         participant_names.append(
             all_participants[len(all_participants)-1-i].name)
+    # If odd number of participants, add the middle participant without a pair
+    if (len(all_participants) % 2) == 1:
+        participant_names.append(
+            all_participants[(len(all_participants)/2)+1].name)
     
     # NOTE: Currently only supports matches of two players each.
     bracket = participants_to_bracket(participant_names, 2)
