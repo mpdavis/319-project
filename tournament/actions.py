@@ -123,7 +123,7 @@ def create_tournament(form_data, p_form_data, user):
         for field, value in p_form_data.items():
             if 'name' in field:
                 num = field[11:-4]
-                seeded_list.append({'name':value,'seed':int(num)})  
+                seeded_list.append({'name':value,'seed':int(num)+1})  
 
     # I couldn't fit this into the build tourney recursion, however this helps decides the round number for
     # each match. This method associates each round number with the level of recursion.

@@ -234,9 +234,12 @@
             }
 
             $("#"+id).html(updateMessage);
-            $("#"+id).show("fast");
-        }
+            $("#"+id).fadeIn('slow');
 
+            setTimeout(function() {
+                $("#"+id).fadeOut('slow');
+                }, 2500);
+            }
     });
 
     </script>
