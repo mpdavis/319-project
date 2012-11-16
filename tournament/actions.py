@@ -15,6 +15,9 @@ def get_tournaments_by_user(user_key):
 def get_tournament_by_id(id):
 	return models.Tournament.get_by_id(id)
 
+def get_tournament_by_key(key):
+	return db.get(key)
+
 def get_user_by_id(id):
     return auth_models.WTUser.get_by_id(id)
 
@@ -207,3 +210,18 @@ def create_tournament(form_data, p_form_data, user):
     rec_build_matches(seeded_list,None)
 
     db.put(ps_to_put)
+
+
+def get_round_robin_rounds(tournament):
+    matches = get_matches_by_tournament(tournament)
+    rounds = {}
+    for match in matches:
+        participants = get_participants_by_match(match)
+        if match.round in rounds:
+            rounds.get(match.round).append((match,participants))
+        else:
+            rounds[match.round] = [(match,participants)]
+
+    tuple_list = list(rounds.items())
+    sorted_list = sorted(tuple_list)
+    return sorted_list

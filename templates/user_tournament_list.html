@@ -31,7 +31,7 @@
                     <td>{{ tournament.get_created_formatted() }}</td>
                     <td>
                         <div class="btn-group">
-                            <a href="/tournament/view/?id={{tournament.key().id()}}" class="btn" style="display:inline;margin-top:5px;" role="button" data-toggle="modal">View</a>
+                            <a href="{{ url_for('view-tourney', tournament_key=tournament.keystr())}}" class="btn" style="display:inline;margin-top:5px;" role="button" data-toggle="modal">View</a>
                             <a href="/tournament/edit/?id={{tournament.key().id()}}" class="btn" style="display:inline;margin-top:5px;" role="button" data-toggle="modal">Edit</a>
                         </div>
                     </td>

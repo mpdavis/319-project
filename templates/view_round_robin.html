@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Round Robin{% endblock %}
+
+
+{% block content %}
+<div class="page-header"><h1>{{ tournament.name }}</h1></div>
+<div class="container-fluid">
+    <div class="row-fluid">
+    {% for round,matches in round_robin_rounds %}
+        <div class="span4">
+            <h3>Round {{ round }}</h3>
+            <div class="well">
+            {% for match, participants in matches %}
+                {% for participant in participants %}
+                    {{ participant.name }}
+                    {{ loop.cycle(' vs. ','') }}
+                {% endfor %}
+                <hr>
+            {% endfor %}
+            </div>
+        </div>
+        {{ loop.cycle('','','</div><div class="row-fluid">'|safe) }}
+    {% endfor %}
+    </div>
+</div>
+{% endblock %}

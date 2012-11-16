@@ -5,11 +5,14 @@ import json
 from operator import attrgetter
 from lib.flask_login import login_required
 
+from tournament import public_tournament
+
 import wtforms
 import auth
 import forms
 import models
 import actions
+import flask
 
 import logging
 
@@ -86,6 +89,7 @@ class Tournament_List(auth.UserAwareView):
         context = self.get_context()
         context['user_tournaments'] = actions.get_tournaments_by_user(self.user)
         return render_template('user_tournament_list.html', **context)
+
 
 class Tournament_Edit(auth.UserAwareView):
     decorators = [login_required]
@@ -174,14 +178,33 @@ class Tournament_Edit(auth.UserAwareView):
 
         return json.dumps({'error': error})
 
+
 class Tournament_View(auth.UserAwareView):
     # TODO: Make perms work
     decorators = [login_required]
     
-    def get(self):
+    def get(self, tournament_key):
+        #Contextual variables used by all tournament types.
         context = self.get_context()
-        context['tournament_id'] = request.args.get('id')
-        return render_template('view_tournament.html', **context)
+        context['tournament_key'] = tournament_key
+        tournament = actions.get_tournament_by_key(tournament_key)
+        context['tournament'] = tournament
+        if tournament:
+            if tournament.type == models.Tournament.ROUND_ROBIN:
+                #Setup context for Round Robin tournament
+                context['round_robin_rounds'] = actions.get_round_robin_rounds(tournament)
+                return render_template('view_round_robin.html', **context)
+            else:
+                #Setup context for bracket-style tournaments
+                return render_template('view_tournament.html', **context)
+
+        return flask.abort(404)
+
+# We will use this view for non-logged in users accessing a public tournament.
+# Prevents them from being able to view other tournaments that are not public.
+class PublicTournamentView(Tournament_View):
+    decorators = [public_tournament]
+
 
 class Tournament_Json(auth.UserAwareView):
     # TODO: Make perms work
@@ -196,6 +219,7 @@ class Tournament_Json(auth.UserAwareView):
         bracket_json = actions.get_json_by_tournament(tournament)
         
         return jsonify(bracket_json)
+
 
 class check_email(auth.UserAwareView):
     def get(self):
