@@ -95,10 +95,14 @@ class Tournament_Edit(auth.UserAwareView):
 
         tournament_id = request.args.get('id')
         tournament = actions.get_tournament_by_id(int(tournament_id))
+        admin_list = [actions.get_user_by_id(admin_key.id()) for admin_key in tournament.admins]
+
         html_to_show = ""
+        owners = [tournament.owner.key().id()]
+        owners.extend([admin.key().id() for admin in admin_list])
 
         # if event belongs to our user allow them to edit else redirect them
-        if context['user'].key().id() == tournament.owner.key().id():
+        if context['user'].key().id() in owners:
 
             # preload our forms with data
             form = forms.EditTournament()
@@ -110,7 +114,6 @@ class Tournament_Edit(auth.UserAwareView):
             form.order.data = tournament.order
             form.win_method.data = str(tournament.win_method)
 
-            admin_list = [actions.get_user_by_id(admin_key.id()) for admin_key in tournament.admins]
 
             tournaments = actions.get_linked_tournaments(tournament)
 
