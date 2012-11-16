@@ -61,13 +61,13 @@ def get_json_by_tournament(tournament):
     def bracket_to_json(bracket):
         assert (type(bracket) == list) and (len(bracket) > 0), \
             "Invalid hierarchal bracket list format."
-        json_format = {"winner":"?"}
+        json_format = {"winner":"?", "children":[]}
         if type(bracket[0]) == list:
             for i in range(len(bracket)):
-                json_format["tier_%s" % str(i)] = bracket_to_json(bracket[i])
+                json_format["children"].append(bracket_to_json(bracket[i]))
         else:
             for i in range(len(bracket)):
-                json_format["player_%s" % str(i)] = bracket[i]
+                json_format["children"].append({"name":bracket[i]})
         return json_format
     
     # Grab all participants
