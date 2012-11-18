@@ -4,37 +4,158 @@
     <script type="text/javascript" src="/static/js/d3.v2.min.js"></script>
 {% endblock %}
 
-{% block content %}
+{% block style %}
+    <style>
+/*
+      .nodeText {
+        cursor: pointer;
+        font-family: Helvetica,'Ludica Grande',sans-serif;
+        font-size: 14pt;
+        font-weight: bold;
+        text-anchor: middle;
+        dominant-baseline: central;
+      }
+      .node {
+        cursor: pointer;
+        fill: url(#ButtonGradient);
+        stroke: steelblue;
+        stroke-width: 1px;
+      }
+*/
+    </style>
+{% endblock %}
 
-    <div id="bracket">
+{% block content %}
+    <div id="bracket" style="margin:0px;padding:0px;">
     </div>
 
-    {# D3 script must appear after the #bracket div has been instantiated #}
+    {# D3 script MUST appear after the #bracket div has been instantiated #}
     <script type="text/javascript">
 
-var margin = {top: 30, right: 10, bottom: 10, left: 10},
-    width = 960 - margin.left - margin.right,
-    halfWidth = width / 2,
-    height = 500 - margin.top - margin.bottom,
-    i = 0,
+// Initialize size values.
+var m = { "t": 20, "r": 20, "b": 20, "l": 20 },
+    width = Math.floor(
+      $(document).width() - (
+        2 * $("#bracket").parent().position().left)) - m["r"] - m["l"],
+    height = Math.floor(width / (16.0 / 9.0)) - m["t"] - m["b"],
+    halfWidth = Math.floor(width / 2.0),
+    halfHeight = Math.floor(height / 2.0),
     duration = 500,
+    i = 0, j = 0,
     root;
 
-var svg = d3.select("#bracket").append("svg")
-    .attr("width", width + margin.right + margin.left)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+var tree = d3.layout.tree()
+    .size([width, height]);
 
-{# TODO: Soften this hard-coded url. #}
-d3.json("/tournament/json/?id={{ tournament_id }}", function(json) {
-    d3.select("#bracket").select("svg")
-      .append("text")
-      .attr('style', 'font-family:monospace;font-color:#000;font-size:14pt;')
-      .attr('transform', 'translate(' + 100 + ',' + 100 + ')')
-      .text(json);
-});
+var diagonal = d3.svg.diagonal()
+    .projection(function(d) { return [d.y, d.x]; });
+
+// Initialize SVG.
+var svg = d3.select("#bracket").append("svg")
+    .attr("width", width + m["r"] + m["l"])
+    .attr("height", height + m["t"] + m["b"])
+    .attr("style", "margin:0px;padding:0px;")
+    .attr("xmlns", "http://www.w3.org/2000/svg");
+var defs = svg.append("defs");
+var gradient = defs.append("linearGradient")
+    .attr("id", "ButtonGradient")
+    .attr("gradientUnits", "objectBoundingBox")
+    .attr("x1", "0.5")
+    .attr("y1", "0.5")
+    .attr("x2", "0.5")
+    .attr("y2", "1.0");
+gradient.append("stop")
+    .attr("offset", "0")
+    .attr("stop-color", "white")
+    .attr("stop-opacity", "1")
+    .attr("id", "ButtonColor0");
+gradient.append("stop")
+    .attr("offset", "1")
+    .attr("stop-color", "lightsteelblue")
+    .attr("stop-opacity", "1")
+    .attr("id", "ButtonColor1");
+var bracket = svg.append("g")
+    .attr("transform", "translate(" + m["l"] + "," + m["t"] + ")");
+
+json_display = function(json) {
+  root = json;
+  root.y0 = halfHeight;
+  root.x0 = halfWidth;
+  update(root);
+}
+
+update = function(source) {
+
+  var nodes = tree.nodes(root);
+
+  var node = bracket.selectAll("g.node")
+      .data(nodes, function(d) { return d.id || (d.id = ++i); });
+
+  var nodeEnter = node.enter().append("g")
+      .attr("class", "node")
+      .attr("transform", function(d) {
+        return "translate(" + source.x0 + "," + source.y0 + ")";
+      });
+
+  nodeEnter.append("text")
+      .text(function(d) { return d.name || d.winner; })
+      .attr("style",
+        "cursor:pointer;" +
+        "font-family:Helvetica,'Ludica Grande',sans-serif;" +
+        "font-size:14pt;" +
+        "font-weight:bold;" +
+        "text-anchor:middle;" +
+        "dominant-baseline:central;");
+
+  nodeEnter.selectAll("text").each(function(d) {
+    var w = $(this).width();
+    var h = $(this).height();
+    var wm = 20;
+    var hm = 10;
+    d3.select(this.parentNode).insert("rect", "text")
+        .attr("style",
+          "cursor:pointer;")
+        .attr("fill", "url(#ButtonGradient)")
+        .attr("stroke", "steelblue")
+        .attr("stroke-width", "1px")
+        .attr("width", w + wm)
+        .attr("height", h + hm)
+        .attr("x", (-1) * ((w + wm) / 2))
+        .attr("y", (-1) * ((h + hm) / 2))
+        .attr("rx", 5)
+        .attr("ry", 5);
+  });
+
+  var nodeUpdate = node.transition()
+      .duration(duration)
+      .attr("transform", function(d) {
+        return "translate(" + d.x + "," + d.y + ")";
+      });
+
+  var elbow = function (d, i) {
+    return "M" + d.source.x + "," + d.source.y +
+      "V" + Math.abs(d.source.y + d.target.y) / 2 +
+      "H" + d.target.x + "V" + d.target.y;
+  };
+
+  var link = bracket.selectAll("path.link")
+      .data(tree.links(nodes), function(d) { return d.target.id; });
+
+  link.enter().insert("path", "g")
+      .attr("style",
+        "fill:none;" +
+        "stroke:lightslategray;")
+      .attr("d", function(d) {
+        var o = {x: source.x0, y: source.y0};
+        return elbow({source: o, target: o});
+      })
+    .transition()
+      .duration(duration)
+      .attr("d", elbow);
+
+}
+
+d3.json("/tournament/json/?id={{ tournament_id }}", json_display);
 
     </script>
-
 {% endblock %}
