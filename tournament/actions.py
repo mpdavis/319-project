@@ -95,7 +95,7 @@ def get_json_by_tournament(tournament):
     # If odd number of participants, add the middle participant without a pair
     if (len(all_participants) % 2) == 1:
         participant_names.append(
-            all_participants[(len(all_participants)/2)+1].name)
+            all_participants[(len(all_participants)/2)].name)
     
     # NOTE: Currently only supports matches of two players each.
     bracket = participants_to_bracket(participant_names, 2)

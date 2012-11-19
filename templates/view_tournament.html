@@ -6,22 +6,25 @@
 
 {% block style %}
     <style>
-/*
       .nodeText {
         cursor: pointer;
         font-family: Helvetica,'Ludica Grande',sans-serif;
-        font-size: 14pt;
+        font-size: 9pt;
         font-weight: bold;
         text-anchor: middle;
         dominant-baseline: central;
       }
-      .node {
+      .nodeBox {
         cursor: pointer;
         fill: url(#ButtonGradient);
         stroke: steelblue;
         stroke-width: 1px;
       }
-*/
+      .nodeLink {
+        fill: none;
+        stroke: lightslategray;
+        stroke-width: 2px;
+      }
     </style>
 {% endblock %}
 
@@ -33,7 +36,7 @@
     <script type="text/javascript">
 
 // Initialize size values.
-var m = { "t": 20, "r": 20, "b": 20, "l": 20 },
+var m = { "t": 20, "r": 40, "b": 20, "l": 120 },
     width = Math.floor(
       $(document).width() - (
         2 * $("#bracket").parent().position().left)) - m["r"] - m["l"],
@@ -44,11 +47,9 @@ var m = { "t": 20, "r": 20, "b": 20, "l": 20 },
     i = 0, j = 0,
     root;
 
+// Initialize the D3 tree.
 var tree = d3.layout.tree()
-    .size([width, height]);
-
-var diagonal = d3.svg.diagonal()
-    .projection(function(d) { return [d.y, d.x]; });
+    .size([height, width]);
 
 // Initialize SVG.
 var svg = d3.select("#bracket").append("svg")
@@ -79,33 +80,28 @@ var bracket = svg.append("g")
 
 json_display = function(json) {
   root = json;
-  root.y0 = halfHeight;
-  root.x0 = halfWidth;
+  root.x0 = halfHeight;
+  root.y0 = halfWidth;
   update(root);
 }
 
 update = function(source) {
 
   var nodes = tree.nodes(root);
+  var links = tree.links(nodes);
 
   var node = bracket.selectAll("g.node")
-      .data(nodes, function(d) { return d.id || (d.id = ++i); });
+      .data(nodes);
 
   var nodeEnter = node.enter().append("g")
       .attr("class", "node")
       .attr("transform", function(d) {
-        return "translate(" + source.x0 + "," + source.y0 + ")";
+        return "translate(" + (width - source.y0) + "," + source.x0 + ")";
       });
 
   nodeEnter.append("text")
       .text(function(d) { return d.name || d.winner; })
-      .attr("style",
-        "cursor:pointer;" +
-        "font-family:Helvetica,'Ludica Grande',sans-serif;" +
-        "font-size:14pt;" +
-        "font-weight:bold;" +
-        "text-anchor:middle;" +
-        "dominant-baseline:central;");
+      .attr("class", "nodeText");
 
   nodeEnter.selectAll("text").each(function(d) {
     var w = $(this).width();
@@ -113,11 +109,7 @@ update = function(source) {
     var wm = 20;
     var hm = 10;
     d3.select(this.parentNode).insert("rect", "text")
-        .attr("style",
-          "cursor:pointer;")
-        .attr("fill", "url(#ButtonGradient)")
-        .attr("stroke", "steelblue")
-        .attr("stroke-width", "1px")
+        .attr("class", "nodeBox")
         .attr("width", w + wm)
         .attr("height", h + hm)
         .attr("x", (-1) * ((w + wm) / 2))
@@ -126,30 +118,29 @@ update = function(source) {
         .attr("ry", 5);
   });
 
-  var nodeUpdate = node.transition()
+  node.transition()
       .duration(duration)
       .attr("transform", function(d) {
-        return "translate(" + d.x + "," + d.y + ")";
+        return "translate(" + (width - d.y) + "," + d.x + ")";
       });
 
   var elbow = function (d, i) {
-    return "M" + d.source.x + "," + d.source.y +
-      "V" + Math.abs(d.source.y + d.target.y) / 2 +
-      "H" + d.target.x + "V" + d.target.y;
+    return "M" + (width - d.source.y) + "," + d.source.x +
+      "H" + (((width - d.source.y) + (width - d.target.y)) / 2) +
+      "V" + d.target.x + "H" + (width - d.target.y);
   };
 
-  var link = bracket.selectAll("path.link")
-      .data(tree.links(nodes), function(d) { return d.target.id; });
+  var link = bracket.selectAll("path.nodeLink")
+      .data(links);
 
-  link.enter().insert("path", "g")
-      .attr("style",
-        "fill:none;" +
-        "stroke:lightslategray;")
+  var linkEnter = link.enter().insert("path", "g")
+      .attr("class", "nodeLink")
       .attr("d", function(d) {
         var o = {x: source.x0, y: source.y0};
         return elbow({source: o, target: o});
-      })
-    .transition()
+      });
+
+  linkEnter.transition()
       .duration(duration)
       .attr("d", elbow);
 
