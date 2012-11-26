@@ -132,6 +132,13 @@ class Tournament_Edit(auth.UserAwareView):
                 
                 participants_by_match[match] = found_participants
 
+            if tournament.type == 'RR':
+                # in round robins we have multiple participants who are identified by 
+                # their name, which means we will have several participant models with the same name 
+                # what we are doing here is making sure when a user is looking at a tourney edit page
+                # we only display one player instead of the same player over and over again
+                participants = [v for v in {part.name:part for part in participants}.itervalues()]
+
             matches.sort(key=attrgetter('round'))
             participants.sort(key=attrgetter('seed')) 
 
