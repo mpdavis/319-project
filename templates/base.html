@@ -60,6 +60,7 @@
                                     <label style="text-align: center;padding-top:5px">or</label>
                                     <input class="btn btn-primary btn-block" type="button" id="sign-in-facebook" value="Sign In with Facebook">
                                     <input class="btn btn-primary btn-block" type="button" id="sign-in-google" value="Sign In with Google">
+                                    <input name="_csrf_token" type="hidden" value="{{ csrf_token() }}">
 {#                                    <input class="btn btn-primary btn-block" type="button" value="Sign Up" onclick="window.location.replace('{{ url_for('register') }}')">#}
 {#                                    <input class="btn btn-primary btn-block" type="button" value="Reset Password">#}
                                 </form>

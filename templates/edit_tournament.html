@@ -6,6 +6,7 @@
         <div class="span8 offset2" style="margin-top:40px;">
             <h1>Edit Tournament</h1>
             <form class="form-horizontal" method="post" action="" id="edit_form">
+                <input name="_csrf_token" type="hidden" value="{{ csrf_token() }}" id="csrf-token">
             <div class="well">
 
                 <div class="alert alert-error" id="save_confirmation" style="display: none;">
@@ -126,6 +127,7 @@
 
             <div class="control-group">
                 <div class="controls">
+                    <input name="_csrf_token" type="hidden" value="{{ csrf_token() }}">
                     <button type="button" style="margin-left:5px;" class="btn pull-right" id="cancel">Cancel</button>
                     <button type="button" class="btn btn-primary pull-right" id="save">Save</button>
                 </div>
@@ -152,7 +154,7 @@
             });
 
             // post data!
-            $.post("/tournament/edit/?id={{tournament.key().id()}}&new_admins="+admins_to_save, {name: $("#name").val(), date: $("#date").val()+" "+$("#date_time").val(), location: $("#location").val(),tournament_security: $('#tournament_security').val(), type:$('#type').val(), order:$("#order").val(),win_method:$('#win_method').val()},
+            $.post("/tournament/edit/?id={{tournament.key().id()}}&new_admins="+admins_to_save, {name: $("#name").val(), date: $("#date").val()+" "+$("#date_time").val(), location: $("#location").val(),tournament_security: $('#tournament_security').val(), type:$('#type').val(), order:$("#order").val(),win_method:$('#win_method').val(),_csrf_token:$('#csrf-token').val()},
             function(responseText)
             {
                 var data = $.parseJSON(responseText);

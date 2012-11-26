@@ -1,7 +1,8 @@
 from wtforms import Form, TextField, PasswordField, BooleanField
 from wtforms import validators
+from base import forms as base_forms
 
-class SignupForm(Form):
+class SignupForm(base_forms.BaseForm):
     username = TextField('Username',
         [validators.Required()])
     email = TextField('Email',
@@ -14,9 +15,9 @@ class SignupForm(Form):
     password_confirm = PasswordField('Confirm Password',
         [validators.Required()])
 
-class LoginForm(Form):
+class LoginForm(base_forms.BaseForm):
     email = TextField('Email',
         [validators.Required(), validators.Email()])
     password = PasswordField('Password',
         [validators.Required()])
-    remember_me = BooleanField('Remember')
+    remember_me = BooleanField('Remember Me')

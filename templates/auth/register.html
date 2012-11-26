@@ -10,7 +10,7 @@
                     Whoops!
                 </div>
 
-                <form class="form-horizontal" method="post" action="">
+                <form class="form-horizontal" method="post" action="" id="register-form">
                     <div class="control-group">
                         <label class="control-label">Email</label>
                         <div class="controls">
@@ -39,6 +39,7 @@
                     </div>
                     <div class="control-group">
                         <div class="controls">
+                            {{ render_csrf_token() }}
                             <button type="button" class="btn btn-primary" id="submit">Register</button>
                         </div>
                     </div>
@@ -58,7 +59,7 @@
             $("#username_control").removeClass("error").removeClass("success");
             $("#username_text").text("");
             if ($("#username").val().length > 0) {
-                var page = "/auth/check_username?";
+                var page = "/auth/check_username/?";
                 var output;
                 $.getJSON(page,
                     {
@@ -89,7 +90,7 @@
         });
 
         $("#submit").click(function() {
-            $.post("/auth/register/", {email: $("#email").val(), username: $("#username").val(), password: $("#password").val(), password_confirm: $("#password_confirm").val()},
+            $.post("/auth/register/", $("#register-form").serialize(),
             function(responseText)
             {
                 var data = $.parseJSON(responseText);

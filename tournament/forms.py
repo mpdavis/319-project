@@ -19,6 +19,7 @@ class NewTournamentStep2(forms.Form):
     date = forms.DateTimeField("Date", [validators.Optional()],
                                widget=base_widgets.DateTimeInput(), format="%m/%d/%Y %H:%M")
 
+
 class NewTournamentStep2DATEHACK(forms.Form):
     #This is so I can have a different format on the date field.  TODO: somehow make into one form.
     name = forms.StringField("Name", [validators.Required()])

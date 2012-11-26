@@ -94,25 +94,24 @@ class Login(auth.UserAwareView):
         return render_template("auth/login.html", **context)
 
     def post(self):
-
+        context = self.get_context()
         form = auth_forms.LoginForm(request.form)
-        error = None
-        loggedin = False
-        message = None
 
         if form.validate():
-
             loggedin = auth_utils.check_password(form.password.data, form.email.data)
 
             if not loggedin:
-                message = "Invalid Email / Password"
+                form.set_form_error('Invalid Email / Password')
+#                form.email.errors = ["Invalid Email / Password"]
+#                form.password.errors = ["Invalid Email / Password"]
             else:
-                flask_login.login_user(auth_models.WTUser.all().filter('email =', form.email.data).fetch(1)[0],
+                flask_login.login_user(auth_models.WTUser.all().filter(
+                    'email =', form.email.data).fetch(1)[0],
                                        remember=form.remember_me.data)
 
-        next_url = '/tournament/list'
-        response = json.dumps({'loggedin': loggedin, 'error_message': message, 'next_url': next_url})
-        return response
+        context['form'] = form
+        return render_template("auth/login.html", **context)
+
 
 class FacebookLogin(auth.UserAwareView):
 

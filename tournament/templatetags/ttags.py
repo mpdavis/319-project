@@ -1,6 +1,8 @@
 from jinja2.ext import  contextfunction, Markup
 import wtforms
 
+from lib import csrf
+
 
 def setup_jinja2_environment(app):
     jenv = app.jinja_env
@@ -18,6 +20,7 @@ def setup_jinja2_environment(app):
         'render_feild': render_field,
         'render_form': render_form,
         'render_form_errors': render_form_errors,
+        'render_csrf_token': render_csrf_token,
 #        'csrf_token':csrf_token,
         # ...
     })
@@ -99,7 +102,7 @@ def render_field(context, field, label=None, single_input=False):
 
 
 @contextfunction
-def render_form(context, form):
+def render_form(context, form, render_csrf=True):
     #helper for determining visible fields
     def get_visible_inputs(form):
         visible_inputs = []
@@ -118,8 +121,12 @@ def render_form(context, form):
     errors = render_form_errors_helper(form)
     single_input = len(get_visible_inputs(form)) == 1
     legend = '' #TODO: implement later for form headings.
+    csrf_token = ''
 
-    return Markup('%s%s%s' % (errors, legend, get_fields_html(context, form, single_input)))
+    if render_csrf:
+        csrf_token = render_csrf_token(context)
+
+    return Markup('%s%s%s%s' % (errors, legend, get_fields_html(context, form, single_input), csrf_token))
 
 
 @contextfunction
@@ -128,14 +135,15 @@ def render_form_errors(context, form):
 
 def render_form_errors_helper(form):
     rendered_form_errors = ''
-    error_base = "<div class=\"alert alert-error\">There were errors with your form submission. Please correct to continue. %s </div>"
+    error_base = "<div class=\"alert alert-error\">%s</div>"
 
-#Looks like WTForms does not have non-field-errors
-#    if hasattr(form, 'show_no_base_error'):
-#        rendered_form_errors = "<div class=\"error_notice_dialog\">%s</div>" % unicode(form.non_field_errors())
-#    elif form.non_field_errors():
-#        error_messages = unicode(form.non_field_errors())
-#        rendered_form_errors = error_base %  error_messages
-    if form.errors:
-        rendered_form_errors = error_base % ""
+    if form.errors or (hasattr(form, 'form_error') and form.form_error):
+        if hasattr(form, 'form_error') and form.form_error:
+            rendered_form_errors = error_base % form.form_error
+        else:
+            rendered_form_errors = error_base % "There were errors with your form submission. Please correct to continue."
     return rendered_form_errors
+
+@contextfunction
+def render_csrf_token(context):
+    return Markup('<input type="hidden" name="_csrf_token" value="%s" />' % context['csrf_token']())

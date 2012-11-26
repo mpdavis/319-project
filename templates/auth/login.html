@@ -5,30 +5,11 @@
     <div class="row" style="margin-top:40px;">
         <div class="span6 offset3">
             <div class="well">
-                <div class="alert alert-error" id="error" style="display: none">
-                    This is a test
-                </div>
-                <form class="form-horizontal" method="post" action="" id="login_form">
-                    <div class="control-group">
-                        <label class="control-label">Email</label>
-                        <div class="controls">
-                            {{ form.email|safe }}
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label">Password</label>
-                        <div class="controls">
-                            {{ form.password|safe }}
-                        </div>
-                    </div>
+                <form class="form-horizontal" method="POST" action="" id="login_form">
+                    {{ render_form(form) }}
                     <div class="control-group">
                         <div class="controls">
-                            <label class="checkbox">
-                                {{ form.remember_me|safe }} Remember Me
-                            </label>
-                            <div style="margin-top: 20px;">
-                                <button type="button" class="btn btn-primary">Login</button> or <a href="/auth/register"> register an account.</a>
-                            </div>
+                            <input type="submit" class="btn btn-primary" value="Login"> or <a href="/auth/register"> register an account.</a>
                         </div>
                     </div>
                 </form>
@@ -39,31 +20,22 @@
 
     </div>
 
-    <script>
-        // Ajax request for login
-        function login() {
-            $.post("/auth/login/", $("#login_form").serialize(),
-                    function(responseText)
-                    {
-                        var data = $.parseJSON(responseText);
-                        if (data.loggedin) {
-                            window.location.replace("/tournament/list");
-                        }
-                    });
-        }
-
-
-        $("#login_form").click(function() {
-            login();
-        });
-
-        $("#login_form").keypress(function(e) {
-            if (e && e.which == 13) {
-                login();
-            }
-        })
-
-
-    </script>
+{#    <script>#}
+{#        // Ajax request for login#}
+{#        function login(e) {#}
+{#            e.preventDefault();#}
+{#            $.post("/auth/login/", $("#login_form").serialize(),#}
+{#                    function(responseText)#}
+{#                    {#}
+{#                        var data = $.parseJSON(responseText);#}
+{#                        if (data.loggedin) {#}
+{#                            window.location.replace("/tournament/list");#}
+{#                        }#}
+{#                    });#}
+{#        }#}
+{##}
+{#        $("#login_form").on('submit',login);#}
+{##}
+{#    </script>#}
 
 {% endblock %}

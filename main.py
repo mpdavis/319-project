@@ -10,6 +10,8 @@ from flask import Flask
 from flask.templating import render_template
 from flask import request
 
+from lib.csrf import csrf
+
 import auth
 from auth import urls as auth_urls
 
@@ -22,6 +24,8 @@ app = Flask(__name__)
 auth.initialize(app)
 
 app.secret_key = 'this-is-just-our-dev-key-oh-so-secret'
+
+csrf(app)
 
 
 class MainHandler(auth.UserAwareView):
