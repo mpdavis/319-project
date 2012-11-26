@@ -98,10 +98,14 @@ class Tournament_Edit(auth.UserAwareView):
         context = self.get_context()
 
         tournament = actions.get_tournament_by_key(tournament_key)
+        admin_list = [actions.get_user_by_id(admin_key.id()) for admin_key in tournament.admins]
+
         html_to_show = ""
+        owners = [tournament.owner.key().id()]
+        owners.extend([admin.key().id() for admin in admin_list])
 
         # if event belongs to our user allow them to edit else redirect them
-        if context['user'].key().id() == tournament.owner.key().id():
+        if context['user'].key().id() in owners:
 
             # preload our forms with data
             form = forms.EditTournament()
@@ -113,7 +117,6 @@ class Tournament_Edit(auth.UserAwareView):
             form.order.data = tournament.order
             form.win_method.data = str(tournament.win_method)
 
-            admin_list = [actions.get_user_by_id(admin_key.id()) for admin_key in tournament.admins]
 
             tournaments = actions.get_linked_tournaments(tournament)
 
@@ -131,6 +134,13 @@ class Tournament_Edit(auth.UserAwareView):
                     found_participants.append({'name':'To Be Determined'})
                 
                 participants_by_match[match] = found_participants
+
+            if tournament.type == 'RR':
+                # in round robins we have multiple participants who are identified by 
+                # their name, which means we will have several participant models with the same name 
+                # what we are doing here is making sure when a user is looking at a tourney edit page
+                # we only display one player instead of the same player over and over again
+                participants = [v for v in {part.name:part for part in participants}.itervalues()]
 
             matches.sort(key=attrgetter('round'))
             participants.sort(key=attrgetter('seed')) 

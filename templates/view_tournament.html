@@ -4,37 +4,149 @@
     <script type="text/javascript" src="/static/js/d3.v2.min.js"></script>
 {% endblock %}
 
-{% block content %}
+{% block style %}
+    <style>
+      .nodeText {
+        cursor: pointer;
+        font-family: Helvetica,'Ludica Grande',sans-serif;
+        font-size: 9pt;
+        font-weight: bold;
+        text-anchor: middle;
+        dominant-baseline: central;
+      }
+      .nodeBox {
+        cursor: pointer;
+        fill: url(#ButtonGradient);
+        stroke: steelblue;
+        stroke-width: 1px;
+      }
+      .nodeLink {
+        fill: none;
+        stroke: lightslategray;
+        stroke-width: 2px;
+      }
+    </style>
+{% endblock %}
 
-    <div id="bracket">
+{% block content %}
+    <div id="bracket" style="margin:0px;padding:0px;">
     </div>
 
-    {# D3 script must appear after the #bracket div has been instantiated #}
+    {# D3 script MUST appear after the #bracket div has been instantiated #}
     <script type="text/javascript">
 
-var margin = {top: 30, right: 10, bottom: 10, left: 10},
-    width = 960 - margin.left - margin.right,
-    halfWidth = width / 2,
-    height = 500 - margin.top - margin.bottom,
-    i = 0,
+// Initialize size values.
+var m = { "t": 20, "r": 40, "b": 20, "l": 120 },
+    width = Math.floor(
+      $(document).width() - (
+        2 * $("#bracket").parent().position().left)) - m["r"] - m["l"],
+    height = Math.floor(width / (16.0 / 9.0)) - m["t"] - m["b"],
+    halfWidth = Math.floor(width / 2.0),
+    halfHeight = Math.floor(height / 2.0),
     duration = 500,
+    i = 0, j = 0,
     root;
 
-var svg = d3.select("#bracket").append("svg")
-    .attr("width", width + margin.right + margin.left)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+// Initialize the D3 tree.
+var tree = d3.layout.tree()
+    .size([height, width]);
 
-{# TODO: Soften this hard-coded url. #}
-d3.json("/tournament/json/?id={{ tournament_id }}", function(json) {
-    d3.select("#bracket").select("svg")
-      .append("text")
-      .attr('style', 'font-family:monospace;font-color:#000;font-size:14pt;')
-      .attr('transform', 'translate(' + 100 + ',' + 100 + ')')
-      .text(json);
-});
+// Initialize SVG.
+var svg = d3.select("#bracket").append("svg")
+    .attr("width", width + m["r"] + m["l"])
+    .attr("height", height + m["t"] + m["b"])
+    .attr("style", "margin:0px;padding:0px;")
+    .attr("xmlns", "http://www.w3.org/2000/svg");
+var defs = svg.append("defs");
+var gradient = defs.append("linearGradient")
+    .attr("id", "ButtonGradient")
+    .attr("gradientUnits", "objectBoundingBox")
+    .attr("x1", "0.5")
+    .attr("y1", "0.5")
+    .attr("x2", "0.5")
+    .attr("y2", "1.0");
+gradient.append("stop")
+    .attr("offset", "0")
+    .attr("stop-color", "white")
+    .attr("stop-opacity", "1")
+    .attr("id", "ButtonColor0");
+gradient.append("stop")
+    .attr("offset", "1")
+    .attr("stop-color", "lightsteelblue")
+    .attr("stop-opacity", "1")
+    .attr("id", "ButtonColor1");
+var bracket = svg.append("g")
+    .attr("transform", "translate(" + m["l"] + "," + m["t"] + ")");
+
+json_display = function(json) {
+  root = json;
+  root.x0 = halfHeight;
+  root.y0 = halfWidth;
+  update(root);
+}
+
+update = function(source) {
+
+  var nodes = tree.nodes(root);
+  var links = tree.links(nodes);
+
+  var node = bracket.selectAll("g.node")
+      .data(nodes);
+
+  var nodeEnter = node.enter().append("g")
+      .attr("class", "node")
+      .attr("transform", function(d) {
+        return "translate(" + (width - source.y0) + "," + source.x0 + ")";
+      });
+
+  nodeEnter.append("text")
+      .text(function(d) { return d.name || d.winner; })
+      .attr("class", "nodeText");
+
+  nodeEnter.selectAll("text").each(function(d) {
+    var w = $(this).width();
+    var h = $(this).height();
+    var wm = 20;
+    var hm = 10;
+    d3.select(this.parentNode).insert("rect", "text")
+        .attr("class", "nodeBox")
+        .attr("width", w + wm)
+        .attr("height", h + hm)
+        .attr("x", (-1) * ((w + wm) / 2))
+        .attr("y", (-1) * ((h + hm) / 2))
+        .attr("rx", 5)
+        .attr("ry", 5);
+  });
+
+  node.transition()
+      .duration(duration)
+      .attr("transform", function(d) {
+        return "translate(" + (width - d.y) + "," + d.x + ")";
+      });
+
+  var elbow = function (d, i) {
+    return "M" + (width - d.source.y) + "," + d.source.x +
+      "H" + (((width - d.source.y) + (width - d.target.y)) / 2) +
+      "V" + d.target.x + "H" + (width - d.target.y);
+  };
+
+  var link = bracket.selectAll("path.nodeLink")
+      .data(links);
+
+  var linkEnter = link.enter().insert("path", "g")
+      .attr("class", "nodeLink")
+      .attr("d", function(d) {
+        var o = {x: source.x0, y: source.y0};
+        return elbow({source: o, target: o});
+      });
+
+  linkEnter.transition()
+      .duration(duration)
+      .attr("d", elbow);
+
+}
+
+d3.json("/tournament/json/?id={{ tournament_id }}", json_display);
 
     </script>
-
 {% endblock %}

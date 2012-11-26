@@ -54,8 +54,13 @@ def get_json_by_tournament(tournament):
             for i in range(len(participants) / match_size):
                 matches.append(participants[(i*match_size):((i+1)*match_size)])
             remainder = len(participants) % match_size
-            if remainder > 0:
+            if remainder > 1:
                 matches.append(participants[((-1)*remainder):])
+            elif remainder > 0:
+                if type(participants[-1]) != list:
+                    matches.append([participants[-1]])
+                else:
+                    matches.append(participants[-1])
             matches = participants_to_bracket(matches, match_size)
         else:
             matches = participants
@@ -64,13 +69,16 @@ def get_json_by_tournament(tournament):
     def bracket_to_json(bracket):
         assert (type(bracket) == list) and (len(bracket) > 0), \
             "Invalid hierarchal bracket list format."
-        json_format = {"winner":"?"}
+        json_format = {"winner":"?", "children":[]}
         if type(bracket[0]) == list:
             for i in range(len(bracket)):
-                json_format["tier_%s" % str(i)] = bracket_to_json(bracket[i])
+                json_format["children"].append(bracket_to_json(bracket[i]))
         else:
-            for i in range(len(bracket)):
-                json_format["player_%s" % str(i)] = bracket[i]
+            if len(bracket) > 1:
+                for i in range(len(bracket)):
+                    json_format["children"].append({"name":bracket[i]})
+            else:
+                json_format = {"name":bracket[0]}
         return json_format
     
     # Grab all participants
@@ -87,6 +95,10 @@ def get_json_by_tournament(tournament):
         participant_names.append(all_participants[i].name)
         participant_names.append(
             all_participants[len(all_participants)-1-i].name)
+    # If odd number of participants, add the middle participant without a pair
+    if (len(all_participants) % 2) == 1:
+        participant_names.append(
+            all_participants[(len(all_participants)/2)].name)
     
     # NOTE: Currently only supports matches of two players each.
     bracket = participants_to_bracket(participant_names, 2)
@@ -126,88 +138,117 @@ def create_tournament(form_data, p_form_data, user):
         for field, value in p_form_data.items():
             if 'name' in field:
                 num = field[11:-4]
-                seeded_list.append({'name':value,'seed':int(num)})  
-
-    # I couldn't fit this into the build tourney recursion, however this helps decides the round number for
-    # each match. This method associates each round number with the level of recursion.
-    # for example a tourney of 16 people
-    # 0:[15] 
-    # 1:[14, 13] 
-    # 2:[12, 11, 10, 9] 
-    # 3:[8, 7, 6, 5, 4, 3, 2, 1]
-    # so each each time we create a new match we just pop an element off of the list depedning on our level of
-    # recursion  
-    def decide_rounds(dict_to_fill, num_of_rounds, level=0):
-        if num_of_rounds <=0:
-            return
-        step = num_of_rounds-int(math.pow(2,level))
-        if step<0: 
-            step=0
-        dict_to_fill[level] = [i for i in range(num_of_rounds, step, -1)]
-        decide_rounds(dict_to_fill,step,level+1)
-
-    round_dict = {}
-    decide_rounds(round_dict,len(seeded_list)-1)
+                seeded_list.append({'name':value,'seed':int(num)+1})  
 
     ps_to_put = []
+    if form_data.get('type') == 'RR':
+        def write_round(list_to_use, round_num, x0, x1, y0, y1):
+            # start from x0 in list and move up to x1  in the list
+            # start from y0 in list and move down to y1 in the list
+            # pair each player element though each iteration
+            for p1, p2 in zip(list_to_use[x0:x1:1],list_to_use[y0:y1:-1]): 
+                m = models.Match(round=round_num, has_been_played=False, parent=t)
+                m.put()
+                player_1 = models.Participant(name=p1['name'],parent=m)
+                player_2 = models.Participant(name=p2['name'],parent=m)
+                ps_to_put.extend([player_1, player_2])
 
-    # rec_build_matches populates our tourneys with the correct network of matches
-    def rec_build_matches(list_to_use, next_match,level=0):
-        def write_player(player, cur_match):
-            if player is not None and player['seed'] is not None and player['name'] is not None:
-                p1 = models.Participant(
-                    seed=player['seed'],
-                    name=player['name'],
-                    parent=cur_match)
-                ps_to_put.append(p1)
+        size = len(seeded_list)
+        split = size/2
 
-        num = len(list_to_use)
-        if num == 2:
-            m = models.Match(round=round_dict[level].pop(), has_been_played=False, parent=t, next_match = next_match)
-            m.put()
-            write_player(list_to_use.pop(),m)
-            write_player(list_to_use.pop(),m)
-        elif num == 1:
-            write_player(list_to_use.pop(), next_match)
-        elif num > 2:
-            left = []
-            right = []
+        # loop through the list for the number of rounds we need
+        # while shuffling the players to create rounds
+        for r in range(size-1):
+            write_round(seeded_list,r+1,0,split,size,split-1)# create new round
+            seeded_list.append(seeded_list.pop(1))# shuffle list
 
-            # This is a little complicated, however it splits the seeded people into 
-            # left and right branches.  If the player's index is divisble by 4 or their index+1
-            # is divisible by 4 they are to be streamed to the right, all the others
-            # are streamed left. (notice we go by index and not seed, however seed = index-1)
-            # for example 8 seeded tourney (the ones going right are marked)
-            # 1 -
-            # 2
-            # 3
-            # 4 -
-            # 5 -
-            # 6
-            # 7
-            # 8 -
-            # As you can see 1,4,5,8 go on the right side of tournament braket, vise versa 
-            # Following the next recursion level...
-            # 1 -
-            # 4
-            # 5
-            # 8 -
-            # This will sort out the matches with the correct players and 
-            # a match tree.
+        # if odd num of players we need to create a new round where we exclude the first player
+        # in the above loop, if odd, we at least exclude one player per round, except the first player
+        # due to the nature of round robins and the algorithm 
+        if size%2 != 0:
+            write_round(seeded_list,r+2,1,split+1,size,split-1)
 
-            for i in range(len(list_to_use)):
-                if i%4 == 0 or (i+1)%4 == 0:
-                    right.append(list_to_use[i])
-                else:
-                    left.append(list_to_use[i])
 
-            m = models.Match(round=round_dict[level].pop(), has_been_played=False, parent=t, next_match = next_match)
-            m.put()
+    elif form_data.get('type') == 'SE':
+        # I couldn't fit this into the build tourney recursion, however this helps decides the round number for
+        # each match. This method associates each round number with the level of recursion.
+        # for example a tourney of 16 people
+        # 0:[15] 
+        # 1:[14, 13] 
+        # 2:[12, 11, 10, 9] 
+        # 3:[8, 7, 6, 5, 4, 3, 2, 1]
+        # so each each time we create a new match we just pop an element off of the list depedning on our level of
+        # recursion  
+        def decide_rounds(dict_to_fill, num_of_rounds, level=0):
+            if num_of_rounds <=0:
+                return
+            step = num_of_rounds-int(math.pow(2,level))
+            if step<0: 
+                step=0
+            dict_to_fill[level] = [i for i in range(num_of_rounds, step, -1)]
+            decide_rounds(dict_to_fill,step,level+1)
 
-            rec_build_matches(right,m,level+1)
-            rec_build_matches(left,m,level+1)
+        round_dict = {}
+        decide_rounds(round_dict,len(seeded_list)-1)
 
-    rec_build_matches(seeded_list,None)
+
+        # rec_build_matches populates our tourneys with the correct network of matches
+        def rec_build_matches(list_to_use, next_match,level=0):
+            def write_player(player, cur_match):
+                if player is not None and player['seed'] is not None and player['name'] is not None:
+                    p1 = models.Participant(
+                        seed=player['seed'],
+                        name=player['name'],
+                        parent=cur_match)
+                    ps_to_put.append(p1)
+
+            num = len(list_to_use)
+            if num == 2:
+                m = models.Match(round=round_dict[level].pop(), has_been_played=False, parent=t, next_match = next_match)
+                m.put()
+                write_player(list_to_use.pop(),m)
+                write_player(list_to_use.pop(),m)
+            elif num == 1:
+                write_player(list_to_use.pop(), next_match)
+            elif num > 2:
+                left = []
+                right = []
+
+                # This is a little complicated, however it splits the seeded people into 
+                # left and right branches.  If the player's index is divisble by 4 or their index+1
+                # is divisible by 4 they are to be streamed to the right, all the others
+                # are streamed left. (notice we go by index and not seed, however seed = index-1)
+                # for example 8 seeded tourney (the ones going right are marked)
+                # 1 -
+                # 2
+                # 3
+                # 4 -
+                # 5 -
+                # 6
+                # 7
+                # 8 -
+                # As you can see 1,4,5,8 go on the right side of tournament braket, vise versa 
+                # Following the next recursion level...
+                # 1 -
+                # 4
+                # 5
+                # 8 -
+                # This will sort out the matches with the correct players and 
+                # a match tree.
+
+                for i in range(len(list_to_use)):
+                    if i%4 == 0 or (i+1)%4 == 0:
+                        right.append(list_to_use[i])
+                    else:
+                        left.append(list_to_use[i])
+
+                m = models.Match(round=round_dict[level].pop(), has_been_played=False, parent=t, next_match = next_match)
+                m.put()
+
+                rec_build_matches(right,m,level+1)
+                rec_build_matches(left,m,level+1)
+
+        rec_build_matches(seeded_list,None)
 
     db.put(ps_to_put)
 

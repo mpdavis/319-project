@@ -8,6 +8,7 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 
 from flask import Flask
 from flask.templating import render_template
+from flask import request
 
 import auth
 from auth import urls as auth_urls
@@ -31,6 +32,8 @@ class MainHandler(auth.UserAwareView):
 
         if self.user:
             context['username'] = self.user.username
+
+        context['login_mode'] = request.args.get('login_mode', None)
 
         return render_template('home.html', **context)
 
