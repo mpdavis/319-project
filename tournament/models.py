@@ -13,10 +13,21 @@ class Tournament(db.Model):
 
     owner = db.ReferenceProperty(auth_models.WTUser)
     admins = db.ListProperty(db.Key)
-    PERMISSION_CHOICES = ['public','protected','private']
+
+    #PERMISSON CONSTANTS
+    PUBLIC = 'public'
+    PROTECTED = 'protected'
+    PRIVATE = 'private'
+    PERMISSION_CHOICES = [PUBLIC,PROTECTED,PRIVATE]
     perms = db.StringProperty(choices=PERMISSION_CHOICES)
 
-    TOURNAMENT_TYPES = ['SE','DE','RR']
+    #TYPE CONSTANTS
+    SINGLE_ELIMINATION = 'SE'
+    DOUBLE_ELIMINATION = 'DE'
+    ROUND_ROBIN = 'RR'
+    TOURNAMENT_TYPES = [SINGLE_ELIMINATION,
+                        DOUBLE_ELIMINATION,
+                        ROUND_ROBIN]
     type = db.StringProperty(choices=TOURNAMENT_TYPES)
 
     order = db.IntegerProperty()
@@ -44,6 +55,9 @@ class Tournament(db.Model):
         if self.created:
             return self.created.strftime("%m/%d/%y %I:%M %p")
         return ''
+
+    def keystr(self):
+        return str(self.key())
 
 
 class Match(db.Model):
@@ -78,6 +92,7 @@ class Participant(db.Model):
     seed = db.IntegerProperty()
     user = db.ReferenceProperty(auth_models.WTUser)
     name = db.StringProperty()
+    score = db.FloatProperty(default=0.0)
 
     def get_participant_name(self):
         if self.user:
