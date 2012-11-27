@@ -92,6 +92,7 @@ class Participant(db.Model):
     seed = db.IntegerProperty()
     user = db.ReferenceProperty(auth_models.WTUser)
     name = db.StringProperty()
+    score = db.FloatProperty(default=0.0)
 
     def get_participant_name(self):
         if self.user:

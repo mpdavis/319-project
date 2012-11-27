@@ -2,6 +2,17 @@
 
 {% block title %}Round Robin{% endblock %}
 
+{% block style %}
+<style>
+.rr-participant{
+    margin-bottom: 0;
+}
+.rr-vs{
+    margin-bottom: 0;
+    margin-left: 25%;
+}
+</style>
+{% endblock %}
 
 {% block content %}
 <div class="page-header"><h1>{{ tournament.name }}</h1></div>
@@ -13,8 +24,8 @@
             <div class="well">
             {% for match, participants in matches %}
                 {% for participant in participants %}
-                    {{ participant.name }}
-                    {{ loop.cycle(' vs. ','') }}
+                    <p class="rr-participant">{{ participant.name }}<span style="float:right;">{{ participant.score }}</span></p>
+                    <p class="rr-vs">{{ loop.cycle(' vs. ','') }}</p>
                 {% endfor %}
                 <hr>
             {% endfor %}
