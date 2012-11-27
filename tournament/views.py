@@ -219,14 +219,9 @@ class Tournament_Json(auth.UserAwareView):
     # TODO: Make perms work
     decorators = [login_required]
     
-    def get(self):
-        context = self.get_context()
-        
-        tournament_id = request.args.get('id')
-        tournament = actions.get_tournament_by_id(int(tournament_id))
-
+    def get(self, tournament_key):
+        tournament = actions.get_tournament_by_key(tournament_key)
         bracket_json = actions.get_json_by_tournament(tournament)
-        
         return jsonify(bracket_json)
 
 

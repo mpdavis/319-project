@@ -146,7 +146,7 @@ update = function(source) {
 
 }
 
-d3.json("/tournament/json/?id={{ tournament_id }}", json_display);
+d3.json("/tournament/json/{{ tournament_key }}/", json_display);
 
     </script>
 {% endblock %}
