@@ -66,7 +66,7 @@
                                 {% for match in matches %}
                                     <tr > 
                                         <td>{{ match.round }}</td>
-                                        <td>{{ match.has_been_played }}</td>
+                                        <td>{{ match.status == 1 }}</td>
                                         {% for particpant in participants_by_match[match] %}
                                             <td>{{particpant.name}}</td>
                                         {% endfor %}
