@@ -106,6 +106,16 @@
 
             <div id="content">
 
+            {% if not remove_header %}
+                <div class="row">
+                    <div class="span12">
+                        <div class="page-header" style="margin: 40px 0px 40px 20px;">
+                            <h1>{% block header %}{% endblock %}</h1>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
                 {% block content %}{% endblock %}
 
             </div>
