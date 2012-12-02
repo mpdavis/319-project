@@ -311,3 +311,12 @@ def get_datatables_records(request, *args):
     response =  json.dumps(response_dict)
 
     return response
+
+def get_non_private_tournaments():
+    keys = models.Tournament.all(keys_only=True).filter("perms =", models.Tournament.PUBLIC).fetch(1000)
+    more_keys = models.Tournament.all(keys_only=True).filter("perms =", models.Tournament.PROTECTED).fetch(1000)
+
+    keys.extend(more_keys)
+
+    tournaments = db.get(keys)
+    return tournaments
