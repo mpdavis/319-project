@@ -66,11 +66,15 @@ class Match(db.Model):
     Children: Participants
     """
     round = db.IntegerProperty()
-    has_been_played = db.BooleanProperty()
+    status = db.IntegerProperty()
     next_match = db.SelfReferenceProperty()
 
+    NOT_STARTED_STATUS = -1
+    IN_PROGRESS_STATUS = 0
+    FINISHED_STATUS = 1
+
     def determine_winner(self):
-        if not self.has_been_played:
+        if self.status != self.FINISHED_STATUS:
             return False
 
         participants = Participant.all().ancestor(self).order('-score')
