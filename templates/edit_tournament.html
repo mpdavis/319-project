@@ -1,10 +1,12 @@
 {% extends 'base.html' %}
 
+{% block header %}Edit Tournament - {{ tournament.name }}{% endblock %}
+
 {% block content %}
 
     <div class="row" >
-        <div class="span8 offset2" style="margin-top:40px;">
-            <h1>Edit Tournament</h1>
+        <div class="span8 offset2" style="margin-top:20px;">
+
             <form class="form-horizontal" method="post" action="" id="edit_form">
             <div class="well">
 

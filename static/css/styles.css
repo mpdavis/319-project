@@ -17,6 +17,7 @@ html {
 body {
     position: relative;
     padding-top: 40px;
+    background-image: url('../img/cream_dust.png');
 }
 
 ul {
@@ -335,7 +336,7 @@ hr.soften {
     padding: 40px 0;
     margin-top: 70px;
     border-top: 1px solid #e5e5e5;
-    background-color: #292929;
+    background-image: url('../img/navy_blue.png');
 }
 .footer p {
     margin-bottom: 0;
@@ -347,6 +348,17 @@ hr.soften {
 .footer-links li {
     display: inline;
     margin-right: 10px;
+}
+
+.footer a {
+    color: #aaaaaa;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+.footer a:hover {
+    color: #fff;
+    text-decoration: none;
 }
 
 
@@ -967,6 +979,8 @@ form.bs-docs-example {
     .footer p {
         margin-bottom: 9px;
     }
+
+
 }
 
 /* Landscape phones
@@ -1059,3 +1073,4 @@ form.bs-docs-example {
 ul.errorlist {
     margin: 0;
 }
+
