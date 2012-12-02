@@ -60,10 +60,23 @@ def update_match_by_winner(match_id, winner):
     participants = get_participants_by_match(match)
     # If there is a participant, then change the match status to played.
     # Add the winner to participants of the next match
-    if participants.__contains__(winner):
+    if winner in participants:
         match.status = models.Match.FINISHED_STATUS
+        match.put()
         generate_player_to_match(winner, match.next_match)
         # Reload the view page
+    return None
+
+def update_match_with_player_score(match_id, participant, score):
+    # Get the selected match by id
+    match = models.Match.get_by_id(match_id)
+    participants = get_participants_by_match(match)
+    # If there is a participant, then change the match status to played.
+    # Add the winner to participants of the next match
+    for p in participants:
+        if p.name == participant:
+            p.score = score
+            p.put()
     return None
 
 
@@ -82,6 +95,7 @@ def generate_player_to_match(participant, cur_match):
             seed=participant.seed,
             name=participant.name,
             parent=cur_match)
+        newPlayer.put()
         cur_match.put()
 
 
@@ -175,8 +189,6 @@ def create_tournament(form_data, p_form_data, user):
 
         # rec_build_matches populates our tourneys with the correct network of matches
         def build_matches_helper(next_match, is_odd, level=0, round =1):
-
-            should_pop = False
             logging.info('level: %d, next_match: %s,   %s', level, next_match, round_dict[level])
             def write_player(seededd_list, cur_match):
                 if len(seeded_list) > 0:
@@ -196,10 +208,8 @@ def create_tournament(form_data, p_form_data, user):
             m = models.Match(round=round, status=models.Match.NOT_STARTED_STATUS, parent=t, next_match = next_match)
             m.put()
             is_leaf = True
-            logging.info("match %d is generated", m.key().id())
 
             if next_match:
-                logging.info("add children %s to %s", m.key().id(), next_match.key().id())
                 next_match.add_children_match(m)
 
             if round_dict.has_key(level+1):
