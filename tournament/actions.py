@@ -148,7 +148,7 @@ def create_tournament(form_data, p_form_data, user):
             # start from y0 in list and move down to y1 in the list
             # pair each player element though each iteration
             for p1, p2 in zip(list_to_use[x0:x1:1],list_to_use[y0:y1:-1]): 
-                m = models.Match(round=round_num, has_been_played=False, parent=t)
+                m = models.Match(round=round_num, status=models.MATCH.NOT_STARTED_STATUS, parent=t)
                 m.put()
                 player_1 = models.Participant(name=p1['name'],parent=m)
                 player_2 = models.Participant(name=p2['name'],parent=m)
@@ -205,7 +205,7 @@ def create_tournament(form_data, p_form_data, user):
 
             num = len(list_to_use)
             if num == 2:
-                m = models.Match(round=round_dict[level].pop(), has_been_played=False, parent=t, next_match = next_match)
+                m = models.Match(round=round_dict[level].pop(), status=models.Match.NOT_STARTED_STATUS, parent=t, next_match = next_match)
                 m.put()
                 write_player(list_to_use.pop(),m)
                 write_player(list_to_use.pop(),m)
@@ -243,7 +243,7 @@ def create_tournament(form_data, p_form_data, user):
                     else:
                         left.append(list_to_use[i])
 
-                m = models.Match(round=round_dict[level].pop(), has_been_played=False, parent=t, next_match = next_match)
+                m = models.Match(round=round_dict[level].pop(), status=models.Match.NOT_STARTED_STATUS, parent=t, next_match = next_match)
                 m.put()
 
                 rec_build_matches(right,m,level+1)
