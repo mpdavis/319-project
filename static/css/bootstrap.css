@@ -933,6 +933,17 @@ table {
 .table-striped tbody tr:nth-child(odd) th {
   background-color: #f9f9f9;
 }
+
+.table-striped tbody tr:nth-child(even) td,
+.table-striped tbody tr:nth-child(even) th {
+    background-color: #ffffff;
+}
+
+.table-striped thead tr td,
+.table-striped thead tr th {
+    background-color: #ffffff;
+}
+
 .table-hover tbody tr:hover td,
 .table-hover tbody tr:hover th {
   background-color: #f5f5f5;
