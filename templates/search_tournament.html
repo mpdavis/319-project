@@ -7,62 +7,64 @@
     <div <div class="span12" style="margin-top:40px;"> 
         <h1>Search Tournaments</h1>
 
-    <div class = "well ">
-            <table class="table table-bordered table-striped table-hover" id="search_table" >
-                <thead>
+        <div>
+                <table class="table table-bordered table-striped table-hover" id="search_table" >
+                    <thead>
+                        <tr>
+                            <th>
+                                Name
+                            </th>
+                            <th>
+                                Type
+                            </th>
+                            <th>
+                                Date & Time
+                            </th>
+
+                            <th>
+                                Location
+                            </th>
+                            <th>
+                                Owner
+                            </th>
+                            <th>
+                                Created
+                            </th>
+                            <th style="width: 113px">
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                    {% for tourn in tournaments %}
                     <tr>
-                        <th>
-                            Name
-                        </th>
-                        <th>
-                            Type
-                        </th>
-                        <th>
-                            Date & Time
-                        </th>
-
-                        <th>
-                            Location
-                        </th>
-                        <th>
-                            Owner
-                        </th>
-                        <th>
-                            Created
-                        </th>
-                        <th>
-                            Actions
-                        </th>
+                        <td>{{ tourn.name }}</td>
+                        <td>{{ tourn.type }}</td>
+                        <td>{{ tourn.date }}</td>
+                        <td>{{ tourn.location }}</td>
+                        <td>{{ tourn.owner.get_display_name() }}</td>
+                        <td>{{ tourn.get_created_formatted() }}</td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="{{ url_for('view-tourney', tournament_key=tourn.keystr())}}" class="btn" style="display:inline;margin-top:5px;" role="button" data-toggle="modal">View</a>
+                                <a href="{{ url_for('tournament-edit', tournament_key=tourn.keystr())}}" class="btn" style="display:inline;margin-top:5px;" role="button" data-toggle="modal">Edit</a>
+                            </div>
+                        </td>
                     </tr>
-                </thead>
-
-                <tbody>
-
-                </tbody>
-            </table>
+                    {% endfor %}
+                    </tbody>
+                </table>
+        </div>
     </div>
-
-
-    </div>
-
-
 
 </div>
 <script>
     $(document).ready(function() {
         $('#search_table').dataTable({
-        'sPaginationType': 'full_numbers',
-        "bServerSide": true,
-        "sAjaxSource": "/tournament/get/",
-        "aoColumns": [
-            { "bSearchable": true},
-            { "bSearchable": true},
-            { "bSearchable": false},
-            { "bSearchable": true},
-            { "bSearchable": true},
-            { "bSearchable": false},
-            { "bSearchable": false},
-        ]
+        'sPaginationType': 'bootstrap'
+
         });
     } );
 </script>
