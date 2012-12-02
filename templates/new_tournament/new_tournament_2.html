@@ -1,11 +1,17 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
 <div class="row">
-
-    <h1 style="margin:35px 0 60px 0;">Start a New Tournament - Step 2</h1>
-
     <div class="span12">
+        <div class="page-header" style="margin: 40px 0px 40px 20px;">
+            <h1>Start a New Tournament - Step 2</h1>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="span6 offset3">
         <form id="new-tourney-form" action='' method='POST' class="form-horizontal">
             <div class="well">
                 {{ render_hidden_fields() }}
@@ -14,7 +20,7 @@
                     <h3>Tell us more about your tournament</h3>
                 </div>
 
-                <div style="margin-left: 250px; margin-top: 10px;">
+                <div style="margin: auto; width: 400px;">
                     {{ render_form(form) }}
                 </div>
 

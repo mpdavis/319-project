@@ -31,8 +31,8 @@ class NewTournamentStep3(forms.Form):
                         ('DE', 'Double Elimination'),
                         ('RR', 'Round Robin'),]
     type = forms.SelectField("Tourney Type", choices=TOURNAMENT_TYPES)
-    number_participants = forms.IntegerField("Number of Participants")
-    show_seeds = forms.BooleanField("Enter seeds for each participant", default=True)
+    number_participants = forms.IntegerField("Participants")
+    show_seeds = forms.BooleanField("Enter seeds", default=False)
 
     def __init__(self, *args, **kwargs):
         super(NewTournamentStep3, self).__init__(*args, **kwargs)
