@@ -7,5 +7,6 @@ def setup_urls(app):
     app.add_url_rule('/tournament/view/<string:tournament_key>/', view_func=tournament_views.Tournament_View.as_view('view-tourney'))
     app.add_url_rule('/tournament/json/<string:tournament_key>/', view_func=tournament_views.Tournament_Json.as_view('tournament-json'))
     app.add_url_rule('/tournament/check_email/', view_func=tournament_views.check_email.as_view('check-email'))
-
     app.add_url_rule('/tournament/public/view/<string:tournament_key>/', view_func=tournament_views.PublicTournamentView.as_view('public-view-tourney'))
+    app.add_url_rule('/tournament/search/', view_func=tournament_views.Tournament_Search.as_view('tournament-search'))
+    app.add_url_rule('/tournament/get/', view_func=tournament_views.get_latest_tournaments.as_view('tournament-get'))
