@@ -178,24 +178,27 @@ def create_tournament(form_data, p_form_data, user):
 
 
             logging.info('level: %d, next_match: %s,   %s', level, next_match, round_dict[level])
-            def write_player(player, cur_match):
-                if player is not None and player['seed'] is not None and player['name'] is not None:
-                    p1 = models.Participant(
-                        seed=player['seed'],
-                        name=player['name'],
-                        parent=cur_match)
-                    logging.info('player: %s is added to %d', p1.name, cur_match.key().id())
-                    ps_to_put.append(p1)
+            def write_player(seededd_list, cur_match):
+                if len(seeded_list) > 0:
+                    player = seeded_list[0]
+                    seeded_list.remove(0)
+                    if player is not None and player['seed'] is not None and player['name'] is not None:
+                        p1 = models.Participant(
+                            seed=player['seed'],
+                            name=player['name'],
+                            parent=cur_match)
+                        logging.info('player: %s is added to %d', p1.name, cur_match.key().id())
+                        ps_to_put.append(p1)
 
             m = models.Match(round=round, status=models.Match.NOT_STARTED_STATUS, parent=t, next_match = next_match)
             m.put()
+            is_leaf = True
             logging.info("match %d is generated", m.key().id())
 
             if next_match:
                 logging.info("add children %s to %s", m.key().id(), next_match.key().id())
                 next_match.add_children_match(m)
 
-            is_leaf=True
             if round_dict.has_key(level+1):
                 candidates = []
                 if len(round_dict[level+1])>1:
@@ -206,17 +209,18 @@ def create_tournament(form_data, p_form_data, user):
                 while len(candidates)>0:
                     logging.info(candidates)
                     is_leaf = False
+                    m.put()
                     build_matches_helper(m, is_odd, level+1, round+1)
                     i = candidates.pop()
                     logging.info('remove: %d', i)
                     if round_dict.has_key(level+1) and is_odd:
                         if len(candidates)==0 and len(seeded_list)>0:
                             is_odd = False
-                            write_player(seeded_list.pop(),m)
+                            write_player(seeded_list,m)
 
             if is_leaf:
-                write_player(seeded_list.pop(),m)
-                write_player(seeded_list.pop(),m)
+                write_player(seeded_list,m)
+                write_player(seeded_list,m)
 
 
         is_odd = False

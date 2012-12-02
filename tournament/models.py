@@ -34,7 +34,6 @@ class Tournament(db.Model):
 
     order = db.IntegerProperty()
     next_tournament = db.SelfReferenceProperty()
-
     #Win Methods
     win_method = db.IntegerProperty()
     HIGHEST_WINS = 0
@@ -91,7 +90,7 @@ class Match(db.Model):
                             "Something is wrong.")
 
     def is_leaf(self):
-        return not self.first_match and self.second_match
+        return not self.first_match and not self.second_match
 
     def get_children_matches(self):
         matches = []
@@ -123,13 +122,16 @@ class MatchEncoder(json.JSONEncoder):
             winner = "?"
             if obj.status==Match.FINISHED_STATUS:
                 winner = obj.determine_winner()
-            children = obj.get_children_matches()
+            children = None
+            if not obj.is_leaf():
+                children = obj.get_children_matches()
             participants = actions.get_participants_by_match(obj)
             users = []
             if len(participants) > 1:
                 for i in range(len(participants)):
                     users.append({"name":participants[i].name})
             #id is not stable here for some reason.
+
             return {"id":obj.key().id(),"winner":winner,"children":children,"participants":users,"status":obj.status}
 
         else:
