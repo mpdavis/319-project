@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Web Tournaments{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div <div class="span12" style="margin-top:40px;"> 
+        <h1>Search Tournaments</h1>
+
+    <div class = "well ">
+            <table class="table table-bordered table-striped table-hover" id="search_table" >
+                <thead>
+                    <tr>
+                        <th>
+                            Name
+                        </th>
+                        <th>
+                            Type
+                        </th>
+                        <th>
+                            Date & Time
+                        </th>
+
+                        <th>
+                            Location
+                        </th>
+                        <th>
+                            Owner
+                        </th>
+                        <th>
+                            Created
+                        </th>
+                        <th>
+                            Actions
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                </tbody>
+            </table>
+    </div>
+
+
+    </div>
+
+
+
+</div>
+<script>
+    $(document).ready(function() {
+        $('#search_table').dataTable({
+        'sPaginationType': 'full_numbers',
+        "bServerSide": true,
+        "sAjaxSource": "/tournament/get/",
+        "aoColumns": [
+            { "bSearchable": true},
+            { "bSearchable": true},
+            { "bSearchable": false},
+            { "bSearchable": true},
+            { "bSearchable": true},
+            { "bSearchable": false},
+            { "bSearchable": false},
+        ]
+        });
+    } );
+</script>
+{% endblock %}
