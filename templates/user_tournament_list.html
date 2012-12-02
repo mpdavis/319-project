@@ -2,11 +2,12 @@
 
 {% block title %}Web Tournaments - My Tournaments{% endblock %}
 
+{% block header %}My Tournaments{% endblock %}
+
 {% block content %}
 <div class="row">
-    <div class="span12" style="margin-top: 50px;">
-        <h1 style="display: inline;margin:35px 0 60px 0;">My Tournaments</h1>
-        <a id="create-tournament-button" href="{{ url_for('new-tourney') }}" class="btn btn-primary pull-right" style="display: inline;margin-top:5px;" role="button" data-toggle="modal">Create New Tournament</a>
+    <div class="span12">
+        <a id="create-tournament-button" href="{{ url_for('new-tourney') }}" class="btn btn-primary pull-right" style="display: inline;margin-top:0px; margin-bottom: 10px;" role="button" data-toggle="modal">Create New Tournament</a>
         <table class="table table-bordered table-striped table-hover" id="tournament-table" style="margin-top:5px;">
             <thead class="header">
             <tr>
