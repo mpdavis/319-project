@@ -13,6 +13,12 @@ def get_tournaments_by_user(user_key):
     t_set = set(tournaments)
     return t_set
 
+def get_match_by_key(key):
+    return db.get(key)
+
+def get_participant_by_key(key):
+    return db.get(key)
+
 def get_tournament_by_id(id):
 	return models.Tournament.get_by_id(id)
 

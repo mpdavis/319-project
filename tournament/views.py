@@ -1,6 +1,6 @@
 from flask import request, redirect, url_for, jsonify
 from flask.templating import render_template
-
+from google.appengine.ext import db
 import json
 from operator import attrgetter
 from lib.flask_login import login_required
@@ -252,4 +252,36 @@ class get_latest_tournaments(auth.UserAwareView):
     def get(self):
         return actions.get_datatables_records(request)
 
+
+class update_match(auth.UserAwareView):
+    def get(self):
+        # Please feed me this json.
+        # {'match':{'match_key':'key_for_match', 'match_status':1, 
+        #           'player1':{'key':'p1_key', 'score':12},
+        #           'player2':{'key':'p2_key', 'score':12}}}
+
+        matches = json.loads(json.dumps(request.args))
+
+        match = actions.get_match_by_key(matches['match[match_key]'])
+        match.status =  long(matches['match[match_status]'])
+
+        p1 = actions.get_participant_by_key(matches['match[player1][key]'])
+        p1.score = float(matches['match[player1][score]'])
+
+        p2 = actions.get_participant_by_key(matches['match[player2][key]'])
+        p2.score = float(matches['match[player2][score]'])
+
+        to_put = [match, p1, p2 ]
+
+
+        winner = match.determine_winner()
+        if winner:
+            to_put.append(models.Participant(
+                                seed=winner.seed,
+                                name=winner.name,
+                                parent=match.next_match))
+
+
+        db.put(to_put)
+        return json.dumps({})
 
