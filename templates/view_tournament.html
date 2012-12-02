@@ -49,7 +49,19 @@ var m = { "t": 20, "r": 40, "b": 20, "l": 120 },
 
 // Initialize the D3 tree.
 var tree = d3.layout.tree()
-    .size([height, width]);
+    .size([height, width])
+    .children(function(d) {
+      child_matches = false;
+      if (d.children)
+      {
+        if (d.children.length > 0)
+          child_matches = true;
+      }
+      if (child_matches)
+        return d.children;
+      else
+        return d.participants;
+    });
 
 // Initialize SVG.
 var svg = d3.select("#bracket").append("svg")
@@ -79,7 +91,7 @@ var bracket = svg.append("g")
     .attr("transform", "translate(" + m["l"] + "," + m["t"] + ")");
 
 json_display = function(json) {
-  root = json;
+  root = json.matches;
   root.x0 = halfHeight;
   root.y0 = halfWidth;
   update(root);
@@ -98,8 +110,7 @@ update = function(source) {
       .attr("transform", function(d) {
         return "translate(" + (width - source.y0) + "," + source.x0 + ")";
       });
-
-  nodeEnter.append("text")
+nodeEnter.append("text")
       .text(function(d) { return d.name || d.winner; })
       .attr("class", "nodeText");
 
