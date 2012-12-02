@@ -41,8 +41,8 @@
                     {% for tourn in tournaments %}
                     <tr>
                         <td>{{ tourn.name }}</td>
-                        <td>{{ tourn.type }}</td>
-                        <td>{{ tourn.date }}</td>
+                        <td>{{ tourn.get_type_verbose() }}</td>
+                        <td>{{ tourn.get_date_formatted() }}</td>
                         <td>{{ tourn.location }}</td>
                         <td>{{ tourn.owner.get_display_name() }}</td>
                         <td>{{ tourn.get_created_formatted() }}</td>
