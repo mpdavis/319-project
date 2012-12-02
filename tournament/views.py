@@ -225,6 +225,13 @@ class Tournament_Json(auth.UserAwareView):
         return jsonify(bracket_json)
 
 
+class Tournament_Search(auth.UserAwareView):
+    active_nav = 'tournament_search'
+    def get(self):
+        context = self.get_context()
+        return render_template('search_tournament.html', **context)
+
+
 class check_email(auth.UserAwareView):
     def get(self):
         email = request.args.get('email', None)
@@ -238,3 +245,10 @@ class check_email(auth.UserAwareView):
             output['username'] = found_user.username
 
         return json.dumps(output)
+
+
+class get_latest_tournaments(auth.UserAwareView):
+    def get(self):
+        return actions.get_datatables_records(request)
+
+
