@@ -176,12 +176,15 @@ def create_tournament(form_data, p_form_data, user):
         # rec_build_matches populates our tourneys with the correct network of matches
         def build_matches_helper(next_match, is_odd, level=0, round =1):
 
-
+            should_pop = False
             logging.info('level: %d, next_match: %s,   %s', level, next_match, round_dict[level])
             def write_player(seededd_list, cur_match):
                 if len(seeded_list) > 0:
-                    player = seeded_list[0]
-                    seeded_list.remove(0)
+                    if len(seeded_list)%2==1:
+                        player = seeded_list.pop()
+                    else:
+                        player = seeded_list[0]
+                        seeded_list.remove(player)
                     if player is not None and player['seed'] is not None and player['name'] is not None:
                         p1 = models.Participant(
                             seed=player['seed'],
@@ -219,6 +222,7 @@ def create_tournament(form_data, p_form_data, user):
                             write_player(seeded_list,m)
 
             if is_leaf:
+
                 write_player(seeded_list,m)
                 write_player(seeded_list,m)
 
