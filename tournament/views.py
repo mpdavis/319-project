@@ -283,5 +283,5 @@ class update_match(auth.UserAwareView):
 
 
         db.put(to_put)
-        return json.dumps({})
+        return json.dumps({'p1_score':p1.score, 'p2_score':p2.score})
 
