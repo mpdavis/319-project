@@ -1,5 +1,7 @@
 from google.appengine.ext import db
 from auth import models as auth_models
+import actions
+import json
 
 
 class Tournament(db.Model):
@@ -73,6 +75,33 @@ class Match(db.Model):
     IN_PROGRESS_STATUS = 0
     FINISHED_STATUS = 1
 
+    #Fields for Single Elimination
+    first_match = db.SelfReferenceProperty(collection_name="first_match_reference_set")
+    second_match = db.SelfReferenceProperty(collection_name="second_match_reference_set")
+
+    def add_children_match(self, match):
+        if not self.first_match:
+            self.first_match = match
+            self.put()
+        elif not self.second_match:
+            self.second_match = match
+            self.put()
+        else:
+            raise Exception("There were more than 2 children matches returned for this match.  " +
+                            "Something is wrong.")
+
+    def is_leaf(self):
+        return not self.first_match and self.second_match
+
+    def get_children_matches(self):
+        matches = []
+        if self.first_match:
+            matches.append(self.first_match)
+        if self.second_match:
+            matches.append(self.second_match)
+        return matches
+
+
     def determine_winner(self):
         if self.status != self.FINISHED_STATUS:
             return False
@@ -87,6 +116,26 @@ class Match(db.Model):
                             "Something is wrong.")
         else:
             return None
+
+class MatchEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Match):
+            winner = "?"
+            if obj.status==Match.FINISHED_STATUS:
+                winner = obj.determine_winner()
+            children = obj.get_children_matches()
+            participants = actions.get_participants_by_match(obj)
+            users = []
+            if len(participants) > 1:
+                for i in range(len(participants)):
+                    users.append({"name":participants[i].name})
+            #id is not stable here for some reason.
+            return {"id":obj.key().id(),"winner":winner,"children":children,"participants":users,"status":obj.status}
+
+        else:
+            return ""
+
+        return json.JSONEncoder.default(self, obj)
 
 
 class Participant(db.Model):

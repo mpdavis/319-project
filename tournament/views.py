@@ -222,7 +222,7 @@ class Tournament_Json(auth.UserAwareView):
     def get(self, tournament_key):
         tournament = actions.get_tournament_by_key(tournament_key)
         bracket_json = actions.get_json_by_tournament(tournament)
-        return jsonify(bracket_json)
+        return bracket_json
 
 
 class Tournament_Search(auth.UserAwareView):
