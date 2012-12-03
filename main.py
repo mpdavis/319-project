@@ -30,6 +30,8 @@ class MainHandler(auth.UserAwareView):
     def get(self):
         context = self.get_context()
 
+        context['remove_header'] = True
+
         if self.user:
             context['username'] = self.user.username
 
