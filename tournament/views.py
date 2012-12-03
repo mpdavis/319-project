@@ -308,5 +308,5 @@ class update_match(auth.UserAwareView):
 
         db.put(to_put)
 
-        return json.dumps({'p1_score':p1_score, 'p1_key': p1_key, 'p2_score':p2_score, 'p2_key': p2_key, 'winner': winner_key})
+        return json.dumps({'p1_score':p1_score, 'p1_key': str(p1_key), 'p2_score':p2_score, 'p2_key': str(p2_key), 'winner': str(winner_key)})
 
