@@ -154,3 +154,8 @@ class Participant(db.Model):
             return self.user.get_display_name()
         else:
             return self.name
+
+    def is_winner(self):
+        if self.parent().determine_winner() and self.parent().determine_winner().key() == self.key():
+            return True
+        return False

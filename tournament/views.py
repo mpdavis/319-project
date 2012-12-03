@@ -283,7 +283,7 @@ class update_match(auth.UserAwareView):
             to_put.append(p1)
         else:
             p1_key = match_participants[0].key()
-            p1_score = match_participants[0].score()
+            p1_score = match_participants[0].score
 
 
         p2_score = None
@@ -299,7 +299,7 @@ class update_match(auth.UserAwareView):
             to_put.append(p2)
         else:
             p2_key = match_participants[1].key()
-            p2_score = match_participants[1].score()
+            p2_score = match_participants[1].score
 
 
         winner_key = None
