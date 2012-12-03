@@ -334,9 +334,13 @@ hr.soften {
 
 .footer {
     padding: 40px 0;
+    color: #444444;
     margin-top: 70px;
     border-top: 1px solid #e5e5e5;
-    background-image: url('../img/navy_blue.png');
+    /*background-image: url('../img/navy_blue.png');*/
+    background-color: #eeeeee;
+
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff2f2f2', GradientType=0);
 }
 .footer p {
     margin-bottom: 0;
@@ -351,13 +355,14 @@ hr.soften {
 }
 
 .footer a {
-    color: #aaaaaa;
+    color: #444444;
     text-decoration: none;
-    font-size: 18px;
+    font-size: 14px;
+    margin-left: 10px;
 }
 
 .footer a:hover {
-    color: #fff;
+    color: #000000;
     text-decoration: none;
 }
 
