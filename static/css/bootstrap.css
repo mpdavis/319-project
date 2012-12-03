@@ -826,6 +826,7 @@ table {
   background-color: transparent;
   border-collapse: collapse;
   border-spacing: 0;
+  background-color: #ffffff;
 }
 .table {
   width: 100%;
@@ -3318,6 +3319,7 @@ input[type="submit"].btn.btn-mini {
   color: #999999;
 }
 .pagination {
+  background-color: #ffffff;
   height: 40px;
   margin: 20px 0;
 }

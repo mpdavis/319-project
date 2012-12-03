@@ -7,29 +7,23 @@
 
 
     <div class="home {%if login_mode=='dusty'%}dusty{%endif%} shadow">
-
         <div class="container">
-
             <div class="row">
                 <div class="span12 blackback">
                     <h1>Web Tournaments</h1>
                     <h3>Easy, fast, and powerful tournament software. </h3>
 
-                    <p style="text-align: center;"><a href="{{ url_for('new-tourney') }}" class="btn btn-primary btn-large">Start a Tournament</a></p> <!-- TODO: fix this link to not be hardcoded! -->
+                    <p style="text-align: center;"><a href="{{ url_for('new-tourney') }}" class="btn btn-primary btn-large">Start a Tournament</a></p>
                 </div>
 
             </div>
 
         </div>
-
-
-
     </div>
 
 {% endblock %}
 
 {% block content %}
-
 
     <div class="marketing">
 
