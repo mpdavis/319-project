@@ -265,14 +265,13 @@ class update_match(auth.UserAwareView):
         match = actions.get_match_by_key(data['match[match_key]'])
         match.status =  long(data['match[match_status]'])
 
-        matches_participants = actions.get_participants_by_match(match)
+        match_participants = actions.get_participants_by_match(match)
 
         to_put = [match]
 
         p1_score = None
         p1_key = None
-        p2_score = None
-        p2_key = None
+
         if 'match[player1][key]' in data:
             p1 = actions.get_participant_by_key(data['match[player1][key]'])
 
@@ -282,7 +281,13 @@ class update_match(auth.UserAwareView):
             p1_key = p1.key()
             p1_score = p1.score = float(data['match[player1][score]'])
             to_put.append(p1)
+        else:
+            p1_key = match_participants[0].key()
+            p1_score = match_participants[0].score()
 
+
+        p2_score = None
+        p2_key = None
         if 'match[player2][key]' in data:
             p2 = actions.get_participant_by_key(data['match[player2][key]'])
 
@@ -292,6 +297,9 @@ class update_match(auth.UserAwareView):
             p2_key = p2.key()
             p2_score = p2.score = float(data['match[player2][score]'])
             to_put.append(p2)
+        else:
+            p2_key = match_participants[1].key()
+            p2_score = match_participants[1].score()
 
 
         winner_key = None
