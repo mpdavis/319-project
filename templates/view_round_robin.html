@@ -116,12 +116,7 @@ $(document).ready(function(){
     $('.match-wrapper').click(function(){
        $('match-wrapper').popover('hide');
     });
-    $('.match-wrapper:not(.not-started)').popover({
-        html: true,
-        placement: 'top',
-        title: 'Update Match <button title="Finish match" class="btn btn-mini btn-inverse pull-right finish-match" style="text-align:left;"><i class="icon-ok"></i></button>',
-        content: get_popover_content
-    });
+    initializePopovers();
     $('.finish-match').live('mouseover', function(){
         $(this).stop().animate({width:90}, 300, function(){$(this).html('<i class="icon-ok"></i> Finish Match')});
     });
@@ -141,7 +136,9 @@ $(document).ready(function(){
                     $('#' + data.p1_key + '-score').removeClass('hidden');
                     $('#' + data.p2_key + '-score > .score').html(data.p2_score).removeClass('hidden');
                     $('#' + data.p2_key + '-score').removeClass('hidden');
+                    that.parent().parent().removeClass('not-started');
                     that.parent().remove();
+                    initializePopovers();
                 });
     });
     //Handler for updating a score on a match.
@@ -173,8 +170,6 @@ $(document).ready(function(){
                   function(data){
                       $('#' + data.winner + '-score').append('&nbsp;&nbsp;<icon class="icon-ok"></i>').addClass('winner');
                       match_wrapper.find('.rr-participant-score').addClass('final');
-
-                      console.log(data);
                   }
         );
     });
@@ -182,6 +177,16 @@ $(document).ready(function(){
 {#    $(this).parent('match-wrapper').popover('destroy');#}
 
 });
+
+function initializePopovers(){
+    $('.match-wrapper').popover('destroy');
+    $('.match-wrapper:not(.not-started)').popover({
+          html: true,
+          placement: 'top',
+          title: 'Update Match <button title="Finish match" class="btn btn-mini btn-inverse pull-right finish-match" style="text-align:left;"><i class="icon-ok"></i></button>',
+          content: get_popover_content
+      });
+}
 
 function get_popover_content(){
     var matchKey = '<input type="hidden" id="hidden-match-key" value="'+ $(this).attr('id') +'" />';
