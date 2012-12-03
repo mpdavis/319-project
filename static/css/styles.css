@@ -173,4 +173,16 @@ body > .navbar .brand:hover {
     background-image: url('../img/navy_blue.png');
 }
 
+/* Forms */
+.required-indicator {
+    color: #FF0000;
+    padding-left: 2px;
+}
 
+.form-horizontal .controls {
+    margin-left: 110px;
+}
+
+.form-horizontal .control-label {
+    width: 100px;
+}
