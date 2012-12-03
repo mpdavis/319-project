@@ -15,7 +15,7 @@ assets_env = Environment(app)
 js = Bundle(Bundle('js/jquery-1.7.1.min.js'), Bundle('js/bootstrap.min.js'),
             Bundle('js/chosen.jquery.min.js', 'js/chosen.autoload.js'),
             Bundle('js/bootstrap-modal.js'), Bundle('js/jquery.datatable.js'),
-            Bundle('js/boostrap-datepicker.js'),
+            Bundle('js/boostrap-datepicker.js'), Bundle('js/jquery-ui.min.js'),
             output='merged/merged.js')
 assets_env.register('js_all', js)
 

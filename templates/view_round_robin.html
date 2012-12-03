@@ -59,9 +59,9 @@ div.match.right .rr-participant-score{
                 <div class="match-wrapper{% if match.status < 0 %} not-started{% endif %}" data-matchkey="{{ match.key() }}">
                 {% for participant in participants %}
                     <div class="{{ loop.cycle('match', 'match right') }}">
-                        <p class="rr-participant-name">{{ participant.name }}</p>
+                        <p class="rr-participant-name" id="{{ participant.key() }}-name">{{ participant.name }}</p>
                         {% if match.status > -1 %}
-                            <p class="rr-participant-score">{{ participant.score|replace('.0','') }}</p>
+                            <p class="rr-participant-score" id="{{ participant.key() }}-score">{{ participant.score|replace('.0','') }}</p>
                         {% endif %}
                     </div>
                 {% endfor %}
@@ -102,19 +102,37 @@ $(document).ready(function(){
         title: 'Update Match',
         content: get_popover_content
     })
+    //Handler for start match button.
     $('.rr-start-match > .btn').click(function(){
-        var url = '/tournament/update_match'
+        var url = '/tournament/update_match';
         var match_key = $(this).attr('id').substr(0, $(this).attr('id').length-6)
-        var p1key = 0
-        var p2key = 0
         $.getJSON(url,
                 {'match': {'match_key': match_key, 'match_status': '0'}},
                 function(data) {
-                    console.log(data)
-                })
-
+                    $(data.p1_key + 'score').html(data.p1_score).css('background-color', '#00aaaa').animate({backgroundColor: "#FFFFFF"}, 1000);
+                    $(data.p2_key + 'score').html(data.p2_score).css('background-color', '#0045bc').animate({backgroundColor: "#FFFFFF"}, 1000);
+                });
+    });
+    //Handler for updating a score on a match.
+    $('.update-score').blur(function(){
+        var url = '/tournament/update_match';
+        var match_key = $(this).attr('id').substr(0, $(this).attr('id').length-6);
+        var p1_obj = $(this).find('.rr-participant-name').first();
+        var p1_key = p1_obj.attr('id').substr(0,$(this).attr('id').length-5);
+        var p1_score = $(p1_key + '-score').html();
+        var p2_obj = $(this).find('.rr-participant-name').eq(1);
+        var p2_key = p2_obj.attr('id').substr(0,$(this).attr('id').length-5);
+        var p2_score = $(p2_key + '-score').html();
+        $.getJSON(url,
+                  {'match':{'match_key': match_key, 'match_status':'0', 'player1':{'key':p1_key, 'score':p1_score}, 'player2':{'key':p2_key, 'score':p2_score}}},
+                  function(data){
+                      $(data.p1_key + 'score').html(data.p1_score).css('background-color', '#00aaaa').animate({backgroundColor: "#FFFFFF"}, 1000);
+                      $(data.p2_key + 'score').html(data.p2_score).css('background-color', '#0045bc').animate({backgroundColor: "#FFFFFF"}, 1000);
+                  }
+        );
     });
 
+{#    $(this).parent('match-wrapper').popover('destroy');#}
 
 });
 
@@ -125,9 +143,9 @@ function get_popover_content(){
     var controls = '<div class="controls">';
     var endDiv = '</div>';
     var label1 = '<label class="control-label" style="font-weight:bold;">' + $(this).find('.rr-participant-name').html() + ':</label>';
-    var input1 = '<input class="span1" type="text" name="participant1_score" value="' + $(this).find('.rr-participant-score').first().html() + '" />';
+    var input1 = '<input class="update-score span1" type="text" name="participant1_score" value="' + $(this).find('.rr-participant-score').first().html() + '" />';
     var label2 = '<label class="control-label" style="font-weight:bold;">' + $(this).find('.rr-participant-name').eq(1).html() + ':</label>';
-    var input2 = '<input class="span1" type="text" name="participant2_score" value="' + $(this).find('.rr-participant-score').eq(1).html() + '" />';
+    var input2 = '<input class="update-score span1" type="text" name="participant2_score" value="' + $(this).find('.rr-participant-score').eq(1).html() + '" />';
     var submit = '<input type="submit" class="btn btn-primary btn-mini" value="Update" />'
     var endForm = '</form>';
     return form + controlGroup + label1 + controls + input1 + endDiv + endDiv + controlGroup + label2 + controls + input2 + endDiv + endDiv + endForm;
