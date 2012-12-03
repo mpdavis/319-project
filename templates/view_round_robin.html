@@ -12,7 +12,10 @@
 .match-wrapper{
     cursor: pointer;
 }
-.match-wrapper.not-started-message{
+.match-wrapper.not-started{
+    cursor: auto;
+}
+.match-wrapper.finished{
     cursor: auto;
 }
 div.match {
@@ -67,7 +70,7 @@ div.match.right .rr-participant-score.final.winner{
             <h3>Round {{ round }}</h3>
             <div class="well well-large">
             {% for match, participants in matches %}
-                <div class="match-wrapper{% if match.status < 0 %} not-started{% endif %}" id="{{ match.key() }}">
+                <div class="match-wrapper{% if match.status < 0 %} not-started{% else %}{% if match.status == 1 %} finished{% endif %}{% endif %}" id="{{ match.key() }}">
                 {% for participant in participants %}
                     <div class="{{ loop.cycle('match', 'match right') }}">
                         <p class="rr-participant-name" id="{{ participant.key() }}-name">{{ participant.name }}</p>
@@ -105,6 +108,11 @@ div.match.right .rr-participant-score.final.winner{
 </div>
 <script type="text/javascript">
 $(document).ready(function(){
+    $('body').live('click',function(e){
+        if($(e.target).parents('div.popover').length < 1){
+            $('.match-wrapper').popover('hide');
+        }
+    });
     $('.match-wrapper').mouseover(function(){
         $(this).find('.rr-start-match > .btn').removeClass('hidden');
         $(this).find('.rr-start-match > p.not-started-message').addClass('hidden');
@@ -113,8 +121,11 @@ $(document).ready(function(){
         $(this).find('.rr-start-match > .btn').addClass('hidden');
         $(this).find('.rr-start-match > p.not-started-message').removeClass('hidden');
     });
-    $('.match-wrapper').click(function(){
-       $('match-wrapper').popover('hide');
+    $('.match-wrapper').click(function(e){
+        $('.match-wrapper').not($(this)).popover('hide');
+        $(this).popover('toggle');
+        $('.update-score').first().focus();
+        e.stopPropagation();
     });
     initializePopovers();
     $('.finish-match').live('mouseover', function(){
@@ -157,7 +168,7 @@ $(document).ready(function(){
                   function(data){
                       $('#' + data.p1_key + '-score > .score').html(data.p1_score);
                       $('#' + data.p2_key + '-score > .score').html(data.p2_score);
-                      match_wrapper.css('background-color', '#ccd5ec').animate({backgroundColor: "#FFFFFF"}, 1000)
+                      match_wrapper.css('background-color', '#ccd5ec').animate({backgroundColor: "#F9F9F9"}, 1000)
                   }
         );
     });
@@ -170,22 +181,23 @@ $(document).ready(function(){
                   function(data){
                       $('#' + data.winner + '-score').append('&nbsp;&nbsp;<icon class="icon-ok"></i>').addClass('winner');
                       match_wrapper.find('.rr-participant-score').addClass('final');
+                      match_wrapper.addClass('finished');
+                      match_wrapper.popover('hide');
+                      initializePopovers();
                   }
         );
     });
-
-{#    $(this).parent('match-wrapper').popover('destroy');#}
-
 });
 
 function initializePopovers(){
     $('.match-wrapper').popover('destroy');
-    $('.match-wrapper:not(.not-started)').popover({
+    $('.match-wrapper:not(.not-started):not(.finished)').popover({
           html: true,
           placement: 'top',
+          trigger: 'manual',
           title: 'Update Match <button title="Finish match" class="btn btn-mini btn-inverse pull-right finish-match" style="text-align:left;"><i class="icon-ok"></i></button>',
           content: get_popover_content
-      });
+    });
 }
 
 function get_popover_content(){
