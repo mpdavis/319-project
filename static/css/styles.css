@@ -169,6 +169,8 @@ body > .navbar .brand:hover {
     background-color: #f9f9f9;
 }
 
-
+.navbar-inverse {
+    background-image: url('../img/navy_blue.png');
+}
 
 
