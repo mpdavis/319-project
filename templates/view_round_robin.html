@@ -6,6 +6,9 @@
 
 {% block style %}
 <style>
+.hidden{
+    display: none;
+}
 .match-wrapper{
     cursor: pointer;
 }
@@ -24,6 +27,9 @@ div.match.right{
 div.match.right .rr-participant-score{
     padding: 0px 0px 0px 30px;
 }
+div.match.right .rr-participant-score.final.winner{
+    padding: 0px 0px 0px 65px;
+}
 .rr-participant-name{
     margin-bottom: 0;
     display: inline;
@@ -37,6 +43,9 @@ div.match.right .rr-participant-score{
     font-size: 22px;
     font-weight: bolder;
     color: #002ca0;
+}
+.rr-participant-score.final{
+    color: #333333;
 }
 .rr-start-match{
     height: 25px;
@@ -58,12 +67,22 @@ div.match.right .rr-participant-score{
             <h3>Round {{ round }}</h3>
             <div class="well well-large">
             {% for match, participants in matches %}
-                <div class="match-wrapper{% if match.status < 0 %} not-started{% endif %}" data-matchkey="{{ match.key() }}">
+                <div class="match-wrapper{% if match.status < 0 %} not-started{% endif %}" id="{{ match.key() }}">
                 {% for participant in participants %}
                     <div class="{{ loop.cycle('match', 'match right') }}">
                         <p class="rr-participant-name" id="{{ participant.key() }}-name">{{ participant.name }}</p>
-                        {% if match.status > -1 %}
+                        {% if match.status == -1 %}
+                            <p class="rr-participant-score hidden" id="{{ participant.key() }}-score">{{ participant.score|replace('.0','') }}</p>
+                        {% endif %}
+                        {% if match.status == 0 %}
                             <p class="rr-participant-score" id="{{ participant.key() }}-score">{{ participant.score|replace('.0','') }}</p>
+                        {% endif %}
+                        {% if match.status == 1 %}
+                            {% if participant.is_winner() %}
+                            <p class="rr-participant-score final winner" id="{{ participant.key() }}-score">{{ participant.score|replace('.0','') }} &nbsp;<i class="icon-ok"></i></p>
+                            {% else %}
+                            <p class="rr-participant-score final" id="{{ participant.key() }}-score">{{ participant.score|replace('.0','') }}</p>
+                            {% endif %}
                         {% endif %}
                     </div>
                 {% endfor %}
@@ -101,35 +120,59 @@ $(document).ready(function(){
     $('.match-wrapper:not(.not-started)').popover({
         html: true,
         placement: 'top',
-        title: 'Update Match',
+        title: 'Update Match <button title="Finish match" class="btn btn-mini btn-inverse pull-right finish-match" style="text-align:left;"><i class="icon-ok"></i></button>',
         content: get_popover_content
-    })
+    });
+    $('.finish-match').live('mouseover', function(){
+        $(this).stop().animate({width:90}, 300, function(){$(this).html('<i class="icon-ok"></i> Finish Match')});
+    });
+    $('.finish-match').live('mouseleave', function(){
+        $(this).stop().html('<i class="icon-ok"></i>').animate({width:25}, 300);
+    });
+
     //Handler for start match button.
     $('.rr-start-match > .btn').click(function(){
-        var url = '/tournament/update_match';
+        var url = '/tournament/update_match/';
         var match_key = $(this).attr('id').substr(0, $(this).attr('id').length-6)
         $.getJSON(url,
                 {'match': {'match_key': match_key, 'match_status': '0'}},
                 function(data) {
-                    $(data.p1_key + 'score').html(data.p1_score).css('background-color', '#00aaaa').animate({backgroundColor: "#FFFFFF"}, 1000);
-                    $(data.p2_key + 'score').html(data.p2_score).css('background-color', '#0045bc').animate({backgroundColor: "#FFFFFF"}, 1000);
+                    $('#' + data.p1_key + '-score').html(data.p1_score).removeClass('hidden');
+                    $('#' + data.p2_key + '-score').html(data.p2_score).removeClass('hidden');
+                    $(this).parent().remove();
                 });
     });
     //Handler for updating a score on a match.
-    $('.update-score').blur(function(){
-        var url = '/tournament/update_match';
-        var match_key = $(this).attr('id').substr(0, $(this).attr('id').length-6);
-        var p1_obj = $(this).find('.rr-participant-name').first();
-        var p1_key = p1_obj.attr('id').substr(0,$(this).attr('id').length-5);
-        var p1_score = $(p1_key + '-score').html();
-        var p2_obj = $(this).find('.rr-participant-name').eq(1);
-        var p2_key = p2_obj.attr('id').substr(0,$(this).attr('id').length-5);
-        var p2_score = $(p2_key + '-score').html();
+    $('.update-score').live('blur', function(){
+        var url = '/tournament/update_match/';
+        var match_key = $(this).parent().parent().parent().parent().find('#hidden-match-key').val();
+        var match_wrapper = $("#" + match_key);
+        var p1_obj = match_wrapper.find('.rr-participant-name').first();
+        var p1_key = p1_obj.attr('id').substr(0,p1_obj.attr('id').length-5);
+        var p1_score = $(this).parent().parent().parent().find('.update-score').first().val();
+        var p2_obj = match_wrapper.find('.rr-participant-name').eq(1);
+        var p2_key = p2_obj.attr('id').substr(0,p2_obj.attr('id').length-5);
+        var p2_score = $(this).parent().parent().parent().find('.update-score').eq(1).val();
         $.getJSON(url,
                   {'match':{'match_key': match_key, 'match_status':'0', 'player1':{'key':p1_key, 'score':p1_score}, 'player2':{'key':p2_key, 'score':p2_score}}},
                   function(data){
-                      $(data.p1_key + 'score').html(data.p1_score).css('background-color', '#00aaaa').animate({backgroundColor: "#FFFFFF"}, 1000);
-                      $(data.p2_key + 'score').html(data.p2_score).css('background-color', '#0045bc').animate({backgroundColor: "#FFFFFF"}, 1000);
+                      $('#' + data.p1_key + '-score').html(data.p1_score);
+                      $('#' + data.p2_key + '-score').html(data.p2_score);
+                      match_wrapper.css('background-color', '#ccd5ec').animate({backgroundColor: "#FFFFFF"}, 1000)
+                  }
+        );
+    });
+    $('.finish-match').live('click', function(){
+        var url = '/tournament/update_match/';
+        var match_key = $(this).parent().parent().find('#hidden-match-key').val();
+        var match_wrapper = $("#" + match_key);
+        $.getJSON(url,
+                  {'match': {'match_key': match_key, 'match_status': '1'}},
+                  function(data){
+                      $('#' + data.winner + '-score').append('&nbsp;&nbsp;<icon class="icon-ok"></i>').addClass('winner');
+                      match_wrapper.find('.rr-participant-score').addClass('final');
+
+                      console.log(data);
                   }
         );
     });
@@ -139,7 +182,7 @@ $(document).ready(function(){
 });
 
 function get_popover_content(){
-
+    var matchKey = '<input type="hidden" id="hidden-match-key" value="'+ $(this).attr('id') +'" />';
     var form = '<form class="form-horizontal" method="post">';
     var controlGroup = '<div class="control-group">';
     var controls = '<div class="controls">';
@@ -150,7 +193,7 @@ function get_popover_content(){
     var input2 = '<input class="update-score span1" type="text" name="participant2_score" value="' + $(this).find('.rr-participant-score').eq(1).html() + '" />';
     var submit = '<input type="submit" class="btn btn-primary btn-mini" value="Update" />'
     var endForm = '</form>';
-    return form + controlGroup + label1 + controls + input1 + endDiv + endDiv + controlGroup + label2 + controls + input2 + endDiv + endDiv + endForm;
+    return matchKey + form + controlGroup + label1 + controls + input1 + endDiv + endDiv + controlGroup + label2 + controls + input2 + endDiv + endDiv + endForm;
 }
 </script>
 {% endblock %}
