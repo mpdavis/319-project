@@ -72,23 +72,23 @@ div.match.right .rr-participant-score.final.winner{
                     <div class="{{ loop.cycle('match', 'match right') }}">
                         <p class="rr-participant-name" id="{{ participant.key() }}-name">{{ participant.name }}</p>
                         {% if match.status == -1 %}
-                            <p class="rr-participant-score hidden" id="{{ participant.key() }}-score">{{ participant.score|replace('.0','') }}</p>
+                            <p class="rr-participant-score hidden" id="{{ participant.key() }}-score"><span class="score">{{ participant.score|replace('.0','') }}</span></p>
                         {% endif %}
                         {% if match.status == 0 %}
-                            <p class="rr-participant-score" id="{{ participant.key() }}-score">{{ participant.score|replace('.0','') }}</p>
+                            <p class="rr-participant-score" id="{{ participant.key() }}-score"><span class="score">{{ participant.score|replace('.0','') }}</span></p>
                         {% endif %}
                         {% if match.status == 1 %}
                             {% if participant.is_winner() %}
-                            <p class="rr-participant-score final winner" id="{{ participant.key() }}-score">{{ participant.score|replace('.0','') }} &nbsp;<i class="icon-ok"></i></p>
+                            <p class="rr-participant-score final winner" id="{{ participant.key() }}-score"><span class="score">{{ participant.score|replace('.0','') }}</span> &nbsp;<i class="icon-ok"></i></p>
                             {% else %}
-                            <p class="rr-participant-score final" id="{{ participant.key() }}-score">{{ participant.score|replace('.0','') }}</p>
+                            <p class="rr-participant-score final" id="{{ participant.key() }}-score"><span class="score">{{ participant.score|replace('.0','') }}</span></p>
                             {% endif %}
                         {% endif %}
                     </div>
                 {% endfor %}
                 {% if match.status < 0 %}
                     <div class="rr-start-match">
-                        <button class="btn btn-mini btn-primary btn-block" id="{{ match.key() }}-start">Start this Match</button>
+                        <button class="btn btn-mini btn-primary btn-block hidden" id="{{ match.key() }}-start">Start this Match</button>
                         <p class="not-started-message">This match has not been started yet!</p>
                     </div>
                 {% endif %}
@@ -105,14 +105,13 @@ div.match.right .rr-participant-score.final.winner{
 </div>
 <script type="text/javascript">
 $(document).ready(function(){
-    $('.rr-start-match > .btn').css('display','none');
     $('.match-wrapper').mouseover(function(){
-        $(this).find('.rr-start-match > .btn').css('display','inline');
-        $(this).find('.rr-start-match > p.not-started-message').css('display','none');
+        $(this).find('.rr-start-match > .btn').removeClass('hidden');
+        $(this).find('.rr-start-match > p.not-started-message').addClass('hidden');
     });
     $('.match-wrapper').mouseleave(function(){
-        $(this).find('.rr-start-match > .btn').css('display','none');
-        $(this).find('.rr-start-match > p.not-started-message').css('display','block');
+        $(this).find('.rr-start-match > .btn').addClass('hidden');
+        $(this).find('.rr-start-match > p.not-started-message').removeClass('hidden');
     });
     $('.match-wrapper').click(function(){
        $('match-wrapper').popover('hide');
@@ -132,14 +131,17 @@ $(document).ready(function(){
 
     //Handler for start match button.
     $('.rr-start-match > .btn').click(function(){
+        var that = $(this);
         var url = '/tournament/update_match/';
         var match_key = $(this).attr('id').substr(0, $(this).attr('id').length-6)
         $.getJSON(url,
                 {'match': {'match_key': match_key, 'match_status': '0'}},
                 function(data) {
-                    $('#' + data.p1_key + '-score').html(data.p1_score).removeClass('hidden');
-                    $('#' + data.p2_key + '-score').html(data.p2_score).removeClass('hidden');
-                    $(this).parent().remove();
+                    $('#' + data.p1_key + '-score > .score').html(data.p1_score);
+                    $('#' + data.p1_key + '-score').removeClass('hidden');
+                    $('#' + data.p2_key + '-score > .score').html(data.p2_score).removeClass('hidden');
+                    $('#' + data.p2_key + '-score').removeClass('hidden');
+                    that.parent().remove();
                 });
     });
     //Handler for updating a score on a match.
@@ -156,8 +158,8 @@ $(document).ready(function(){
         $.getJSON(url,
                   {'match':{'match_key': match_key, 'match_status':'0', 'player1':{'key':p1_key, 'score':p1_score}, 'player2':{'key':p2_key, 'score':p2_score}}},
                   function(data){
-                      $('#' + data.p1_key + '-score').html(data.p1_score);
-                      $('#' + data.p2_key + '-score').html(data.p2_score);
+                      $('#' + data.p1_key + '-score > .score').html(data.p1_score);
+                      $('#' + data.p2_key + '-score > .score').html(data.p2_score);
                       match_wrapper.css('background-color', '#ccd5ec').animate({backgroundColor: "#FFFFFF"}, 1000)
                   }
         );
@@ -188,9 +190,9 @@ function get_popover_content(){
     var controls = '<div class="controls">';
     var endDiv = '</div>';
     var label1 = '<label class="control-label" style="font-weight:bold;">' + $(this).find('.rr-participant-name').html() + ':</label>';
-    var input1 = '<input class="update-score span1" type="text" name="participant1_score" value="' + $(this).find('.rr-participant-score').first().html() + '" />';
+    var input1 = '<input class="update-score span1" type="text" name="participant1_score" value="' + $(this).find('.rr-participant-score').first().find('.score').html() + '" />';
     var label2 = '<label class="control-label" style="font-weight:bold;">' + $(this).find('.rr-participant-name').eq(1).html() + ':</label>';
-    var input2 = '<input class="update-score span1" type="text" name="participant2_score" value="' + $(this).find('.rr-participant-score').eq(1).html() + '" />';
+    var input2 = '<input class="update-score span1" type="text" name="participant2_score" value="' + $(this).find('.rr-participant-score').eq(1).find('.score').html() + '" />';
     var submit = '<input type="submit" class="btn btn-primary btn-mini" value="Update" />'
     var endForm = '</form>';
     return matchKey + form + controlGroup + label1 + controls + input1 + endDiv + endDiv + controlGroup + label2 + controls + input2 + endDiv + endDiv + endForm;
