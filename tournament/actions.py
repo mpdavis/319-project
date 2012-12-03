@@ -237,7 +237,7 @@ def create_tournament(form_data, p_form_data, user):
         if len(seeded_list)%2 == 1:
             is_odd = True
         build_matches_helper(None, is_odd)
-        db.put(ps_to_put)
+    db.put(ps_to_put)
 
 
 def get_round_robin_rounds(tournament):
@@ -326,3 +326,8 @@ def get_non_private_tournaments():
 
     tournaments = db.get(keys)
     return tournaments
+
+#def get_participants_from_match(key):
+#    participants = models.Participant.parent(key).fetch()
+#    logging.warning(participants)
+#    return participants

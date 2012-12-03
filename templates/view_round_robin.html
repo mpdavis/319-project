@@ -60,9 +60,9 @@ div.match.right .rr-participant-score{
                 {% for participant in participants %}
                     <div class="{{ loop.cycle('match', 'match right') }}">
                         <p class="rr-participant-name">{{ participant.name }}</p>
-                    {% if match.status > -1 %}
-                        <p class="rr-participant-score">{{ participant.score|replace('.0','') }}</p>
-                    {% endif %}
+                        {% if match.status > -1 %}
+                            <p class="rr-participant-score">{{ participant.score|replace('.0','') }}</p>
+                        {% endif %}
                     </div>
                 {% endfor %}
                 {% if match.status < 0 %}
@@ -71,7 +71,7 @@ div.match.right .rr-participant-score{
                         <p class="not-started-message">This match has not been started yet!</p>
                     </div>
                 {% endif %}
-                </div>
+            </div>
                 {% if not loop.last %}
                 <hr>
                 {% endif %}
@@ -103,11 +103,19 @@ $(document).ready(function(){
         content: get_popover_content
     })
     $('.rr-start-match > .btn').click(function(){
-        var url = '/tournament/update_match/'
-{#        $.post(url, function(data){#}
-{#                  $()#}
-{#               });#}
+        var url = '/tournament/update_match'
+        var match_key = $(this).attr('id').substr(0, $(this).attr('id').length-6)
+        var p1key = 0
+        var p2key = 0
+        $.getJSON(url,
+                {'match': {'match_key': match_key, 'match_status': '0'}},
+                function(data) {
+                    console.log(data)
+                })
+
     });
+
+
 });
 
 function get_popover_content(){

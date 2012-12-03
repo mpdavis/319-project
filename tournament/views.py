@@ -265,6 +265,8 @@ class update_match(auth.UserAwareView):
         match = actions.get_match_by_key(matches['match[match_key]'])
         match.status =  long(matches['match[match_status]'])
 
+#        actions.get_participants_by_match(match)
+
         to_put = [match]
         p1_score = None
         p2_score = None
