@@ -263,55 +263,40 @@ class update_match(auth.UserAwareView):
         data = json.loads(json.dumps(request.args))
 
         match = actions.get_match_by_key(data['match[match_key]'])
-        match.status =  long(data['match[match_status]'])
-
         match_participants = actions.get_participants_by_match(match)
 
-        to_put = [match]
+        if match.status < 1:
+            match.status =  long(data['match[match_status]'])
+            to_put = [match]
 
-        p1_score = None
-        p1_key = None
+            if 'match[player1][key]' in data:
+                p1 = actions.get_participant_by_key(data['match[player1][key]'])
+                p1_key = p1.key()
+                p1_score = p1.score = float(data['match[player1][score]'])
+                to_put.append(p1)
+            else:
+                p1_key = match_participants[0].key()
+                p1_score = match_participants[0].score
 
-        if 'match[player1][key]' in data:
-            p1 = actions.get_participant_by_key(data['match[player1][key]'])
+            if 'match[player2][key]' in data:
+                p2 = actions.get_participant_by_key(data['match[player2][key]'])
+                p2_key = p2.key()
+                p2_score = p2.score = float(data['match[player2][score]'])
+                to_put.append(p2)
+            else:
+                p2_key = match_participants[1].key()
+                p2_score = match_participants[1].score
 
-#            if not p1 == matches_participants[0] and not p1 == matches_participants[1]:
-#                return json.dumps({'error': 'Invalid participant key for match'})
-
-            p1_key = p1.key()
-            p1_score = p1.score = float(data['match[player1][score]'])
-            to_put.append(p1)
-        else:
-            p1_key = match_participants[0].key()
-            p1_score = match_participants[0].score
-
-
-        p2_score = None
-        p2_key = None
-        if 'match[player2][key]' in data:
-            p2 = actions.get_participant_by_key(data['match[player2][key]'])
-
-#            if not p2 == matches_participants[0] and not p2 == matches_participants[1]:
-#                return json.dumps({'error': 'Invalid participant key for match'})
-
-            p2_key = p2.key()
-            p2_score = p2.score = float(data['match[player2][score]'])
-            to_put.append(p2)
-        else:
-            p2_key = match_participants[1].key()
-            p2_score = match_participants[1].score
-
-
-        winner_key = None
-        if match.status == 1:
-            # Match is over, determine a winner
-            winner = match.determine_winner()
-            if winner:
-                to_put.append(models.Participant(
-                                    seed=winner.seed,
-                                    name=winner.name,
-                                    parent=match.next_match))
-                winner_key = winner.key()
+            winner_key = None
+            if match.status == 1:
+                # Match is over, determine a winner
+                winner = match.determine_winner()
+                if winner:
+                    to_put.append(models.Participant(
+                                        seed=winner.seed,
+                                        name=winner.name,
+                                        parent=match.next_match))
+                    winner_key = winner.key()
 
 
         db.put(to_put)
