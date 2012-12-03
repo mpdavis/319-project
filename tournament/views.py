@@ -276,8 +276,8 @@ class update_match(auth.UserAwareView):
         if 'match[player1][key]' in data:
             p1 = actions.get_participant_by_key(data['match[player1][key]'])
 
-            if not p1 == matches_participants[0] and not p1 == matches_participants[1]:
-                return json.dumps({'error': 'Invalid participant key for match'})
+#            if not p1 == matches_participants[0] and not p1 == matches_participants[1]:
+#                return json.dumps({'error': 'Invalid participant key for match'})
 
             p1_key = p1.key()
             p1_score = p1.score = float(data['match[player1][score]'])
@@ -286,8 +286,8 @@ class update_match(auth.UserAwareView):
         if 'match[player2][key]' in data:
             p2 = actions.get_participant_by_key(data['match[player2][key]'])
 
-            if not p2 == matches_participants[0] and not p2 == matches_participants[1]:
-                return json.dumps({'error': 'Invalid participant key for match'})
+#            if not p2 == matches_participants[0] and not p2 == matches_participants[1]:
+#                return json.dumps({'error': 'Invalid participant key for match'})
 
             p2_key = p2.key()
             p2_score = p2.score = float(data['match[player2][score]'])
