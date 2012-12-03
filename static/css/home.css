@@ -1,6 +1,6 @@
 body {
     background-color:#F5F5F5;
-    background-image:url(http://www.jojari.com/images/jojari/body-speckle.gif);
+    background-image:url('../img/gray_jean.png');
 }
 
 .home {
@@ -24,14 +24,12 @@ body {
 }
 
 .blackback {
-
     margin-top: 90px;
     background: rgba(0,0,0,0.85);
     border-radius: 25px;
     }
 
 .home h1 {
-
     color: white;
     margin-top: 30px;
     font-size: 100px;
@@ -39,7 +37,6 @@ body {
 }
 
 .home h3 {
-
     color: white;
     font-size: 40px;
     line-height: 1.25;
@@ -62,6 +59,7 @@ body {
     -webkit-transition: none;
     -moz-transition: none;
     transition: none;
+}
 
 .home .well {
     opacity:0.6;
