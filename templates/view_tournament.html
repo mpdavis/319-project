@@ -144,49 +144,14 @@ update = function(source) {
                     }
                 }
 
-
                 if (d.status < 1) {
-                    var output = "<form class='form-horizontal form-match'>" +
-                            "<div class='control-group'>" +
-                            "<label class='control-label nodeText'>" + team1 + "</label>" +
-                            "<div class='controls'>" +
-                            "<input class='update-score span1' type='text' value='" + score1 + "'> " +
-                            "<input type='hidden' id='participant1' value='" + key1 + "'>" +
-                            "</div>" +
-                            "</div>" +
-                            "<div class='control-group'>" +
-                            "<label class='control-label nodeText'>" + team2 + "</label>" +
-                            {#                                "<label class='control-label nodeText'> Finish </label>" +#}
-                            "<div class='controls'>" +
-                            "<input class='update-score span1' type='text' value='" + score2 + "'> " +
-                            "<button class='btn btn-mini btn-block btn-inverse done' id='" + d.match_key +  "-finish' style='margin-top: 10px;'>Finish</button>" +
-                            "<input type='hidden' id='participant2' value='" + key2 + "'>" +
-                            "</div>" +
-
-                            "</div>" +
-
-                            "</form>"
+                    var output = '{% include "bracket/inprogress_match_node.html" %}';
                 } else {
-                    var output = "<form class='form-horizontal form-match'>" +
-                            "<div class='control-group'>" +
-                            "<label class='control-label nodeText'>" + team1 + "</label>" +
-                            "<div class='controls'>" +
-                            score1 +
-                            "</div>" +
-                            "</div>" +
-                            "<div class='control-group'>" +
-                            "<label class='control-label nodeText'>" + team2 + "</label>" +
-                            {#                                "<label class='control-label nodeText'> Finish </label>" +#}
-                            "<div class='controls'>" +
-                            score2 +
-                            "</div>" +
-                            "</div>" +
-                            "</form>"
+                    var output = '{% include "bracket/finished_match_node.html" %}';
                 }
 
-                return "<div class='well match-wrapper' id=" + d.match_key + "> " +
-                        output +
-                        "</div>"});
+                return "<div class='well match-wrapper' id=" + d.match_key + "> " + output + "</div>"
+            });
 
 
     nodeEnter.selectAll("text").each(function(d) {
@@ -247,7 +212,6 @@ update = function(source) {
 
     <script type="text/javascript">
         $(document).ready(function(){
-
             //Handler for updating a score on a match.
             $('.update-score').live('blur', function(){
                 var url = '/tournament/update_match/';
@@ -270,10 +234,10 @@ update = function(source) {
                 );
             });
 
-            $('.done').live('click', function(){
+            $('.match-done').live('click', function(){
                 var url2 = '/tournament/update_match/';
                 $.getJSON(url2,
-                        {'match':{'match_key':"ag9kZXZ-MzE5LXByb2plY3RyHQsSClRvdXJuYW1lbnQYtAIMCxIFTWF0Y2gYtgIM",'match_status':'1'}},
+                        {'match':'1'},
                         function(data){
                             console.log("Done");
                         }
