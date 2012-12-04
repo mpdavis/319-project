@@ -196,6 +196,7 @@ class Tournament_View(auth.UserAwareView):
         #Contextual variables used by all tournament types.
         context = self.get_context()
         context['tournament_key'] = tournament_key
+        context['full_page_content'] = True
         tournament = actions.get_tournament_by_key(tournament_key)
         context['tournament'] = tournament
         if tournament:
