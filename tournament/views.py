@@ -260,7 +260,7 @@ class update_match(auth.UserAwareView):
         #           'player1':{'key':'p1_key', 'score':12},
         #           'player2':{'key':'p2_key', 'score':12}}}
         logging.warning("test")
-        p1_score = p2_score = p1_key = p2_key = 0
+        p1_score = p2_score = p1_key = p2_key = winner_key = next_key = 0
         data = json.loads(json.dumps(request.args))
 
         match = actions.get_match_by_key(data['match[match_key]'])
@@ -270,6 +270,7 @@ class update_match(auth.UserAwareView):
         if match.status < 1:
             logging.warning(long(data['match[match_status]']))
             match.status =  long(data['match[match_status]'])
+            next_key = str(match.next_match.key())
             to_put = [match]
 
             if 'match[player1][key]' in data:
@@ -303,5 +304,5 @@ class update_match(auth.UserAwareView):
 
             db.put(to_put)
 
-        return json.dumps({'p1_score':p1_score, 'p1_key': str(p1_key), 'p2_score':p2_score, 'p2_key': str(p2_key), 'winner': str(winner_key)})
+        return json.dumps({'p1_score':p1_score, 'p1_key': str(p1_key), 'p2_score':p2_score, 'p2_key': str(p2_key), 'winner': str(winner_key), 'next_match': next_key})
 
