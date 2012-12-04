@@ -54,9 +54,9 @@ def get_top_match_by_tournament(tournament):
             return match
     return None
 
-def update_match_by_winner(match_id, winner):
+def update_match_by_winner(match_key, winner):
     # Get the selected match by id
-    match = models.Match.get_by_id(match_id)
+    match = models.Match.get(match_key)
     participants = get_participants_by_match(match)
     # If there is a participant, then change the match status to played.
     # Add the winner to participants of the next match
@@ -67,9 +67,9 @@ def update_match_by_winner(match_id, winner):
         # Reload the view page
     return None
 
-def update_match_with_player_score(match_id, participant, score):
+def update_match_with_player_score(match_key, participant, score):
     # Get the selected match by id
-    match = models.Match.get_by_id(match_id)
+    match = models.Match.get(match_key)
     participants = get_participants_by_match(match)
     # If there is a participant, then change the match status to played.
     # Add the winner to participants of the next match
