@@ -57,7 +57,8 @@
 
 // Initialize size values.
 var m = { "t": 20, "r": 40, "b": 20, "l": 120 },
-    width = Math.floor($(document).width() - (2 * $("#bracket").parent().position().left)) - m["r"] - m["l"],
+{#    width = Math.floor($(document).width() - (2 * $("#bracket").parent().position().left)) - m["r"] - m["l"],#}
+    width = Math.floor($(document).width()),
     height = Math.floor(width / (16.0 / 9.0)) - m["t"] - m["b"] + 500,
 
     halfWidth = Math.floor(width / 2.0),
@@ -159,7 +160,7 @@ update = function(source) {
                             {#                                "<label class='control-label nodeText'> Finish </label>" +#}
                             "<div class='controls'>" +
                             "<input class='update-score span1' type='text' value='" + score2 + "'> " +
-                            "<button class='btn btn-mini btn-block btn-inverse done' id='" + d.match_key +  "-finish' style='margin-top: 10px;'>Finish</button>" +
+                            "<a class='btn btn-mini btn-block btn-inverse done' id='" + d.match_key +  "-finish' style='margin-top: 10px;'>Finish</a>" +
                             "<input type='hidden' id='participant2' value='" + key2 + "'>" +
                             "</div>" +
 
@@ -271,13 +272,30 @@ update = function(source) {
             });
 
             $('.done').live('click', function(){
-                var url2 = '/tournament/update_match/';
-                $.getJSON(url2,
-                        {'match':{'match_key':"ag9kZXZ-MzE5LXByb2plY3RyHQsSClRvdXJuYW1lbnQYtAIMCxIFTWF0Y2gYtgIM",'match_status':'1'}},
+                var url = '/tournament/update_match/';
+                var match_key = $(this).parents().find('.match-wrapper').attr('id');
+                var match_wrapper = $("#" + match_key);
+                var p1_obj = match_wrapper.find('#participant1');
+                var p1_key = p1_obj.val();
+                var p2_obj = match_wrapper.find('#participant2');
+                var p2_key = p2_obj.val();
+
+                var p2_score = $(this).parents().find('.update-score').first().val();
+                var p1_score = $(this).parents().find('.update-score').eq(1).val();
+
+
+                $.getJSON(url,
+                        {'match':{'match_key': match_key, 'match_status':'1', 'player1':{'key':p1_key, 'score':p1_score}, 'player2':{'key':p2_key, 'score':p2_score}}},
                         function(data){
-                            console.log("Done");
+
+{#                            $('#' + data.p2_key + '-score > .score').html(data.p2_score);#}
+                            match_wrapper.css('background-color', '#ccd5ec').animate({backgroundColor: "#F9F9F9"}, 1000)
                         }
                 );
+
+
+
+
             });
         });
 
