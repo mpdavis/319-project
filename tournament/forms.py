@@ -54,8 +54,8 @@ class EditTournament(forms.Form):
     TOURNAMENT_TYPES = [('SE', 'Single Elimination'),
                         ('DE', 'Double Elimination'),
                         ('RR', 'Round Robin')]
-    type = forms.SelectField("Tourney Type", choices=TOURNAMENT_TYPES)
-    order = forms.IntegerField("Order", [validators.Optional()])
+    # type = forms.SelectField("Tourney Type", choices=TOURNAMENT_TYPES)
+    # order = forms.IntegerField("Order", [validators.Optional()])
     WIN_TYPES = [('0', 'High Wins'),
                  ('1', 'Low Wins')]
     win_method = forms.SelectField("Win Method", choices=WIN_TYPES)  
