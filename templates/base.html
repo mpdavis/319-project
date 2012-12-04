@@ -21,6 +21,7 @@
         <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.datatables.css" />
         <link rel="stylesheet" type="text/css" href="/static/css/styles.css" />
 
+        <script type="text/javascript" src="/static/js/jquery-ui.min.js"></script>
         <script type="text/javascript" src="/static/js/jquery-1.7.1.min.js"></script>
         <script type="text/javascript" src="/static/js/bootstrap.js"></script>
         <script type="text/javascript" src="/static/js/bootstrap-modal.js"></script>
@@ -29,7 +30,6 @@
         <script type="text/javascript" src="/static/js/jquery.datatable.js"></script>
         <script type="text/javascript" src="/static/js/bootstrap-datepicker.js"></script>
         <script type="text/javascript" src="/static/js/bootstrap-datatables.js"></script>
-        <script type="text/javascript" src="/static/js/jquery-ui.min.js"></script>
         {% endif %}
 
         {% block style %}{% endblock %}
@@ -79,20 +79,16 @@
                                     <b class="caret"></b>
                                 </a>
                                 <ul class="dropdown-menu">
-
                                     <li>
                                         <a href="{{ url_for('tournament-list') }}">Tournaments</a>
                                     </li>
                                     <li>
                                         <a href="#">Profile</a>
                                     </li>
-
                                     <li class="divider"></li>
-
                                     <li>
                                         <a href="{{ url_for('logout') }}">Logout</a>
                                     </li>
-
                                 </ul>
                             </li>
                         </ul>
@@ -112,7 +108,7 @@
             {% if not remove_header %}
                 <div class="row">
                     <div class="span12">
-                        <div class="page-header" style="margin: 40px 0px 40px 0px;">
+                        <div class="page-header" style="margin: 40px 0px 0px 0px;">
                             <h1>{% block header %}{% endblock %}</h1>
                         </div>
                     </div>
