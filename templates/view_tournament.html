@@ -49,22 +49,27 @@
 {% endblock %}
 
 {% block content %}
-    <div id="bracket" style="margin:0px;padding:0px;">
+    <div id="bracket" style="margin: 0 auto;width:92%;">
+    </div>
+    <div id="bracket-backup" style="margin: 0 auto;width:92%;">
     </div>
 
     {# D3 script MUST appear after the #bracket div has been instantiated #}
     <script type="text/javascript">
 
 // Initialize size values.
-var m = { "t": 20, "r": 40, "b": 20, "l": 120 },
-    width = Math.floor($(document).width() - (2 * $("#bracket").parent().position().left)) - m["r"] - m["l"],
-    height = Math.floor(width / (16.0 / 9.0)) - m["t"] - m["b"] + 500,
+var m = { "t": 20, "r": 40, "b": 20, "l": 40 },
+    width = $("#bracket").width() - m["r"] - m["l"],
+    height = $("#bracket").height() - m["t"] - m["b"] + 500,
 
     halfWidth = Math.floor(width / 2.0),
     halfHeight = Math.floor(height / 2.0),
     duration = 0,
     i = 0, j = 0,
-    root;
+    root,
+    theJSON,
+    timer,
+    hasBeenDrawn = false;
 
 // Method for finding node children.
 get_children = function(d) {
@@ -99,10 +104,41 @@ var bracket = svg.append("g")
     .attr("transform", "translate(" + m["l"] + "," + m["t"] + ")");
 
 json_display = function(json) {
+    theJSON = json;
     root = json.matches;
     root.x0 = halfHeight;
     root.y0 = halfWidth;
     update(root);
+    hasBeenDrawn = true;
+}
+
+redraw = function(){
+    console.log("REDRAWING");
+    $("#bracket-backup").html($("#bracket").html());
+    $("#bracket").html('').hide();
+    m = { "t": 20, "r": 40, "b": 20, "l": 40 };
+    width = $("#bracket").width() - m["r"] - m["l"];
+    height = $("#bracket").height() - m["t"] - m["b"] + 500;
+
+    halfWidth = Math.floor(width / 2.0);
+    halfHeight = Math.floor(height / 2.0);
+    duration = 0;
+    i = 0;
+    j = 0;
+    root = null;
+    tree = d3.layout.tree()
+            .size([height, width])
+            .children(get_children);
+    svg = d3.select("#bracket").append("svg")
+            .attr("width", width + m["r"] + m["l"])
+            .attr("height", height + m["t"] + m["b"])
+            .attr("style", "margin:0px;padding:0px;")
+            .attr("xmlns", "http://www.w3.org/2000/svg");
+    defs = svg.append("defs");
+    bracket = svg.append("g").attr("transform", "translate(" + m["l"] + "," + m["t"] + ")");
+    json_display(theJSON);
+    $("#bracket-backup").fadeOut('fast', function(){$(this).html('');});
+    $("#bracket").fadeIn('fast');
 }
 
 update = function(source) {
@@ -208,6 +244,12 @@ update = function(source) {
 }
 
     d3.json("/tournament/json/{{ tournament_key }}/", json_display);
+    $(window).resize(function(){
+        if(timer != null) clearTimeout(timer);
+        if(hasBeenDrawn) {
+            timer = setTimeout(function() { redraw(); }, 300);
+        }
+    });
     </script>
 
     <script type="text/javascript">
