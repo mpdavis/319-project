@@ -52,6 +52,7 @@
 
                     {% if not user %}
                         <div class="dropdown pull-right">
+                            <a class="btn btn-primary" href="{{ url_for('register') }}">Register</a>
                             <a id="login_dropdown" class="dropdown-toggle btn btn-primary" data-toggle="dropdown" href="#">Login</a>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel" style="padding: 15px; padding-bottom: 0px;">
                                 <form accept-charset="UTF-8" id="nav_login">
