@@ -30,7 +30,11 @@ h3 code {
 }
 
 .page-header{
-    margin: 40px 0 0 0;
+    margin: 40px 0 40px 0;
+}
+
+.main-grid-span{
+    margin-top: -60px;
 }
 
 .full-page-container{
@@ -193,4 +197,12 @@ body > .navbar .brand:hover {
 
 .form-horizontal .control-label {
     width: 100px;
+}
+
+/*Datatable*/
+.datatable-pagination {
+    float: right;
+}
+.datatable-head {
+    height: 36px;
 }

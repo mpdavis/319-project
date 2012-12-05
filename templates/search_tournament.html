@@ -6,66 +6,54 @@
 
 {% block content %}
 <div class="row">
-    <div class="span12">
+    <div class="span12 main-grid-span">
+        <table class="table table-bordered table-striped table-hover" id="search_table" >
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Date & Time</th>
+                    <th>Location</th>
+                    <th>Owner</th>
+                    <th>Created</th>
+                    <th style="width: 63px">Actions</th>
+                </tr>
+            </thead>
 
-        <div>
-                <table class="table table-bordered table-striped table-hover" id="search_table" >
-                    <thead>
-                        <tr>
-                            <th>
-                                Name
-                            </th>
-                            <th>
-                                Type
-                            </th>
-                            <th>
-                                Date & Time
-                            </th>
-
-                            <th>
-                                Location
-                            </th>
-                            <th>
-                                Owner
-                            </th>
-                            <th>
-                                Created
-                            </th>
-                            <th style="width: 63px">
-                                Actions
-                            </th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-
-                    {% for tourn in tournaments %}
-                    <tr>
-                        <td>{{ tourn.name }}</td>
-                        <td>{{ tourn.get_type_verbose() }}</td>
-                        <td>{{ tourn.get_date_formatted() }}</td>
-                        <td>{{ tourn.location }}</td>
-                        <td>{{ tourn.owner.get_display_name() }}</td>
-                        <td>{{ tourn.get_created_formatted() }}</td>
-                        <td>
-                            <div class="btn-group">
-                                <a href="{{ url_for('view-tourney', tournament_key=tourn.keystr())}}" class="btn" style="display:inline;margin-top:5px;" role="button" data-toggle="modal">View</a>
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-        </div>
+            <tbody>
+            {% for tourn in tournaments %}
+                <tr>
+                    <td>{{ tourn.name }}</td>
+                    <td>{{ tourn.get_type_verbose() }}</td>
+                    <td>{{ tourn.get_date_formatted() }}</td>
+                    <td>{{ tourn.location }}</td>
+                    <td>{{ tourn.owner.get_display_name() }}</td>
+                    <td>{{ tourn.get_created_formatted() }}</td>
+                    <td>
+                        <div class="btn-group">
+                            <a href="{{ url_for('view-tourney', tournament_key=tourn.keystr())}}" class="btn" style="display:inline;margin-top:5px;" role="button" data-toggle="modal">View</a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
-
 </div>
 <script>
-    $(document).ready(function() {
-        $('#search_table').dataTable({
-        'sPaginationType': 'bootstrap'
+$(document).ready(function() {
+    $('#search_table').dataTable({
+        "sDom": "<'datatable-head'f>t<<l><'datatable-pagination'pi>>",
+        'sPaginationType': 'bootstrap',
+        "bStateSave":true,
+        "oLanguage": {
+            "sInfo": "Showing _START_ to _END_ of _TOTAL_ tournaments",
+            "sLengthMenu": "Show _MENU_ tournaments",
+            "sInfoEmpty": "Showing 0 tournaments",
+            "sInfoFiltered": "(filtered from _MAX_ total tournaments)"
+        }
 
-        });
-    } );
+    });
+});
 </script>
 {% endblock %}
