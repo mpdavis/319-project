@@ -195,6 +195,7 @@ class Tournament_View(auth.UserAwareView):
         #Contextual variables used by all tournament types.
         context = self.get_context()
         context['tournament_key'] = tournament_key
+        context['full_page_content'] = True
         tournament = actions.get_tournament_by_key(tournament_key)
         context['tournament'] = tournament
         if tournament:
@@ -258,14 +259,18 @@ class update_match(auth.UserAwareView):
         # {'match':{'match_key':'key_for_match', 'match_status':1, 
         #           'player1':{'key':'p1_key', 'score':12},
         #           'player2':{'key':'p2_key', 'score':12}}}
-
+        logging.warning("test")
+        p1_score = p2_score = p1_key = p2_key = winner_key = next_key = 0
         data = json.loads(json.dumps(request.args))
 
         match = actions.get_match_by_key(data['match[match_key]'])
         match_participants = actions.get_participants_by_match(match)
 
+        logging.warning(match)
         if match.status < 1:
+            logging.warning(long(data['match[match_status]']))
             match.status =  long(data['match[match_status]'])
+            next_key = str(match.next_match.key())
             to_put = [match]
 
             if 'match[player1][key]' in data:
@@ -297,8 +302,7 @@ class update_match(auth.UserAwareView):
                                         parent=match.next_match))
                     winner_key = winner.key()
 
+            db.put(to_put)
 
-        db.put(to_put)
-
-        return json.dumps({'p1_score':p1_score, 'p1_key': str(p1_key), 'p2_score':p2_score, 'p2_key': str(p2_key), 'winner': str(winner_key)})
+        return json.dumps({'p1_score':p1_score, 'p1_key': str(p1_key), 'p2_score':p2_score, 'p2_key': str(p2_key), 'winner': str(winner_key), 'next_match': next_key})
 

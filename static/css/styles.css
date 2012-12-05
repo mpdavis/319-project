@@ -29,6 +29,14 @@ h3 code {
     font-weight: normal;
 }
 
+.page-header{
+    margin: 40px 0 0 0;
+}
+
+.full-page-container{
+    width:auto;
+}
+
 /* Tweak navbar brand link to be super sleek
 -------------------------------------------------- */
 
