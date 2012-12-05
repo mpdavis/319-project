@@ -9,8 +9,6 @@
 {% block style %}
     <style>
       .nodeText {
-{#        background-color: #ffffff;#}
-        cursor: pointer;
         font-family: Helvetica,'Ludica Grande',sans-serif;
         font-size: 14pt;
         font-weight: bold;
@@ -45,6 +43,11 @@
         .match-wrapper {
             padding-right: 10px;
         }
+        .match-pre {
+            margin-top: 18px;
+            padding-right: 20px;
+            text-align: center;
+        }
     </style>
 {% endblock %}
 
@@ -59,7 +62,6 @@
 
     find_height = function () {
         var height = parseInt({{ num_players }}) * 125;
-        console.log(height)
         return height;
     }
 
@@ -68,7 +70,7 @@
 // Initialize size values.
 var m = { "t": 20, "r": 40, "b": 20, "l": 40 },
     width = $("#bracket").width() - m["r"] - m["l"],
-    height = find_height()
+    height = find_height(),
     halfWidth = Math.floor(width / 2.0),
     halfHeight = Math.floor(height / 2.0),
     duration = 0,
@@ -89,14 +91,15 @@ get_children = function(d) {
 // Initialize the D3 tree.
     console.log(height)
 var tree = d3.layout.tree()
-        .children(get_children)
-        .size([height, width]);
+    .size([height, width])
+    .separation(function(a, b) { return 1; })
+    .children(get_children);
 
 // Initialize SVG.
 var svg = d3.select("#bracket").append("svg")
     .attr("width", width + m["r"] + m["l"])
     .attr("height", height + m["t"] + m["b"])
-    .attr("style", "margin:0px;padding:0px;")
+    .attr("style", "margin:-50px 0px 0px 0px;padding:0px;")
     .attr("xmlns", "http://www.w3.org/2000/svg");
 
 var defs = svg.append("defs");
@@ -118,7 +121,7 @@ redraw = function(redraw_json){
     $("#bracket").html('').hide();
     m = { "t": 20, "r": 40, "b": 20, "l": 40 };
     width = $("#bracket").width() - m["r"] - m["l"];
-    height = find_height()
+    height = find_height();
 
     halfWidth = Math.floor(width / 2.0);
     halfHeight = Math.floor(height / 2.0);
@@ -128,6 +131,7 @@ redraw = function(redraw_json){
     root = null;
     tree = d3.layout.tree()
             .size([height, width])
+            .separation(function(a, b) { return 1; })
             .children(get_children);
     svg = d3.select("#bracket").append("svg")
             .attr("width", width + m["r"] + m["l"])
@@ -191,9 +195,13 @@ update = function(source) {
                         key2 = d.participants[1].key;
                         score2 = d.participants[1].score;
                     } else {
-                        return "<div class='well match-wrapper' id=" + d.match_key + ">Finish Earlier Matches</div>"
+                        return "<div class='well match-wrapper match-pre' id=" + d.match_key + ">Finish Earlier Matches</div>"
                     }
                 }
+                var class1 = '';
+                var class2 = '';
+                if(d.winner == key1) class1 = 'success';
+                if(d.winner == key2) class2 = 'success';
 
                 if (d.status < 1) {
                     var output = '{% include "bracket/inprogress_match_node.html" %}';
@@ -201,7 +209,7 @@ update = function(source) {
                     var output = '{% include "bracket/finished_match_node.html" %}';
                 }
 
-                return "<div class='well match-wrapper' id=" + d.match_key + "> " + output + "</div>"
+                return output
             });
 
 
@@ -230,7 +238,7 @@ update = function(source) {
         .attr("transform", function(d) {
             var output = "";
             if (d.depth < 1) {
-                output = "translate(" + (width - d.y - 200) + "," + (d.x - 42) + ")"
+                output = "translate(" + (width - d.y - 200) + "," + (d.x - 57) + ")"
             } else {
                 output = "translate(" + (width - d.y) + "," + (d.x - 60) + ")"
             }

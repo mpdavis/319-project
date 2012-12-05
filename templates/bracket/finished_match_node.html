@@ -1,14 +1,12 @@
-<form class="form-horizontal form-match">' +
-    '<div class="control-group">' +
-        '<label class="control-label nodeText">' + team1 + '</label>' +
-        '<div class="controls">' +
-            score1 +
-        '</div>' +
-    '</div>' +
-    '<div class="control-group">' +
-        '<label class="control-label nodeText">' + team2 + '</label>' +
-        '<div class="controls">' +
-            score2 +
-        '</div>' +
-    '</div>' +
-'</form>
+<div class="match-wrapper match-finished" id="' + d.match_key + '" style="margin-top: 22px;">' +
+    '<table class="table table-bordered">' +
+        '<tr class="'+ class1 +'">' +
+            '<td>' + team1 + '</td>' +
+            '<td width="12px;">' + score1 + '</td>' +
+        '</tr>' +
+        '<tr class="'+ class2 +'">' +
+            '<td>' + team2 + '</td>' +
+            '<td>' + score2 + '</td>' +
+        '</tr>' +
+    '</table>' +
+'</div>
