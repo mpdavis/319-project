@@ -115,6 +115,7 @@ json_display = function(json) {
 
 redraw = function(redraw_json){
     console.log("REDRAWING");
+    var top = document.documentElement.scrollTop;
     $("#bracket-backup").html($("#bracket").html());
     $("#bracket").html('').hide();
     m = { "t": 20, "r": 40, "b": 20, "l": 40 };
@@ -138,8 +139,12 @@ redraw = function(redraw_json){
     defs = svg.append("defs");
     bracket = svg.append("g").attr("transform", "translate(" + m["l"] + "," + m["t"] + ")");
     json_display(redraw_json);
-    $("#bracket-backup").fadeOut('fast', function(){$(this).html('');});
-    $("#bracket").fadeIn('fast');
+    $("#bracket-backup").fadeOut(300, function(){
+        $(this).html('');
+        $("#bracket").fadeIn(300);
+    });
+{#    $("#bracket").fadeIn(300);#}
+    window.scrollTo(0,top);
 }
 
 refresh_json = function(){
