@@ -352,6 +352,12 @@ def get_non_private_tournaments():
     tournaments = db.get(keys)
     return tournaments
 
+def get_public_tournaments():
+    keys = models.Tournament.all(keys_only=True).filter("perms =", models.Tournament.PUBLIC).fetch(1000)
+    tournaments = db.get(keys)
+    return tournaments
+
+
 def get_participants_from_match(key):
     participants = models.Participant.parent(key).fetch()
     return participants
