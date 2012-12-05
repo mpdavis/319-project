@@ -21,8 +21,8 @@
         <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.datatables.css" />
         <link rel="stylesheet" type="text/css" href="/static/css/styles.css" />
 
+        <script type="text/javascript" src="/static/js/jquery-1.8.3.js"></script>
         <script type="text/javascript" src="/static/js/jquery-ui.min.js"></script>
-        <script type="text/javascript" src="/static/js/jquery-1.7.1.min.js"></script>
         <script type="text/javascript" src="/static/js/bootstrap.js"></script>
         <script type="text/javascript" src="/static/js/bootstrap-modal.js"></script>
         <script type="text/javascript" src="/static/js/chosen.jquery.min.js"></script>
@@ -52,6 +52,7 @@
 
                     {% if not user %}
                         <div class="dropdown pull-right">
+                            <a class="btn btn-primary" href="{{ url_for('register') }}">Register</a>
                             <a id="login_dropdown" class="dropdown-toggle btn btn-primary" data-toggle="dropdown" href="#">Login</a>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel" style="padding: 15px; padding-bottom: 0px;">
                                 <form accept-charset="UTF-8" id="nav_login">
@@ -101,23 +102,17 @@
 
         {% block jumbotron %}{% endblock %}
 
-        <div id="main-content" class="container">
-
-            <div id="content">
-
+        <div id="main-content" class="container {% if full_page_content %}full-page-container{% endif %}">
             {% if not remove_header %}
                 <div class="row">
                     <div class="span12">
-                        <div class="page-header" style="margin: 40px 0px 0px 0px;">
+                        <div class="page-header" {% if full_page_content %}style="margin-left: 100px"{% endif %}>
                             <h1>{% block header %}{% endblock %}</h1>
                         </div>
                     </div>
                 </div>
             {% endif %}
-
-                {% block content %}{% endblock %}
-
-            </div>
+            {% block content %}{% endblock %}
         </div>
 
         <footer class="footer">
