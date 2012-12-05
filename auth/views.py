@@ -72,7 +72,7 @@ class Register(auth.UserAwareView):
                     registered = True
 
                     subject = "Welcome to Web Tournaments"
-                    body = mail.generate_email_body("email/auth/registration_email.txt", username=new_user.username)
+                    body = mail.generate_email_body("email/auth/registration_email.html", username=new_user.username)
 
                     mail.send_email(new_user.email, subject, body)
 

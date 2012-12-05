@@ -240,7 +240,7 @@ class Tournament_Search(auth.UserAwareView):
     active_nav = 'tournament_search'
     def get(self):
         context = self.get_context()
-        context['tournaments'] = actions.get_non_private_tournaments()
+        context['tournaments'] = actions.get_public_tournaments()
         return render_template('search_tournament.html', **context)
 
 
