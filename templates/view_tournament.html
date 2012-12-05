@@ -27,9 +27,9 @@
         stroke-width: 2px;
       }
 
-        .form-match {
-            margin-right: 10px;
-        }
+      .form-match {
+          margin-right: 10px;
+      }
 
       .form-horizontal .controls {
           margin-left: 90px;
@@ -39,15 +39,28 @@
           width: 80px;
       }
 
-
-        .match-wrapper {
-            padding-right: 10px;
-        }
-        .match-pre {
-            margin-top: 18px;
-            padding-right: 20px;
-            text-align: center;
-        }
+      .match-wrapper {
+          padding-right: 10px;
+      }
+      .match-pre {
+          margin-top: 18px;
+          padding-right: 20px;
+          text-align: center;
+      }
+      #tournament-winner h1 {
+          color: white;
+          font-size: 100px;
+          line-height: 1.25;
+          margin-top: 30px;
+      }
+      #tournament-winner h4 {
+          color: white;
+          font-size: 30px;
+      }
+      #tournament-winner .blackback {
+          text-align: center;
+          margin-top: 20px;
+      }
     </style>
 {% endblock %}
 
@@ -55,6 +68,21 @@
     <div id="bracket" style="margin: 0 auto;width:92%;">
     </div>
     <div id="bracket-backup" style="margin: 0 auto;width:92%;">
+    </div>
+    <div id="tournament-winner" style="margin: 0 auto;width:92%;display:none;">
+        <div class="container">
+            <div class="row">
+                <div class="span8 offset2 blackback">
+                    <h4>And the winner is...</h4>
+                    <h1><i style="margin-right:50px;color:#E3CF7A" class="icon-star"></i><span id="tournament-winner-name"></span><i style="margin-left:50px;color:#E3CF7A" class="icon-star"></i></h1>
+                </div>
+            </div>
+            <div class="row">
+                <div class="span4 offset4">
+                    <div id="tournament-winner-match" class="nodeText"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     {# D3 script MUST appear after the #bracket div has been instantiated #}
@@ -79,6 +107,7 @@ var m = { "t": 20, "r": 40, "b": 20, "l": 40 },
     theJSON,
     size,
     timer,
+    showingWinner = false,
     hasBeenDrawn = false;
 
 
@@ -108,6 +137,15 @@ var bracket = svg.append("g")
 
 json_display = function(json) {
     theJSON = json;
+
+    if(json.winner != null && json.winner.length > 2){
+        showingWinner = true;
+        $("#bracket").hide();
+        $("#tournament-winner-name").html(json.winner);
+        $("#tournament-winner").fadeIn(800);
+        display_winner(json);
+    }
+
     root = json.matches;
     root.x0 = 600;
     root.y0 = halfWidth;
@@ -115,38 +153,56 @@ json_display = function(json) {
     hasBeenDrawn = true;
 }
 
-redraw = function(redraw_json){
-    var top = document.documentElement.scrollTop;
-    $("#bracket-backup").html($("#bracket").html());
-    $("#bracket").html('').hide();
-    m = { "t": 20, "r": 40, "b": 20, "l": 40 };
-    width = $("#bracket").width() - m["r"] - m["l"];
-    height = find_height();
+display_winner = function(json) {
+    var d = json.matches
+    var team1 = d.participants[0].name;
+    var key1 = d.participants[0].key;
+    var score1 = d.participants[0].score;
+    var team2 = d.participants[1].name;
+    var key2 = d.participants[1].key;
+    var score2 = d.participants[1].score;
+    var class1 = '';
+    var class2 = '';
+    if(d.winner == key1) class1 = 'success';
+    if(d.winner == key2) class2 = 'success';
+    var output = '{% include "bracket/finished_match_node.html" %}';
+    $("#tournament-winner-match").html(output);
+}
 
-    halfWidth = Math.floor(width / 2.0);
-    halfHeight = Math.floor(height / 2.0);
-    duration = 0;
-    i = 0;
-    j = 0;
-    root = null;
-    tree = d3.layout.tree()
-            .size([height, width])
-            .separation(function(a, b) { return 1; })
-            .children(get_children);
-    svg = d3.select("#bracket").append("svg")
-            .attr("width", width + m["r"] + m["l"])
-            .attr("height", height + m["t"] + m["b"])
-            .attr("style", "margin:0px;padding:0px;")
-            .attr("xmlns", "http://www.w3.org/2000/svg");
-    defs = svg.append("defs");
-    bracket = svg.append("g").attr("transform", "translate(" + m["l"] + "," + m["t"] + ")");
-    json_display(redraw_json);
-    $("#bracket-backup").fadeOut(300, function(){
-        $(this).html('');
-        $("#bracket").fadeIn(300);
-    });
-{#    $("#bracket").fadeIn(300);#}
-    window.scrollTo(0,top);
+redraw = function(redraw_json){
+    if(!showingWinner){
+        var top = document.documentElement.scrollTop;
+        $("#bracket-backup").html($("#bracket").html());
+        $("#bracket").html('').hide();
+        m = { "t": 20, "r": 40, "b": 20, "l": 40 };
+        width = $("#bracket").width() - m["r"] - m["l"];
+        height = find_height();
+
+        halfWidth = Math.floor(width / 2.0);
+        halfHeight = Math.floor(height / 2.0);
+        duration = 0;
+        i = 0;
+        j = 0;
+        root = null;
+        tree = d3.layout.tree()
+                .size([height, width])
+                .separation(function(a, b) { return 1; })
+                .children(get_children);
+        svg = d3.select("#bracket").append("svg")
+                .attr("width", width + m["r"] + m["l"])
+                .attr("height", height + m["t"] + m["b"])
+                .attr("style", "margin:0px;padding:0px;")
+                .attr("xmlns", "http://www.w3.org/2000/svg");
+        defs = svg.append("defs");
+        bracket = svg.append("g").attr("transform", "translate(" + m["l"] + "," + m["t"] + ")");
+        json_display(redraw_json);
+        $("#bracket-backup").fadeOut(300, function(){
+            $(this).html('');
+            $("#bracket").fadeIn(300);
+        });
+    {#    $("#bracket").fadeIn(300);#}
+        window.scrollTo(0,top);
+    }
 }
 
 refresh_json = function(){

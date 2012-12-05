@@ -306,7 +306,8 @@ class update_match(auth.UserAwareView):
         if match.status < 1:
             logging.warning(long(data['match[match_status]']))
             match.status =  long(data['match[match_status]'])
-            next_key = str(match.next_match.key())
+            if match.next_match:
+                next_key = str(match.next_match.key())
             to_put = [match]
 
             if 'match[player1][key]' in data:

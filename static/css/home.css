@@ -23,12 +23,6 @@ body {
     -webkit-box-shadow: 100px 0 30px 5px #999;
 }
 
-.blackback {
-    margin-top: 90px;
-    background: rgba(0,0,0,0.85);
-    border-radius: 25px;
-    }
-
 .home h1 {
     color: white;
     margin-top: 30px;
