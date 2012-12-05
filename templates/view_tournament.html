@@ -118,7 +118,6 @@ get_children = function(d) {
 }
 
 // Initialize the D3 tree.
-    console.log(height)
 var tree = d3.layout.tree()
     .size([height, width])
     .separation(function(a, b) { return 1; })
@@ -140,10 +139,11 @@ json_display = function(json) {
 
     if(json.winner != null && json.winner.length > 2){
         showingWinner = true;
-        $("#bracket").hide();
+        $("#bracket").html('').hide();
         $("#tournament-winner-name").html(json.winner);
         $("#tournament-winner").fadeIn(800);
         display_winner(json);
+        return;
     }
 
     root = json.matches;
@@ -191,7 +191,7 @@ redraw = function(redraw_json){
         svg = d3.select("#bracket").append("svg")
                 .attr("width", width + m["r"] + m["l"])
                 .attr("height", height + m["t"] + m["b"])
-                .attr("style", "margin:0px;padding:0px;")
+                .attr("style", "margin:-50px 0px 0px 0px;padding:0px;")
                 .attr("xmlns", "http://www.w3.org/2000/svg");
         defs = svg.append("defs");
         bracket = svg.append("g").attr("transform", "translate(" + m["l"] + "," + m["t"] + ")");
@@ -341,8 +341,8 @@ update = function(source) {
                 var p1_key = p1_obj.val();
                 var p2_obj = match_wrapper.find('#participant2');
                 var p2_key = p2_obj.val();
-                var p1_score = $(this).parents().find('.update-score').eq(1).val();
-                var p2_score = $(this).parents().find('.update-score').first().val();
+                var p1_score = $('input[value="'+p1_key+'"]').parent().find('.update-score1').val();
+                var p2_score = $('input[value="'+p2_key+'"]').parent().find('.update-score2').val();
 
                 $.getJSON(url,
                         {'match':{'match_key': match_key, 'match_status':'0', 'player1':{'key':p1_key, 'score':p1_score}, 'player2':{'key':p2_key, 'score':p2_score}}},
@@ -365,8 +365,8 @@ update = function(source) {
                 var key2 = p2_obj.val();
                 var team2 = $(this).parents().find('.name2').html()
 
-                var score2 = $(this).parents().find('.update-score').first().val();
-                var score1 = $(this).parents().find('.update-score').eq(1).val();
+                var score1 = $('input[value="'+key1+'"]').parent().find('.update-score1').val();
+                var score2 = $('input[value="'+key2+'"]').parent().find('.update-score2').val();
 
                 $.getJSON(url,
                         {'match':{'match_key': match_key, 'match_status':'1', 'player1':{'key':key1, 'score':score1}, 'player2':{'key':key2, 'score':score2}}},
