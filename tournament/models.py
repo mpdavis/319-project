@@ -25,10 +25,10 @@ class Tournament(db.Model):
 
     #TYPE CONSTANTS
     SINGLE_ELIMINATION = 'SE'
-    DOUBLE_ELIMINATION = 'DE'
+#    DOUBLE_ELIMINATION = 'DE'
     ROUND_ROBIN = 'RR'
     TOURNAMENT_TYPES = [SINGLE_ELIMINATION,
-                        DOUBLE_ELIMINATION,
+#                        DOUBLE_ELIMINATION,
                         ROUND_ROBIN]
     type = db.StringProperty(choices=TOURNAMENT_TYPES)
 
@@ -129,10 +129,10 @@ class MatchEncoder(json.JSONEncoder):
             users = []
             if len(participants) > 1:
                 for i in range(len(participants)):
-                    users.append({"key":participants[i].key().__str__(),"name":participants[i].name, "score":participants[i].score})
+                    users.append({"name":participants[i].name, "key":str(participants[i].key()), "score":participants[i].score})
             #id is not stable here for some reason.
 
-            return {"key_for_match":obj.key().__str__(),"winner":winner,"children":children,"participants":users,"status":obj.status}
+            return {"key_for_match":obj.key().__str__(),"winner":winner,"children":children,"participants":users,"status":obj.status,"match_key":str(obj.key())}
 
         else:
             return ""
