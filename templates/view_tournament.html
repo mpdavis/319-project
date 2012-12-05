@@ -9,9 +9,10 @@
 {% block style %}
     <style>
       .nodeText {
+{#        background-color: #ffffff;#}
         cursor: pointer;
         font-family: Helvetica,'Ludica Grande',sans-serif;
-        font-size: 9pt;
+        font-size: 14pt;
         font-weight: bold;
         text-anchor: middle;
         dominant-baseline: central;
@@ -27,39 +28,65 @@
         stroke: lightslategray;
         stroke-width: 2px;
       }
+
+        .form-match {
+            margin-right: 10px;
+        }
+
+      .form-horizontal .controls {
+          margin-left: 90px;
+      }
+
+      .form-horizontal .control-label {
+          width: 80px;
+      }
+
+
+        .match-wrapper {
+            padding-right: 10px;
+        }
     </style>
 {% endblock %}
 
 {% block content %}
-    <div id="bracket" style="margin:0px;padding:0px;">
+    <div id="bracket" style="margin: 0 auto;width:92%;">
+    </div>
+    <div id="bracket-backup" style="margin: 0 auto;width:92%;">
     </div>
 
     {# D3 script MUST appear after the #bracket div has been instantiated #}
     <script type="text/javascript">
 
 // Initialize size values.
-var m = { "t": 20, "r": 40, "b": 20, "l": 120 },
-    width = Math.floor(
-      $(document).width() - (
-        2 * $("#bracket").parent().position().left)) - m["r"] - m["l"],
-    height = Math.floor(width / (16.0 / 9.0)) - m["t"] - m["b"],
+
+var m = { "t": 20, "r": 40, "b": 20, "l": 40 },
+    width = $("#bracket").width() - m["r"] - m["l"],
+    height = $("#bracket").height() - m["t"] - m["b"] + 1200,
+
     halfWidth = Math.floor(width / 2.0),
     halfHeight = Math.floor(height / 2.0),
-    duration = 500,
+    duration = 0,
     i = 0, j = 0,
-    root;
+    root,
+    theJSON,
+    timer,
+    hasBeenDrawn = false;
 
 // Method for finding node children.
 get_children = function(d) {
-  child_matches = false;
-  if (d.children) {
-    if (d.children.length > 0)
-      child_matches = true;
-  }
-  if (child_matches)
-    return d.children;
-  else
-    return d.participants;
+    child_matches = false;
+    is_playable_match = false;
+    if (d.participants) {
+        if (d.participants.length == 2) {
+            is_playable_match = true;
+        }
+    }
+
+    if (is_playable_match) {
+        return d.children;
+    } else {
+        return d.children;
+    }
 }
 
 // Initialize the D3 tree.
@@ -74,90 +101,144 @@ var svg = d3.select("#bracket").append("svg")
     .attr("style", "margin:0px;padding:0px;")
     .attr("xmlns", "http://www.w3.org/2000/svg");
 var defs = svg.append("defs");
-var gradient = defs.append("linearGradient")
-    .attr("id", "ButtonGradient")
-    .attr("gradientUnits", "objectBoundingBox")
-    .attr("x1", "0.5")
-    .attr("y1", "0.5")
-    .attr("x2", "0.5")
-    .attr("y2", "1.0");
-gradient.append("stop")
-    .attr("offset", "0")
-    .attr("stop-color", "white")
-    .attr("stop-opacity", "1")
-    .attr("id", "ButtonColor0");
-gradient.append("stop")
-    .attr("offset", "1")
-    .attr("stop-color", "lightsteelblue")
-    .attr("stop-opacity", "1")
-    .attr("id", "ButtonColor1");
 var bracket = svg.append("g")
     .attr("transform", "translate(" + m["l"] + "," + m["t"] + ")");
 
 json_display = function(json) {
-  root = json.matches;
-  root.x0 = halfHeight;
-  root.y0 = halfWidth;
-  update(root);
+    theJSON = json;
+    root = json.matches;
+    root.x0 = halfHeight;
+    root.y0 = halfWidth;
+    update(root);
+    hasBeenDrawn = true;
+}
+
+redraw = function(redraw_json){
+    console.log("REDRAWING");
+    var top = document.documentElement.scrollTop;
+    $("#bracket-backup").html($("#bracket").html());
+    $("#bracket").html('').hide();
+    m = { "t": 20, "r": 40, "b": 20, "l": 40 };
+    width = $("#bracket").width() - m["r"] - m["l"];
+    height = $("#bracket").height() - m["t"] - m["b"] + 1200;
+
+    halfWidth = Math.floor(width / 2.0);
+    halfHeight = Math.floor(height / 2.0);
+    duration = 0;
+    i = 0;
+    j = 0;
+    root = null;
+    tree = d3.layout.tree()
+            .size([height, width])
+            .children(get_children);
+    svg = d3.select("#bracket").append("svg")
+            .attr("width", width + m["r"] + m["l"])
+            .attr("height", height + m["t"] + m["b"])
+            .attr("style", "margin:0px;padding:0px;")
+            .attr("xmlns", "http://www.w3.org/2000/svg");
+    defs = svg.append("defs");
+    bracket = svg.append("g").attr("transform", "translate(" + m["l"] + "," + m["t"] + ")");
+    json_display(redraw_json);
+    $("#bracket-backup").fadeOut(300, function(){
+        $(this).html('');
+        $("#bracket").fadeIn(300);
+    });
+{#    $("#bracket").fadeIn(300);#}
+    window.scrollTo(0,top);
+}
+
+refresh_json = function(){
+    var url = "/tournament/json/{{ tournament_key }}/";
+    $.getJSON(url,
+              {},
+              function(data){
+                  theJSON = data;
+                  console.log(data);
+                  redraw(data);
+              }
+    )
 }
 
 update = function(source) {
 
-  var nodes = tree.nodes(root);
-  var links = tree.links(nodes);
+    var nodes = tree.nodes(root);
+    var links = tree.links(nodes);
 
-  var node = bracket.selectAll("g.node")
+    var node = bracket.selectAll("g.node")
       .data(nodes);
 
-  var nodeEnter = node.enter().append("g")
-      .attr("class", "node")
-      .attr("transform", function(d) {
+    var nodeEnter = node.enter().append("g")
+        .attr("class", "node")
+        .attr("transform", function(d) {
         return "translate(" + (width - source.y0) + "," + source.x0 + ")";
-      });
-nodeEnter.append("text")
-      .text(function(d) { return d.name || d.winner; })
-      .attr("class", "nodeText");
-
-  nodeEnter.selectAll("text").each(function(d) {
-    var w = $(this).width();
-    var h = $(this).height();
-    var wm = 20;
-    var hm = 10;
-    d3.select(this.parentNode)
-        .attr("width", w + wm)
-        .attr("height", h + hm)
-        .attr("x", (-1) * ((w + wm) / 2))
-        .attr("y", (-1) * ((h + hm) / 2))
-      .insert("rect", "text")
-        .attr("class", "nodeBox")
-        .attr("width", w + wm)
-        .attr("height", h + hm)
-        .attr("x", (-1) * ((w + wm) / 2))
-        .attr("y", (-1) * ((h + hm) / 2))
-        .attr("rx", 5)
-        .attr("ry", 5);
-  });
-
-  nodeEnter.each(function(d) {
-    $(this).popover({
-      placement: 'top',
-      title: 'Update Match',
-      content: (d.name || d.winner) + ':<br />' +
-      '<input type="text" style="width:20px;" /><br />' +
-      '<a href="#" class="btn btn-primary" onclick="javascript:' +
-      'alert(' + (d.name || d.winner) + ');' +
-      '">Update Score</a>'
     });
-  });
-  nodeEnter.on("click", function(d,i){
-    $(this).popover();
-  });
 
-  node.transition()
-      .duration(duration)
-      .attr("transform", function(d) {
-        return "translate(" + (width - d.y) + "," + d.x + ")";
-      });
+    nodeEnter.append("foreignObject")
+            .attr("width", 200)
+            .attr("height", 140)
+            .attr("class", "nodeText")
+            .append('xhtml:nodeForm')
+            .html(function(d) {
+                var team1 = '';
+                var key1 = '';
+                var score1 = '';
+                var team2 = '';
+                var key2 = '';
+                var score2 = '';
+                if (d.participants) {
+                    if (d.participants.length > 0) {
+                        team1 = d.participants[0].name;
+                        key1 = d.participants[0].key;
+                        score1 = d.participants[0].score;
+                        team2 = d.participants[1].name;
+                        key2 = d.participants[1].key;
+                        score2 = d.participants[1].score;
+                    } else {
+                        return "<div class='well match-wrapper' id=" + d.match_key + ">Finish Earlier Matches</div>"
+                    }
+                }
+
+                if (d.status < 1) {
+                    var output = '{% include "bracket/inprogress_match_node.html" %}';
+                } else {
+                    var output = '{% include "bracket/finished_match_node.html" %}';
+                }
+
+                return "<div class='well match-wrapper' id=" + d.match_key + "> " + output + "</div>"
+            });
+
+
+    nodeEnter.selectAll("text").each(function(d) {
+        var w = $(this).width();
+        var h = $(this).height();
+        var wm = 20;
+        var hm = 10;
+        d3.select(this.parentNode)
+            .attr("width", w + wm)
+            .attr("height", h + hm)
+            .attr("x", (-1) * ((w + wm) / 2))
+            .attr("y", (-1) * ((h + hm) / 2))
+            .insert("rect", "text")
+            .attr("class", "nodeBox")
+            .attr("width", w + wm)
+            .attr("height", h + hm)
+            .attr("x", (-1) * ((w + wm) / 2))
+            .attr("y", (-1) * ((h + hm) / 2))
+            .attr("rx", 5)
+            .attr("ry", 5);
+    });
+
+    node.transition()
+        .duration(duration)
+        .attr("transform", function(d) {
+            var output = "";
+            if (d.depth < 1) {
+                output = "translate(" + (width - d.y - 200) + "," + (d.x - 42) + ")"
+            } else {
+                output = "translate(" + (width - d.y) + "," + (d.x - 60) + ")"
+            }
+            return output;
+    });
 
   var elbow = function (d, i) {
     return "M" + (width - d.source.y) + "," + d.source.x +
@@ -178,10 +259,68 @@ nodeEnter.append("text")
   linkEnter.transition()
       .duration(duration)
       .attr("d", elbow);
-
 }
 
-d3.json("/tournament/json/{{ tournament_key }}/", json_display);
+    d3.json("/tournament/json/{{ tournament_key }}/", json_display);
+
+    $(window).resize(function(){
+        if(timer != null) clearTimeout(timer);
+        if(hasBeenDrawn) {
+            timer = setTimeout(function() { redraw(theJSON); }, 300);
+        }
+    });
+
+        $(document).ready(function(){
+            //Handler for updating a score on a match.
+            $('.update-score').live('blur', function(){
+                var url = '/tournament/update_match/';
+                var match_key = $(this).parents().find('.match-wrapper').attr('id');
+                var match_wrapper = $("#" + match_key);
+                var p1_obj = match_wrapper.find('#participant1');
+                var p1_key = p1_obj.val();
+                var p2_obj = match_wrapper.find('#participant2');
+                var p2_key = p2_obj.val();
+                var p1_score = $(this).parents().find('.update-score').eq(1).val();
+                var p2_score = $(this).parents().find('.update-score').first().val();
+
+                $.getJSON(url,
+                        {'match':{'match_key': match_key, 'match_status':'0', 'player1':{'key':p1_key, 'score':p1_score}, 'player2':{'key':p2_key, 'score':p2_score}}},
+                        function(data){
+{#                            $('#' + data.p1_key + '-score > .score').html(data.p1_score);#}
+{#                            $('#' + data.p2_key + '-score > .score').html(data.p2_score);#}
+                            match_wrapper.css('background-color', '#ccd5ec').animate({backgroundColor: "#F9F9F9"}, 1000)
+                        }
+                );
+            });
+
+            $('.done').live('click', function(){
+                var url = '/tournament/update_match/';
+                var match_key = $(this).parents().find('.match-wrapper').attr('id');
+                var match_wrapper = $("#" + match_key);
+                var p1_obj = match_wrapper.find('#participant1');
+                var key1 = p1_obj.val();
+                var team1 = $(this).parents().find('.name1').html()
+                var p2_obj = match_wrapper.find('#participant2');
+                var key2 = p2_obj.val();
+                var team2 = $(this).parents().find('.name2').html()
+
+                var score2 = $(this).parents().find('.update-score').first().val();
+                var score1 = $(this).parents().find('.update-score').eq(1).val();
+
+                console.log(team1)
+                $.getJSON(url,
+                        {'match':{'match_key': match_key, 'match_status':'1', 'player1':{'key':key1, 'score':score1}, 'player2':{'key':key2, 'score':score2}}},
+                        function(data){
+{#                            #}
+{#                            var new_output = '{% include "bracket/finished_match_node.html" %}'#}
+{#                            match_wrapper.html(new_output);#}
+                            match_wrapper.css('background-color', '#ccd5ec').animate({backgroundColor: "#F9F9F9"}, 1000)
+                            refresh_json();
+                        }
+                );
+            });
+        });
 
     </script>
+
 {% endblock %}
