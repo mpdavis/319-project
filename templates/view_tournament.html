@@ -61,7 +61,7 @@
 
 var m = { "t": 20, "r": 40, "b": 20, "l": 40 },
     width = $("#bracket").width() - m["r"] - m["l"],
-    height = $("#bracket").height() - m["t"] - m["b"] + 500,
+    height = $("#bracket").height() - m["t"] - m["b"] + 1200,
 
     halfWidth = Math.floor(width / 2.0),
     halfHeight = Math.floor(height / 2.0),
@@ -113,13 +113,14 @@ json_display = function(json) {
     hasBeenDrawn = true;
 }
 
-redraw = function(){
+redraw = function(redraw_json){
     console.log("REDRAWING");
+    var top = document.documentElement.scrollTop;
     $("#bracket-backup").html($("#bracket").html());
     $("#bracket").html('').hide();
     m = { "t": 20, "r": 40, "b": 20, "l": 40 };
     width = $("#bracket").width() - m["r"] - m["l"];
-    height = $("#bracket").height() - m["t"] - m["b"] + 500;
+    height = $("#bracket").height() - m["t"] - m["b"] + 1200;
 
     halfWidth = Math.floor(width / 2.0);
     halfHeight = Math.floor(height / 2.0);
@@ -137,9 +138,25 @@ redraw = function(){
             .attr("xmlns", "http://www.w3.org/2000/svg");
     defs = svg.append("defs");
     bracket = svg.append("g").attr("transform", "translate(" + m["l"] + "," + m["t"] + ")");
-    json_display(theJSON);
-    $("#bracket-backup").fadeOut('fast', function(){$(this).html('');});
-    $("#bracket").fadeIn('fast');
+    json_display(redraw_json);
+    $("#bracket-backup").fadeOut(300, function(){
+        $(this).html('');
+        $("#bracket").fadeIn(300);
+    });
+{#    $("#bracket").fadeIn(300);#}
+    window.scrollTo(0,top);
+}
+
+refresh_json = function(){
+    var url = "/tournament/json/{{ tournament_key }}/";
+    $.getJSON(url,
+              {},
+              function(data){
+                  theJSON = data;
+                  console.log(data);
+                  redraw(data);
+              }
+    )
 }
 
 update = function(source) {
@@ -249,7 +266,7 @@ update = function(source) {
     $(window).resize(function(){
         if(timer != null) clearTimeout(timer);
         if(hasBeenDrawn) {
-            timer = setTimeout(function() { redraw(); }, 300);
+            timer = setTimeout(function() { redraw(theJSON); }, 300);
         }
     });
 
@@ -294,10 +311,11 @@ update = function(source) {
                 $.getJSON(url,
                         {'match':{'match_key': match_key, 'match_status':'1', 'player1':{'key':key1, 'score':score1}, 'player2':{'key':key2, 'score':score2}}},
                         function(data){
-                            var new_output = '{% include "bracket/finished_match_node.html" %}'
-                            match_wrapper.html(new_output);
+{#                            #}
+{#                            var new_output = '{% include "bracket/finished_match_node.html" %}'#}
+{#                            match_wrapper.html(new_output);#}
                             match_wrapper.css('background-color', '#ccd5ec').animate({backgroundColor: "#F9F9F9"}, 1000)
-
+                            refresh_json();
                         }
                 );
             });
