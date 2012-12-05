@@ -98,7 +98,7 @@ def get_json_by_tournament(tournament):
     tournament_winner_key = ''
     if top_match.determine_winner():
         tournament_winner = top_match.determine_winner().name
-        tournament_winner = str(top_match.determine_winner().key())
+        tournament_winner_key = str(top_match.determine_winner().key())
     tournament_json= {
         "title"     : tournament.name,
         "type"      : tournament.type,
