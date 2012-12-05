@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 
+{% block script %}<link rel="stylesheet" type="text/css" href="/static/css/home.css" />{% endblock %}
+
 {% block jumbotron %}
 
-    <link rel="stylesheet" type="text/css" href="/static/css/home.css" />
-
-    <div class="home {%if login_mode=='dusty'%}dusty{%endif%} shadow">
+    <div class="home {%if login_mode=='dusty'%}dusty{%endif%} shadow" style="margin-top:40px;">
         <div class="container">
             <div class="row">
                 <div class="span12 blackback">

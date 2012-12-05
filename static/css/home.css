@@ -3,6 +3,10 @@ body {
     background-image:url('../img/gray_jean.png');
 }
 
+#main-content{
+    margin-top: 0px;
+}
+
 .home {
     background-image: url(/static/img/hilton.jpeg);
     background-size: cover;
