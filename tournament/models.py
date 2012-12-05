@@ -129,10 +129,10 @@ class MatchEncoder(json.JSONEncoder):
             users = []
             if len(participants) > 1:
                 for i in range(len(participants)):
-                    users.append({"name":participants[i].name})
+                    users.append({"key":participants[i].key().__str__(),"name":participants[i].name, "score":participants[i].score})
             #id is not stable here for some reason.
 
-            return {"id":obj.key().id(),"winner":winner,"children":children,"participants":users,"status":obj.status}
+            return {"key_for_match":obj.key().__str__(),"winner":winner,"children":children,"participants":users,"status":obj.status}
 
         else:
             return ""
