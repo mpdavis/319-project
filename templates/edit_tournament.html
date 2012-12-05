@@ -10,13 +10,9 @@
             <form class="form-horizontal" method="post" action="" id="edit_form">
             <div class="well">
 
-                <div class="alert alert-error" id="save_confirmation" style="display: none;">
-                    error
-                </div>
-
                 {{ render_form(form) }}
 
-                <div class="control-group">
+<!--                 <div class="control-group">
                     <label class="control-label">Linked Tournaments:</label>
                     <div class="controls">
                         <table class="table table-bordered table-striped " id="tournament-table" >
@@ -51,7 +47,7 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
+                </div> -->
 
                 <div class="control-group">
                     <label class="control-label">Matches:</label>
@@ -123,7 +119,7 @@
                             </tbody>
                         </table>
                         <button type="button" class="btn btn-success " id="add_admin">Add</button>
-                        <input id="new_admin_name" name="new_admint_name" type="text" value="">
+                        <input id="new_admin_name" name="new_admint_name" placeholder="user email" type="text" value="">
                         <div class="alert alert-error" id="admin_check" style="display: none;margin-top:10px;">
                             error
                         </div>
@@ -131,10 +127,13 @@
                 </div>
             </div>
 
+            <div class="alert alert-error" style="display: none;"  id="save_confirmation"> 
+                error
+            </div>
             <div class="control-group">
                 <div class="controls">
                     <button type="button" style="margin-left:5px;" class="btn pull-right" id="cancel">Cancel</button>
-                    <button type="button" class="btn btn-primary pull-right" id="save">Save</button>
+                    <button type="button" style="margin-left:5px;" class="btn btn-primary pull-right" id="save">Save</button>
                 </div>
             </div>
             </form>
@@ -159,7 +158,7 @@
             });
 
             // post data!
-            $.post("{{ url_for('tournament-edit', tournament_key=tournament.keystr())}}&new_admins="+admins_to_save, {name: $("#name").val(), date: $("#date").val()+" "+$("#date_time").val(), location: $("#location").val(),tournament_security: $('#tournament_security').val(), type:$('#type').val(), order:$("#order").val(),win_method:$('#win_method').val()},
+            $.post("{{ url_for('tournament-edit', tournament_key=tournament.keystr())}}?new_admins="+admins_to_save, {name: $("#name").val(), date: $("#date").val()+" "+$("#date_time").val(), location: $("#location").val(),tournament_security: $('#tournament_security').val(), type:$('#type').val(), order:$("#order").val(),win_method:$('#win_method').val()},
             function(responseText)
             {
                 var data = $.parseJSON(responseText);
@@ -170,7 +169,7 @@
                 }
                 else
                 {
-                    notifictions('save_confirmation',true, 'Save Error');
+                    notifictions('save_confirmation',true, 'Save Error '+data.error);
                 }
             });
         });
