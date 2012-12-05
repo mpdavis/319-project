@@ -17,6 +17,7 @@ import flask
 import logging
 
 class New_Tournament(auth.UserAwareView):
+    decorators = [login_required]
     def get(self):
         context = self.get_context({
             'fields':{'step':1},

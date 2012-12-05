@@ -95,8 +95,10 @@ def get_json_by_tournament(tournament):
     top_match = get_top_match_by_tournament(tournament)
     pickled = json.dumps(top_match, cls=models.MatchEncoder)
     tournament_winner = ''
+    tournament_winner_key = ''
     if top_match.determine_winner():
         tournament_winner = top_match.determine_winner().name
+        tournament_winner = str(top_match.determine_winner().key())
     tournament_json= {
         "title"     : tournament.name,
         "type"      : tournament.type,
@@ -106,7 +108,12 @@ def get_json_by_tournament(tournament):
         "size"      : tournament.num_players,
         "matches"   : pickled
     }
-    encoded = "{\"title\":\""+tournament.name+"\",\"type\":\""+tournament.type+"\",\"winner\":\""+tournament_winner+"\",\"size\":\""+str(tournament.num_players)+"\",\"matches\":"+pickled+"}"
+    encoded = "{\"title\":\""+tournament.name+"\"," \
+                "\"type\":\""+tournament.type+"\"," \
+                "\"winner\":\""+tournament_winner+"\"," \
+                "\"winner_key\":\""+tournament_winner_key+"\"," \
+                "\"size\":\""+str(tournament.num_players)+"\"," \
+                "\"matches\":"+pickled+"}"
     return encoded
 
 # This method actually creates new paricipants and add it to the match

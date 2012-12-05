@@ -3,15 +3,14 @@
 {% block content %}
 
     <div class="row" style="margin-top:40px;">
-        <div class="span6 offset3">
+        <div class="span4 offset4">
             <div class="well">
                 <div class="alert alert-success">
                     Congratulations!
                 </div>
-                Thank you for registering.<br>
+                <p style="text-align: center; font-size: 24px;">Thank you for registering</p>
                 <br>
-                #TODO:
-                Put stuff here explaining what to do next.  Big button to start or join a tournament.
+                <p style="text-align: center;"><a href="{{ url_for('new-tourney') }}" class="btn btn-primary btn-large">Start a Tournament</a></p>
 
 
             </div>
