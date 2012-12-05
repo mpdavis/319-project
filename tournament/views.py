@@ -113,8 +113,8 @@ class Tournament_Edit(auth.UserAwareView):
             form.date.data = tournament.date
             form.location.data = tournament.location
             form.tournament_security.data = tournament.perms
-            form.type.data = tournament.type
-            form.order.data = tournament.order
+            # form.type.data = tournament.type
+            # form.order.data = tournament.order
             form.win_method.data = str(tournament.win_method)
 
 
@@ -159,24 +159,23 @@ class Tournament_Edit(auth.UserAwareView):
 
         return html_to_show
 
-    def post(self):
+    def post(self,tournament_key):
         form = forms.EditTournament(request.form)
         error = 0
 
-        tournament_id = request.args.get('id')
-        tournament = actions.get_tournament_by_id(int(tournament_id))
+        tournament = actions.get_tournament_by_key(tournament_key)
 
         if tournament is not None:
             if form.validate():
-                new_admins = request.args.get('new_admins').split(":")
+                new_admins = request.args.get('new_admins','').split(":")
                 tournament.admins = [actions.get_user_by_email(new_guy).key() for new_guy in new_admins if new_guy != ""]
 
                 tournament.name = form.name.data
                 tournament.date = form.date.data
                 tournament.location = form.location.data
                 tournament.perms = form.tournament_security.data
-                tournament.type = form.type.data
-                tournament.order = form.order.data
+                # tournament.type = form.type.data
+                # tournament.order = form.order.data
                 tournament.win_method = int(form.win_method.data)
 
                 tournament.put()
