@@ -3,14 +3,14 @@
 {% block content %}
 
     <div class="row" style="margin-top:80px;">
-        <div class="span6 offset3">
+        <div class="span4 offset4">
             <div class="well">
 
-                <div class="alert alert-error" id="error_message" style="display: none;">
-                    Whoops!
+                <div class="page-header" style="margin-top: -5px;">
+                    <h3>Register</h3>
                 </div>
 
-                <form class="form-horizontal" method="post" action="">
+                <form class="form-horizontal" method="post" action="" id="basic_login_form">
                     <div class="control-group">
                         <label class="control-label">Email</label>
                         <div class="controls">
@@ -21,10 +21,10 @@
                         <label class="control-label">Username</label>
                         <div class="controls">
                             {{ form.username|safe }}
-                            <div class="help-inline" id="username_text"></div>
+                            <i class="icon-ok" id="username-confirm" style="position: relative; right: -200px; top: -25px; color: #209920"></i>
                         </div>
                     </div>
-                    <div class="control-group" id="password_control">
+                    <div class="control-group" id="password_control" style="margin-top: -25px;">
                         <label class="control-label">Password</label>
                         <div class="controls">
                             {{ form.password|safe }}
@@ -34,7 +34,7 @@
                         <label class="control-label">Confirm</label>
                         <div class="controls">
                             {{ form.password_confirm|safe }}
-                            <div class="help-inline" id="password_confirm_text"></div>
+                            <i class="icon-ok" id="password-confirm" style="position: relative; right: -200px; top: -25px; color: #209920"></i>
                         </div>
                     </div>
                     <div class="control-group">
@@ -53,9 +53,14 @@
     <script>
 
     $(document).ready(function(){
+        $('#username-confirm').css('color', '#ffffff');
+        $('#basic_login_form').find('input').css("padding-right", "25px")
+        $('#basic_login_form').find('input').css("width", "187px")
+        $("#password-confirm").css('color', '#ffffff');
+
 
         $("#username").blur(function () {
-            $("#username_control").removeClass("error").removeClass("success");
+            $('#username-confirm').css('color', '#ffffff');
             $("#username_text").text("");
             if ($("#username").val().length > 0) {
                 var page = "/auth/check_username?";
@@ -67,10 +72,12 @@
                     function(data) {
 
                         if (data.valid) {
+                            $('#username-confirm').css('color', '#209920');
                             $("#username_control").removeClass("error").addClass("success");
                             $("#username_text").text("Available");
 
                         } else {
+                            $('#username-confirm').css('color', '#ffffff');
                             $("#username_control").removeClass("success").addClass("error");
                             $("#username_text").text("Unavailable");
                         }
@@ -80,13 +87,17 @@
 
         $("#password_confirm").blur(function() {
             if ($("#password").val() == $("#password_confirm").val()) {
+                $("#password-confirm").css('color', '#209920');
                 $("#password_confirm_control").removeClass("error").addClass("success");
                 $("#password_confirm_text").text("Passwords match!");
             } else {
+                $("#password-confirm").css('color', '#ffffff');
                 $("#password_confirm_control").removeClass("success").addClass("error");
                 $("#password_confirm_text").text("Passwords don't match!");
             }
         });
+
+
 
         $("#submit").click(function() {
             $.post("/auth/register/", {email: $("#email").val(), username: $("#username").val(), password: $("#password").val(), password_confirm: $("#password_confirm").val()},

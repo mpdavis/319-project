@@ -110,6 +110,8 @@ class Login(auth.UserAwareView):
                 flask_login.login_user(auth_models.WTUser.all().filter('email =', form.email.data).fetch(1)[0],
                                        remember=form.remember_me.data)
 
+        else:
+            message = "Invalid Email / Password"
         next_url = '/tournament/list'
         response = json.dumps({'loggedin': loggedin, 'error_message': message, 'next_url': next_url})
         return response

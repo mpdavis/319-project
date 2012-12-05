@@ -6,7 +6,7 @@ from google.appengine.ext import deferred
 
 def send_email(email, subject, body):
 
-    sender="Web Tournament Support <computmaxer@gmail.com>"
+    sender="Web Tournament Support <webtournaments@gmail.com>"
     deferred.defer(mail.send_mail, sender=sender, to=email, subject=subject, body=body)
 
 
