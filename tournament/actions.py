@@ -60,6 +60,11 @@ def get_top_match_by_tournament(tournament):
             return match
     return None
 
+def delete_tournament(tournament):
+    keys_to_delete = db.Query(keys_only=True).ancestor(tournament).fetch(None)
+    keys_to_delete.append(tournament.key())
+    db.delete(keys_to_delete)
+
 def update_match_by_winner(match_key, winner):
     # Get the selected match by id
     match = models.Match.get(match_key)

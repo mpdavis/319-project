@@ -189,7 +189,7 @@ class Tournament_Edit(auth.UserAwareView):
 
 class Tournament_View(auth.UserAwareView):
     # TODO: Make perms work
-    decorators = [login_required]
+    # decorators = [login_required]
     
     def get(self, tournament_key):
         #Contextual variables used by all tournament types.
@@ -199,14 +199,24 @@ class Tournament_View(auth.UserAwareView):
         tournament = actions.get_tournament_by_key(tournament_key)
         context['num_players'] = str(tournament.num_players)
         context['tournament'] = tournament
+
+        admin_list = []
+        is_a_owner = False
+        if context['user'] is not None:
+            admin_list = [actions.get_user_by_id(admin_key.id()) for admin_key in tournament.admins]
+            owners = [tournament.owner.key().id()]
+            owners.extend([admin.key().id() for admin in admin_list])
+            is_a_owner = context['user'].key().id() in owners
+
         if tournament:
-            if tournament.type == models.Tournament.ROUND_ROBIN:
-                #Setup context for Round Robin tournament
-                context['round_robin_rounds'] = actions.get_round_robin_rounds(tournament)
-                return render_template('view_round_robin.html', **context)
-            else:
-                #Setup context for bracket-style tournaments
-                return render_template('view_tournament.html', **context)
+            if tournament.perms == tournament.PRIVATE and is_a_owner or tournament.perms != tournament.PRIVATE:
+                if tournament.type == models.Tournament.ROUND_ROBIN:
+                    #Setup context for Round Robin tournament
+                    context['round_robin_rounds'] = actions.get_round_robin_rounds(tournament)
+                    return render_template('view_round_robin.html', **context)
+                else:
+                    #Setup context for bracket-style tournaments
+                    return render_template('view_tournament.html', **context)
 
         return flask.abort(404)
 
@@ -218,7 +228,7 @@ class PublicTournamentView(Tournament_View):
 
 class Tournament_Json(auth.UserAwareView):
     # TODO: Make perms work
-    decorators = [login_required]
+    # decorators = [login_required]
     
     def get(self, tournament_key):
         tournament = actions.get_tournament_by_key(tournament_key)
@@ -252,6 +262,31 @@ class check_email(auth.UserAwareView):
 class get_latest_tournaments(auth.UserAwareView):
     def get(self):
         return actions.get_datatables_records(request)
+
+class delete_tournament(auth.UserAwareView):
+    def post(self):
+        context = self.get_context()
+        tournament_key = request.args.get('tournament_key',None)
+        fail = False
+
+        if tournament_key is not None:
+
+            tournament = actions.get_tournament_by_key(tournament_key)
+            
+            admin_list = [actions.get_user_by_id(admin_key.id()) for admin_key in tournament.admins]
+            owners = [tournament.owner.key().id()]
+            owners.extend([admin.key().id() for admin in admin_list])
+
+            if context['user'].key().id() in owners:
+                actions.delete_tournament(tournament)
+            else:
+                fail = True
+        else:
+            fail = True
+
+
+
+        return json.dumps({'fail':fail})
 
 
 class update_match(auth.UserAwareView):
