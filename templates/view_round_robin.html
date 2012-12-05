@@ -20,7 +20,7 @@
 }
 div.match {
     display: inline-block;
-    width: 150px;
+    width: 48%;
     overflow-x: hidden;
     white-space: nowrap;
 }
@@ -62,50 +62,75 @@ div.match.right .rr-participant-score.final.winner{
 {% endblock %}
 
 {% block content %}
-
-<div class="container-fluid">
-    <div class="row-fluid">
-    {% for round,matches in round_robin_rounds %}
-        <div class="span4">
-            <h3>Round {{ round }}</h3>
-            <div class="well well-large">
-            {% for match, participants in matches %}
-                <div class="match-wrapper{% if match.status < 0 %} not-started{% else %}{% if match.status == 1 %} finished{% endif %}{% endif %}" id="{{ match.key() }}">
-                {% for participant in participants %}
-                    <div class="{{ loop.cycle('match', 'match right') }}">
-                        <p class="rr-participant-name" id="{{ participant.key() }}-name">{{ participant.name }}</p>
-                        {% if match.status == -1 %}
-                            <p class="rr-participant-score hidden" id="{{ participant.key() }}-score"><span class="score">{{ participant.score|replace('.0','') }}</span></p>
-                        {% endif %}
-                        {% if match.status == 0 %}
-                            <p class="rr-participant-score" id="{{ participant.key() }}-score"><span class="score">{{ participant.score|replace('.0','') }}</span></p>
-                        {% endif %}
-                        {% if match.status == 1 %}
-                            {% if participant.is_winner() %}
-                            <p class="rr-participant-score final winner" id="{{ participant.key() }}-score"><span class="score">{{ participant.score|replace('.0','') }}</span> &nbsp;<i class="icon-ok"></i></p>
-                            {% else %}
-                            <p class="rr-participant-score final" id="{{ participant.key() }}-score"><span class="score">{{ participant.score|replace('.0','') }}</span></p>
-                            {% endif %}
-                        {% endif %}
-                    </div>
-                {% endfor %}
-                {% if match.status < 0 %}
-                    <div class="rr-start-match">
-                        <button class="btn btn-mini btn-primary btn-block hidden" id="{{ match.key() }}-start">Start this Match</button>
-                        <p class="not-started-message">This match has not been started yet!</p>
-                    </div>
-                {% endif %}
-            </div>
-                {% if not loop.last %}
-                <hr>
-                {% endif %}
+<div class="row-fluid">
+    <div class="span2">
+        <h3>Standings</h3>
+        <table class="table table-bordered table-striped" id="standings-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Wins</th>
+                    <th>Loses</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for standing in standings %}
+                <tr id="{{standing.3}}">
+                    <td>{{ standing.2 }}</td>
+                    <td class="win">{{ standing.0 }}</td>
+                    <td class="lose">{{ standing.1 }}</td>
+                </tr>
             {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="span10">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                {% for round,matches in round_robin_rounds %}
+                    <div class="span4">
+                        <h3>Round {{ round }}</h3>
+                        <div class="well">
+                            {% for match, participants in matches %}
+                                <div class="match-wrapper{% if match.status < 0 %} not-started{% else %}{% if match.status == 1 %} finished{% endif %}{% endif %}" id="{{ match.key() }}">
+                                    {% for participant in participants %}
+                                        <div class="{{ loop.cycle('match', 'match right') }}">
+                                            <p class="rr-participant-name" id="{{ participant.key() }}-name">{{ participant.name }}</p>
+                                            {% if match.status == -1 %}
+                                                <p class="rr-participant-score hidden" id="{{ participant.key() }}-score"><span class="score">{{ participant.score|replace('.0','') }}</span></p>
+                                            {% endif %}
+                                            {% if match.status == 0 %}
+                                                <p class="rr-participant-score" id="{{ participant.key() }}-score"><span class="score">{{ participant.score|replace('.0','') }}</span></p>
+                                            {% endif %}
+                                            {% if match.status == 1 %}
+                                                {% if participant.is_winner() %}
+                                                    <p class="rr-participant-score final winner" id="{{ participant.key() }}-score"><span class="score">{{ participant.score|replace('.0','') }}</span> &nbsp;<i class="icon-ok"></i></p>
+                                                {% else %}
+                                                    <p class="rr-participant-score final" id="{{ participant.key() }}-score"><span class="score">{{ participant.score|replace('.0','') }}</span></p>
+                                                {% endif %}
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                    {% if match.status < 0 %}
+                                        <div class="rr-start-match">
+                                            <button class="btn btn-mini btn-primary btn-block hidden" id="{{ match.key() }}-start">Start this Match</button>
+                                            <p class="not-started-message">This match has not been started yet!</p>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                {% if not loop.last %}
+                                    <hr>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {{ loop.cycle('','','</div><div class="row-fluid">'|safe) }}
+                {% endfor %}
             </div>
         </div>
-        {{ loop.cycle('','','</div><div class="row-fluid">'|safe) }}
-    {% endfor %}
     </div>
 </div>
+
 <script type="text/javascript">
 $(document).ready(function(){
     $('body').live('click',function(e){
@@ -183,6 +208,14 @@ $(document).ready(function(){
                       match_wrapper.find('.rr-participant-score').addClass('final');
                       match_wrapper.addClass('finished');
                       match_wrapper.popover('hide');
+                      var winnerRow = $("#" + data.winner_uuid);
+                      console.log(winnerRow);
+                      var existingWins = parseInt(winnerRow.find('.win').html());
+                      console.log(existingWins);
+                      winnerRow.find('.win').html(existingWins + 1).css('background-color', '#ccd5ec').animate({backgroundColor: "#F9F9F9"}, 1000)
+                      var loserRow = $("#" + data.loser_uuid);
+                      var existingLoses = parseInt(loserRow.find('.lose').html());
+                      loserRow.find('.lose').html(existingLoses + 1).css('background-color', '#ccd5ec').animate({backgroundColor: "#F9F9F9"}, 1000)
                       initializePopovers();
                   }
         );
