@@ -16,6 +16,8 @@ from auth import urls as auth_urls
 from tournament import urls as tournament_urls
 from tournament.templatetags import ttags
 
+from base import views as base_views
+
 
 app = Flask(__name__)
 
@@ -51,6 +53,7 @@ class DemoHandler(auth.UserAwareView):
 
 #Define URLs
 app.add_url_rule('/', view_func=MainHandler.as_view('home'))
+app.add_url_rule('/about/', view_func=base_views.About.as_view('about'))
 app.add_url_rule('/demo/', view_func=DemoHandler.as_view('demo'))
 auth_urls.setup_urls(app)
 tournament_urls.setup_urls(app)
