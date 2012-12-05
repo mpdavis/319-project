@@ -123,6 +123,8 @@ class MatchEncoder(json.JSONEncoder):
             winner = "?"
             if obj.status==Match.FINISHED_STATUS:
                 winner = obj.determine_winner()
+                if winner:
+                    winner = str(winner.key())
             children = None
             if not obj.is_leaf():
                 children = obj.get_children_matches()
