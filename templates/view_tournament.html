@@ -140,10 +140,11 @@ json_display = function(json) {
 
     if(json.winner != null && json.winner.length > 2){
         showingWinner = true;
-        $("#bracket").hide();
+        $("#bracket").html('').hide();
         $("#tournament-winner-name").html(json.winner);
         $("#tournament-winner").fadeIn(800);
         display_winner(json);
+        return;
     }
 
     root = json.matches;
@@ -191,7 +192,7 @@ redraw = function(redraw_json){
         svg = d3.select("#bracket").append("svg")
                 .attr("width", width + m["r"] + m["l"])
                 .attr("height", height + m["t"] + m["b"])
-                .attr("style", "margin:0px;padding:0px;")
+                .attr("style", "margin:-50px 0px 0px 0px;padding:0px;")
                 .attr("xmlns", "http://www.w3.org/2000/svg");
         defs = svg.append("defs");
         bracket = svg.append("g").attr("transform", "translate(" + m["l"] + "," + m["t"] + ")");
