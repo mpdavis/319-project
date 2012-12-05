@@ -154,7 +154,7 @@ def create_tournament(form_data, p_form_data, user):
                 seeded_list.append({'name':value,'seed':int(num)+1})
 
     t.num_players = len(seeded_list)
-    t.put()
+    t = t.put()
 
     ps_to_put = []
     if form_data.get('type') == 'RR':
@@ -263,6 +263,7 @@ def create_tournament(form_data, p_form_data, user):
             is_odd = True
         build_matches_helper(None, is_odd)
     db.put(ps_to_put)
+    return t
 
 
 def get_round_robin_rounds(tournament):

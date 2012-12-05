@@ -64,10 +64,9 @@ class New_Tournament(auth.UserAwareView):
                 p_form = forms.handle_participant_forms(request.form,num_participants,include_seeds)
                 p_form.validate() #TODO: if here?
 
-                actions.create_tournament(context['fields'], p_form.data, self.user.key())
+                t_key = actions.create_tournament(context['fields'], p_form.data, self.user.key())
 
-                #TEMP REDIRECT TO HOME TODO: Redirect to Tournament Overview Page once it exists
-                return redirect(url_for('tournament-list'))
+                return redirect(url_for('view-tourney', tournament_key=str(t_key)))
             else:
                 context.update({'fields':{'step':3}, 'form':form})
                 return self.render_new_tourney(context)
@@ -195,7 +194,6 @@ class Tournament_View(auth.UserAwareView):
         #Contextual variables used by all tournament types.
         context = self.get_context()
         context['tournament_key'] = tournament_key
-        context['full_page_content'] = True
         tournament = actions.get_tournament_by_key(tournament_key)
         context['num_players'] = str(tournament.num_players)
         context['tournament'] = tournament
@@ -216,6 +214,7 @@ class Tournament_View(auth.UserAwareView):
                     return render_template('view_round_robin.html', **context)
                 else:
                     #Setup context for bracket-style tournaments
+                    context['full_page_content'] = True
                     return render_template('view_tournament.html', **context)
 
         return flask.abort(404)
