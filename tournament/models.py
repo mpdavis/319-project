@@ -101,6 +101,8 @@ class Match(db.Model):
             matches.append(self.second_match)
         return matches
 
+    def has_been_played(self):
+        return self.status == self.FINISHED_STATUS
 
     def determine_winner(self):
         if self.status != self.FINISHED_STATUS:
@@ -155,6 +157,7 @@ class Participant(db.Model):
     user = db.ReferenceProperty(auth_models.WTUser)
     name = db.StringProperty()
     score = db.FloatProperty(default=0.0)
+    uuid = db.StringProperty()
 
     def get_participant_name(self):
         if self.user:

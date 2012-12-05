@@ -102,9 +102,9 @@
 
         {% block jumbotron %}{% endblock %}
 
-        <div id="main-content" class="container {% if full_page_content %}full-page-container{% endif %}">
+        <div id="main-content" class="{% if full_page_content %}container-fluid full-page-container{% else %}container{% endif %}">
             {% if not remove_header %}
-                <div class="row">
+                <div class="{% if full_page_content %}row-fluid{% else %}row{% endif %}">
                     <div class="span12">
                         <div class="page-header" {% if full_page_content %}style="margin-left: 100px"{% endif %}>
                             <h1>{% block header %}{% endblock %}</h1>

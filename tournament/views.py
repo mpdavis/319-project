@@ -211,7 +211,9 @@ class Tournament_View(auth.UserAwareView):
             if tournament.perms == tournament.PRIVATE and is_a_owner or tournament.perms != tournament.PRIVATE:
                 if tournament.type == models.Tournament.ROUND_ROBIN:
                     #Setup context for Round Robin tournament
+                    context['full_page_content'] = True
                     context['round_robin_rounds'] = actions.get_round_robin_rounds(tournament)
+                    context['standings'] = actions.get_round_robin_standings(tournament)
                     return render_template('view_round_robin.html', **context)
                 else:
                     #Setup context for bracket-style tournaments
@@ -295,14 +297,13 @@ class update_match(auth.UserAwareView):
         # {'match':{'match_key':'key_for_match', 'match_status':1, 
         #           'player1':{'key':'p1_key', 'score':12},
         #           'player2':{'key':'p2_key', 'score':12}}}
-        logging.warning("test")
-        p1_score = p2_score = p1_key = p2_key = winner_key = next_key = 0
+        p1_score = p2_score = p1_key = p2_key = winner_key = next_key = winner_uuid = loser_uuid = 0
         data = json.loads(json.dumps(request.args))
 
         match = actions.get_match_by_key(data['match[match_key]'])
         match_participants = actions.get_participants_by_match(match)
+        tournament = match.parent()
 
-        logging.warning(match)
         if match.status < 1:
             logging.warning(long(data['match[match_status]']))
             match.status =  long(data['match[match_status]'])
@@ -333,13 +334,28 @@ class update_match(auth.UserAwareView):
                 # Match is over, determine a winner
                 winner = match.determine_winner()
                 if winner:
-                    to_put.append(models.Participant(
-                                        seed=winner.seed,
-                                        name=winner.name,
-                                        parent=match.next_match))
                     winner_key = winner.key()
+                    if tournament.type == 'SE':
+                        to_put.append(models.Participant(
+                            seed=winner.seed,
+                            name=winner.name,
+                            parent=match.next_match))
+                    elif tournament.type == 'RR':
+                        winner_uuid = winner.uuid
+                        if winner_key == p1_key:
+                            loser_uuid = db.get(p2_key).uuid
+                        elif winner_key == p2_key:
+                            loser_uuid = db.get(p1_key).uuid
 
             db.put(to_put)
 
-        return json.dumps({'p1_score':p1_score, 'p1_key': str(p1_key), 'p2_score':p2_score, 'p2_key': str(p2_key), 'winner': str(winner_key), 'next_match': next_key})
+        if tournament.type == 'RR':
+            return json.dumps({'p1_score':p1_score, 'p1_key': str(p1_key),
+                               'p2_score':p2_score, 'p2_key': str(p2_key),
+                               'winner': str(winner_key), 'next_match': next_key,
+                               'winner_uuid': winner_uuid, 'loser_uuid': loser_uuid})
+        else:
+            return json.dumps({'p1_score':p1_score, 'p1_key': str(p1_key),
+                               'p2_score':p2_score, 'p2_key': str(p2_key),
+                               'winner': str(winner_key), 'next_match': next_key})
 
