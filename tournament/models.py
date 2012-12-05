@@ -15,6 +15,7 @@ class Tournament(db.Model):
 
     owner = db.ReferenceProperty(auth_models.WTUser)
     admins = db.ListProperty(db.Key)
+    num_players = db.IntegerProperty()
 
     #PERMISSON CONSTANTS
     PUBLIC = 'public'
@@ -134,7 +135,13 @@ class MatchEncoder(json.JSONEncoder):
                     users.append({"name":participants[i].name, "key":str(participants[i].key()), "score":participants[i].score})
             #id is not stable here for some reason.
 
-            return {"key_for_match":obj.key().__str__(),"winner":winner,"children":children,"participants":users,"status":obj.status,"match_key":str(obj.key())}
+            return {"key_for_match" : obj.key().__str__(),
+                    "winner"        : winner,
+                    "children"      : children,
+                    "participants"  : users,
+                    "status"        : obj.status,
+                    "match_key"     : str(obj.key()),
+            }
 
         else:
             return ""
