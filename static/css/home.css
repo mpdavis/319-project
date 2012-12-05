@@ -1,6 +1,11 @@
 body {
     background-color:#F5F5F5;
     background-image:url('../img/gray_jean.png');
+    padding-top: 40px;
+}
+
+#main-content{
+    margin-top: 0px;
 }
 
 .home {

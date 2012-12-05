@@ -6,6 +6,7 @@ import json
 from operator import attrgetter
 import logging
 import math
+import uuid
 
 def get_tournaments_by_user(user_key):
     tournaments = models.Tournament.all().filter('owner =', user_key).filter('order', 1).fetch(1000)
@@ -161,7 +162,8 @@ def create_tournament(form_data, p_form_data, user):
         for field, value in p_form_data.items():
             if 'name' in field:
                 num = field[11:-4]
-                seeded_list.append({'name':value,'seed':int(num)+1})
+                unique_player_id = str(uuid.uuid4())
+                seeded_list.append({'name':value,'seed':int(num)+1,'unique_id':unique_player_id})
 
     t.num_players = len(seeded_list)
     t = t.put()
@@ -175,8 +177,8 @@ def create_tournament(form_data, p_form_data, user):
             for p1, p2 in zip(list_to_use[x0:x1:1],list_to_use[y0:y1:-1]): 
                 m = models.Match(round=round_num, status=models.Match.NOT_STARTED_STATUS, parent=t)
                 m.put()
-                player_1 = models.Participant(name=p1['name'],parent=m)
-                player_2 = models.Participant(name=p2['name'],parent=m)
+                player_1 = models.Participant(name=p1['name'],uuid=p1['unique_id'],parent=m)
+                player_2 = models.Participant(name=p2['name'],uuid=p2['unique_id'],parent=m)
                 ps_to_put.extend([player_1, player_2])
 
         size = len(seeded_list)
@@ -372,3 +374,29 @@ def get_public_tournaments():
 def get_participants_from_match(key):
     participants = models.Participant.parent(key).fetch()
     return participants
+
+def get_participants_by_uuid(uuid):
+    return models.Participant.all().filter(unique_id=uuid)
+
+def get_round_robin_standings(tournament):
+    uuids = {}
+    participants = models.Participant.all().ancestor(tournament)
+    for par in participants:
+        if par.uuid in uuids:
+            uuids.get(par.uuid).append(par)
+        else:
+            uuids[par.uuid] = [par]
+
+    standings = []
+    for uuid,pars in uuids.items():
+        wins = 0
+        lose = 0
+        for par in pars:
+            if par.parent().has_been_played():
+                if par.is_winner():
+                    wins += 1
+                else:
+                    lose += 1
+        standings.append((wins,lose,par.name,par.uuid))
+    standings.sort(reverse=True)
+    return standings

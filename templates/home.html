@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 
-{% block jumbotron %}
+{% block script %}<link rel="stylesheet" type="text/css" href="/static/css/home.css" />{% endblock %}
 
-    <link rel="stylesheet" type="text/css" href="/static/css/home.css" />
+{% block jumbotron %}
 
     <div class="home {%if login_mode=='dusty'%}dusty{%endif%} shadow">
         <div class="container">
