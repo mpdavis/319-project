@@ -94,6 +94,9 @@ def update_match_with_player_score(match_key, participant, score):
 def get_json_by_tournament(tournament):
     top_match = get_top_match_by_tournament(tournament)
     pickled = json.dumps(top_match, cls=models.MatchEncoder)
+    tournament_winner = ''
+    if top_match.determine_winner():
+        tournament_winner = top_match.determine_winner().name
     tournament_json= {
         "title"     : tournament.name,
         "type"      : tournament.type,
@@ -103,7 +106,7 @@ def get_json_by_tournament(tournament):
         "size"      : tournament.num_players,
         "matches"   : pickled
     }
-    encoded = "{\"title\":\""+tournament.name+"\",\"type\":\""+tournament.type+"\",\"size\":\""+str(tournament.num_players)+"\",\"matches\":"+pickled+"}"
+    encoded = "{\"title\":\""+tournament.name+"\",\"type\":\""+tournament.type+"\",\"winner\":\""+tournament_winner+"\",\"size\":\""+str(tournament.num_players)+"\",\"matches\":"+pickled+"}"
     return encoded
 
 # This method actually creates new paricipants and add it to the match
