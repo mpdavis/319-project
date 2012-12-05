@@ -11,3 +11,4 @@ def setup_urls(app):
     app.add_url_rule('/tournament/search/', view_func=tournament_views.Tournament_Search.as_view('tournament-search'))
     app.add_url_rule('/tournament/get/', view_func=tournament_views.get_latest_tournaments.as_view('tournament-get'))
     app.add_url_rule('/tournament/update_match/', view_func=tournament_views.update_match.as_view('match_update'))
+    app.add_url_rule('/tournament/delete_tournament/', view_func=tournament_views.delete_tournament.as_view('delete_tournament'))

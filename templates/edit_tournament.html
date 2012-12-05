@@ -130,12 +130,11 @@
             <div class="alert alert-error" style="display: none;"  id="save_confirmation"> 
                 error
             </div>
-            <div class="control-group">
-                <div class="controls">
-                    <button type="button" style="margin-left:5px;" class="btn pull-right" id="cancel">Cancel</button>
-                    <button type="button" style="margin-left:5px;" class="btn btn-primary pull-right" id="save">Save</button>
-                </div>
-            </div>
+
+                <button type="button" class="btn btn-danger pull-left icon-trash" id="delete"> Delete</button>
+                <button type="button" style="margin-left:5px;" class="btn pull-right" id="cancel">Cancel</button>
+                <button type="button" style="margin-left:5px;" class="btn btn-primary pull-right" id="save">Save</button>
+
             </form>
         </div>
 
@@ -174,9 +173,23 @@
             });
         });
 
-        // on cancel redirect back to the user's tournament list
+        $("#delete").click(function() {
+            if (confirm('Are you sure you want to delete this tournament?')){
+                $.post("{{url_for('delete_tournament',tournament_key=tournament.keystr())}}", {},
+                function(responseText)
+                {
+                    var data = $.parseJSON(responseText);
+                    if(!data.fail)
+                    {
+                        window.location = "{{url_for('tournament-list')}}";
+                    }
+                });
+            } 
+
+        });
+
         $("#cancel").click(function() {
-            window.location = '/tournament/list/';
+            window.location = "{{url_for('tournament-list')}}";
         });
 
         // the danger buttons on this page represents every remove button on the admins table

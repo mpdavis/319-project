@@ -55,6 +55,7 @@ class DemoHandler(auth.UserAwareView):
 app.add_url_rule('/', view_func=MainHandler.as_view('home'))
 app.add_url_rule('/about/', view_func=base_views.About.as_view('about'))
 app.add_url_rule('/demo/', view_func=DemoHandler.as_view('demo'))
+app.add_url_rule('/contact/', view_func=base_views.ContactUs.as_view('contact'))
 auth_urls.setup_urls(app)
 tournament_urls.setup_urls(app)
 

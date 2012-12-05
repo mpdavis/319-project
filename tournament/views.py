@@ -252,6 +252,31 @@ class get_latest_tournaments(auth.UserAwareView):
     def get(self):
         return actions.get_datatables_records(request)
 
+class delete_tournament(auth.UserAwareView):
+    def post(self):
+        context = self.get_context()
+        tournament_key = request.args.get('tournament_key',None)
+        fail = False
+
+        if tournament_key is not None:
+
+            tournament = actions.get_tournament_by_key(tournament_key)
+            
+            admin_list = [actions.get_user_by_id(admin_key.id()) for admin_key in tournament.admins]
+            owners = [tournament.owner.key().id()]
+            owners.extend([admin.key().id() for admin in admin_list])
+
+            if context['user'].key().id() in owners:
+                actions.delete_tournament(tournament)
+            else:
+                fail = True
+        else:
+            fail = True
+
+
+
+        return json.dumps({'fail':fail})
+
 
 class update_match(auth.UserAwareView):
     def get(self):
