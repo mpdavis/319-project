@@ -89,9 +89,16 @@ def update_match_with_player_score(match_key, participant, score):
 def get_json_by_tournament(tournament):
     top_match = get_top_match_by_tournament(tournament)
     pickled = json.dumps(top_match, cls=models.MatchEncoder)
-    tournament_json= {"title":tournament.name, "type":tournament.type,"created":tournament.created,"date":tournament.date
-        ,"location":tournament.location,"matches":pickled}
-    encoded = "{\"title\":\""+tournament.name+"\",\"type\":\""+tournament.type+"\",\"matches\":"+pickled+"}"
+    tournament_json= {
+        "title"     : tournament.name,
+        "type"      : tournament.type,
+        "created"   : tournament.created,
+        "date"      : tournament.date,
+        "location"  : tournament.location,
+        "size"      : tournament.num_players,
+        "matches"   : pickled
+    }
+    encoded = "{\"title\":\""+tournament.name+"\",\"type\":\""+tournament.type+"\",\"size\":\""+str(tournament.num_players)+"\",\"matches\":"+pickled+"}"
     return encoded
 
 # This method actually creates new paricipants and add it to the match
@@ -115,7 +122,7 @@ def create_tournament(form_data, p_form_data, user):
         type=form_data.get('type'),
         order=1,
         win_method=models.Tournament.HIGHEST_WINS)
-    t.put()
+
 
     seeded_list = []
     if form_data.get('show_seeds', False):
@@ -139,7 +146,10 @@ def create_tournament(form_data, p_form_data, user):
         for field, value in p_form_data.items():
             if 'name' in field:
                 num = field[11:-4]
-                seeded_list.append({'name':value,'seed':int(num)+1})  
+                seeded_list.append({'name':value,'seed':int(num)+1})
+
+    t.num_players = len(seeded_list)
+    t.put()
 
     ps_to_put = []
     if form_data.get('type') == 'RR':

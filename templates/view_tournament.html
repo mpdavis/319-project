@@ -57,42 +57,40 @@
     {# D3 script MUST appear after the #bracket div has been instantiated #}
     <script type="text/javascript">
 
-// Initialize size values.
+    find_height = function () {
+        var height = parseInt({{ num_players }}) * 125;
+        console.log(height)
+        return height;
+    }
 
+
+
+// Initialize size values.
 var m = { "t": 20, "r": 40, "b": 20, "l": 40 },
     width = $("#bracket").width() - m["r"] - m["l"],
-    height = $("#bracket").height() - m["t"] - m["b"] + 1200,
-
+    height = find_height()
     halfWidth = Math.floor(width / 2.0),
     halfHeight = Math.floor(height / 2.0),
     duration = 0,
     i = 0, j = 0,
     root,
     theJSON,
+    size,
     timer,
     hasBeenDrawn = false;
 
+
+
 // Method for finding node children.
 get_children = function(d) {
-    child_matches = false;
-    is_playable_match = false;
-    if (d.participants) {
-        if (d.participants.length == 2) {
-            is_playable_match = true;
-        }
-    }
-
-    if (is_playable_match) {
-        return d.children;
-    } else {
-        return d.children;
-    }
+    return d.children
 }
 
 // Initialize the D3 tree.
+    console.log(height)
 var tree = d3.layout.tree()
-    .size([height, width])
-    .children(get_children);
+        .children(get_children)
+        .size([height, width]);
 
 // Initialize SVG.
 var svg = d3.select("#bracket").append("svg")
@@ -100,6 +98,7 @@ var svg = d3.select("#bracket").append("svg")
     .attr("height", height + m["t"] + m["b"])
     .attr("style", "margin:0px;padding:0px;")
     .attr("xmlns", "http://www.w3.org/2000/svg");
+
 var defs = svg.append("defs");
 var bracket = svg.append("g")
     .attr("transform", "translate(" + m["l"] + "," + m["t"] + ")");
@@ -107,20 +106,19 @@ var bracket = svg.append("g")
 json_display = function(json) {
     theJSON = json;
     root = json.matches;
-    root.x0 = halfHeight;
+    root.x0 = 600;
     root.y0 = halfWidth;
     update(root);
     hasBeenDrawn = true;
 }
 
 redraw = function(redraw_json){
-    console.log("REDRAWING");
     var top = document.documentElement.scrollTop;
     $("#bracket-backup").html($("#bracket").html());
     $("#bracket").html('').hide();
     m = { "t": 20, "r": 40, "b": 20, "l": 40 };
     width = $("#bracket").width() - m["r"] - m["l"];
-    height = $("#bracket").height() - m["t"] - m["b"] + 1200;
+    height = find_height()
 
     halfWidth = Math.floor(width / 2.0);
     halfHeight = Math.floor(height / 2.0);
@@ -153,7 +151,6 @@ refresh_json = function(){
               {},
               function(data){
                   theJSON = data;
-                  console.log(data);
                   redraw(data);
               }
     )
@@ -307,7 +304,6 @@ update = function(source) {
                 var score2 = $(this).parents().find('.update-score').first().val();
                 var score1 = $(this).parents().find('.update-score').eq(1).val();
 
-                console.log(team1)
                 $.getJSON(url,
                         {'match':{'match_key': match_key, 'match_status':'1', 'player1':{'key':key1, 'score':score1}, 'player2':{'key':key2, 'score':score2}}},
                         function(data){

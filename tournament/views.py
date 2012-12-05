@@ -197,6 +197,7 @@ class Tournament_View(auth.UserAwareView):
         context['tournament_key'] = tournament_key
         context['full_page_content'] = True
         tournament = actions.get_tournament_by_key(tournament_key)
+        context['num_players'] = str(tournament.num_players)
         context['tournament'] = tournament
         if tournament:
             if tournament.type == models.Tournament.ROUND_ROBIN:
