@@ -28,7 +28,6 @@ class NewTournamentStep2DATEHACK(forms.Form):
 
 class NewTournamentStep3(forms.Form):
     TOURNAMENT_TYPES = [('SE', 'Single Elimination'),
-                        ('DE', 'Double Elimination'),
                         ('RR', 'Round Robin'),]
     type = forms.SelectField("Tourney Type", choices=TOURNAMENT_TYPES)
     number_participants = forms.IntegerField("Participants")

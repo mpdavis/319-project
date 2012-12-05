@@ -25,10 +25,10 @@ class Tournament(db.Model):
 
     #TYPE CONSTANTS
     SINGLE_ELIMINATION = 'SE'
-    DOUBLE_ELIMINATION = 'DE'
+#    DOUBLE_ELIMINATION = 'DE'
     ROUND_ROBIN = 'RR'
     TOURNAMENT_TYPES = [SINGLE_ELIMINATION,
-                        DOUBLE_ELIMINATION,
+#                        DOUBLE_ELIMINATION,
                         ROUND_ROBIN]
     type = db.StringProperty(choices=TOURNAMENT_TYPES)
 
