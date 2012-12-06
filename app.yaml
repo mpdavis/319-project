@@ -11,9 +11,11 @@ handlers:
 
 - url: /static
   static_dir: static
+  secure: always
 
 - url: /.*
   script: main.py
+  secure: always
 
 libraries:
 - name: jinja2
@@ -21,3 +23,6 @@ libraries:
 
 builtins:
 - deferred: on
+
+inbound_services:
+  - warmup
