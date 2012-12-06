@@ -50,6 +50,16 @@ h3 code {
     margin-top: 40px;
 }
 
+.throbber {
+    background-image: url('../img/throbber.gif');
+    background-size: 16px 16px;
+    height:16px;
+    width:16px;
+    position: relative;
+    bottom:32px;
+    left:0px;
+    display:none;
+}
 /* Tweak navbar brand link to be super sleek
 -------------------------------------------------- */
 
