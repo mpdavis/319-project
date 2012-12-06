@@ -384,6 +384,7 @@ update = function(source) {
             });
 
             $('.done').live('click', function(){
+                $(this).attr('disabled', 'disabled');
                 var url = '/tournament/update_match/';
                 var match_key = $(this).parents().find('.match-wrapper').attr('id');
                 var match_wrapper = $("#" + match_key);
