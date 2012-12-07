@@ -1,4 +1,5 @@
 import json
+import logging
 
 import auth
 from auth import forms as auth_forms
@@ -133,6 +134,65 @@ class Logout(auth.UserAwareView):
     def get(self):
         flask_login.logout_user()
         return redirect('/auth/login')
+
+class ForgotPassword(auth.UserAwareView):
+    def get(self):
+        context = self.get_context()
+        context['form'] = auth_forms.ForgotPasswordForm()
+        return render_template('auth/forgot_password.html', **context)
+
+    def post(self):
+        form = auth_forms.ForgotPasswordForm(request.form)
+
+        if form.validate():
+            user = auth_models.WTUser.get_user_by_email(form.email.data)
+            if not user:
+                return json.dumps({'error': 'Email not found'})
+
+            logging.info("Sending password reset email to %s" % user.email)
+            auth_utils.send_reset_email(user)
+            return json.dumps({'error': 'email sent'})
+
+        return json.dumps({'error': 'invalid form'})
+
+class ResetPassword(auth.UserAwareView):
+    def get(self):
+        token = request.args.get('token', None)
+        context = self.get_context()
+
+        if not token:
+            context['form'] = auth_forms.ForgotPasswordForm()
+            return render_template('auth/forgot_password.html', **context)
+
+        valid = auth_utils.validate_token(token)
+        if not valid:
+            return render_template('home.html', **context)
+
+        context['token'] = token
+        context['form'] = auth_forms.ResetPasswordForm()
+        return render_template('auth/reset_password.html', **context)
+
+    def post(self):
+        form = auth_forms.ResetPasswordForm(request.form)
+        context = self.get_context()
+
+        if form.validate():
+            token = form.token.data
+            if not token:
+                context['form'] = auth_forms.ForgotPasswordForm
+                return render_template('home.html', **context)
+
+            email = auth_utils.validate_token(token)
+
+            if not email:
+                return json.dumps({'error': 'invalid token'})
+
+            user = auth_models.WTUser.get_user_by_email(email)
+            if user:
+                logging.info("Password reset for %s" % user.email)
+                user.update_password(form.password.data)
+
+            return json.dumps({'message': 'done!'})
 
 
 class check_username(auth.UserAwareView):

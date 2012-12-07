@@ -8,6 +8,8 @@ def send_email(email, subject, body):
 
     sender="Web Tournament Support <computmaxer@gmail.com>"
     deferred.defer(mail.send_mail, sender=sender, to=email, subject=subject, body=body)
+    import logging
+    logging.warning('skldfjslkdjf')
 
 
 def generate_email_body(template, context=None, **kwargs):
