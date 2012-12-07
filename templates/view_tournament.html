@@ -32,20 +32,33 @@
       }
 
       .form-horizontal .controls {
-          margin-left: 90px;
+          margin-left: 100px;
       }
 
       .form-horizontal .control-label {
-          width: 80px;
+          width: 95px;
+      }
+
+      .form-horizontal .control-group {
+          margin-bottom: 5px;
       }
 
       .match-wrapper {
           padding-right: 10px;
+          padding-left: 10px;
+          height:110px;
+      }
+      .match-wrapper.match-finished {
+          padding-left: 0px;
       }
       .match-pre {
-          margin-top: 18px;
+          margin-top: 36px;
           padding-right: 20px;
           text-align: center;
+          height: 35px;
+      }
+      .match-pre.match-championship {
+          margin-top: 18px;
       }
       #tournament-winner h1 {
           color: white;
@@ -61,6 +74,13 @@
           text-align: center;
           margin-top: 20px;
       }
+    .name1, .name2 {
+        overflow: hidden;
+        height: 39px;
+    }
+    .tooltip{
+        margin-top: -50px;
+    }
     </style>
 {% endblock %}
 
@@ -232,7 +252,7 @@ update = function(source) {
 
     nodeEnter.append("foreignObject")
             .attr("width", 200)
-            .attr("height", 140)
+            .attr("height", 150)
             .attr("class", "nodeText")
             .append('xhtml:nodeForm')
             .html(function(d) {
@@ -251,7 +271,12 @@ update = function(source) {
                         key2 = d.participants[1].key;
                         score2 = d.participants[1].score;
                     } else {
-                        return "<div class='well match-wrapper match-pre' id=" + d.match_key + ">Finish Earlier Matches</div>"
+                        if (d.depth < 1) {
+                            return "<div class='well match-wrapper match-pre match-championship' id=" + d.match_key + ">Finish Earlier Matches</div>";
+                        }
+                        else {
+                            return "<div class='well match-wrapper match-pre' id=" + d.match_key + ">Finish Earlier Matches</div>";
+                        }
                     }
                 }
                 var class1 = '';
@@ -296,7 +321,7 @@ update = function(source) {
             if (d.depth < 1) {
                 output = "translate(" + (width - d.y - 200) + "," + (d.x - 57) + ")"
             } else {
-                output = "translate(" + (width - d.y) + "," + (d.x - 60) + ")"
+                output = "translate(" + (width - d.y) + "," + (d.x - 78) + ")"
             }
             return output;
     });
@@ -320,6 +345,8 @@ update = function(source) {
   linkEnter.transition()
       .duration(duration)
       .attr("d", elbow);
+
+    $(".name1, .name2").tooltip({'placement':'left'});
 }
 
     d3.json("/tournament/json/{{ tournament_key }}/", json_display);
@@ -337,6 +364,7 @@ update = function(source) {
                 var url = '/tournament/update_match/';
                 var match_key = $(this).parents().find('.match-wrapper').attr('id');
                 var match_wrapper = $("#" + match_key);
+                match_wrapper.find('.throbber').show();  //Show Throbber
                 var p1_obj = match_wrapper.find('#participant1');
                 var p1_key = p1_obj.val();
                 var p2_obj = match_wrapper.find('#participant2');
@@ -349,21 +377,24 @@ update = function(source) {
                         function(data){
 {#                            $('#' + data.p1_key + '-score > .score').html(data.p1_score);#}
 {#                            $('#' + data.p2_key + '-score > .score').html(data.p2_score);#}
-                            match_wrapper.css('background-color', '#ccd5ec').animate({backgroundColor: "#F9F9F9"}, 1000)
+                            match_wrapper.css('background-color', '#ccd5ec').animate({backgroundColor: "#F9F9F9"}, 1000);
+                            match_wrapper.find('.throbber').hide();
                         }
                 );
             });
 
             $('.done').live('click', function(){
+                $(this).attr('disabled', 'disabled');
                 var url = '/tournament/update_match/';
                 var match_key = $(this).parents().find('.match-wrapper').attr('id');
                 var match_wrapper = $("#" + match_key);
+                match_wrapper.find('.throbber').show();  //Show Throbber
                 var p1_obj = match_wrapper.find('#participant1');
                 var key1 = p1_obj.val();
-                var team1 = $(this).parents().find('.name1').html()
+                var team1 = $(this).parents().find('.name1').html();
                 var p2_obj = match_wrapper.find('#participant2');
                 var key2 = p2_obj.val();
-                var team2 = $(this).parents().find('.name2').html()
+                var team2 = $(this).parents().find('.name2').html();
 
                 var score1 = $('input[value="'+key1+'"]').parent().find('.update-score1').val();
                 var score2 = $('input[value="'+key2+'"]').parent().find('.update-score2').val();
@@ -374,7 +405,8 @@ update = function(source) {
 {#                            #}
 {#                            var new_output = '{% include "bracket/finished_match_node.html" %}'#}
 {#                            match_wrapper.html(new_output);#}
-                            match_wrapper.css('background-color', '#ccd5ec').animate({backgroundColor: "#F9F9F9"}, 1000)
+                            match_wrapper.css('background-color', '#ccd5ec').animate({backgroundColor: "#F9F9F9"}, 1000);
+                            match_wrapper.find('.throbber').hide();
                             refresh_json();
                         }
                 );
