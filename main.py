@@ -7,6 +7,8 @@ sys.path.insert(0, LIB_PATH)
 from google.appengine.ext.webapp.util import run_wsgi_app
 
 from flask import Flask
+from flask.templating import render_template
+from flask import request
 
 import auth
 from auth import urls as auth_urls
@@ -14,7 +16,7 @@ from auth import urls as auth_urls
 from tournament import urls as tournament_urls
 from tournament.templatetags import ttags
 
-from base import urls as base_urls
+from base import views as base_views
 
 
 app = Flask(__name__)
@@ -24,8 +26,36 @@ auth.initialize(app)
 app.secret_key = 'this-is-just-our-dev-key-oh-so-secret'
 
 
+class MainHandler(auth.UserAwareView):
+    active_nav = 'home'
+
+    def get(self):
+        context = self.get_context()
+
+        context['remove_header'] = True
+
+        if self.user:
+            context['username'] = self.user.username
+
+        context['login_mode'] = request.args.get('login_mode', None)
+
+        return render_template('home.html', **context)
+
+
+class DemoHandler(auth.UserAwareView):
+    active_nav = 'home'
+
+    def get(self):
+        context = self.get_context()
+
+        return render_template('demo.html', **context)
+
+
 #Define URLs
-base_urls.setup_urls(app)
+app.add_url_rule('/', view_func=MainHandler.as_view('home'))
+app.add_url_rule('/about/', view_func=base_views.About.as_view('about'))
+app.add_url_rule('/demo/', view_func=DemoHandler.as_view('demo'))
+app.add_url_rule('/contact/', view_func=base_views.ContactUs.as_view('contact'))
 auth_urls.setup_urls(app)
 tournament_urls.setup_urls(app)
 
