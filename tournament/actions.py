@@ -1,6 +1,7 @@
 from google.appengine.ext import db
 from flask.templating import render_template
 from tournament import models
+from tournament import utils
 from auth import auth_models
 import json
 from operator import attrgetter
@@ -169,6 +170,7 @@ def create_tournament(form_data, p_form_data, user):
     t = t.put()
 
     ps_to_put = []
+    #Round Robin Tournament Match Creation
     if form_data.get('type') == 'RR':
         def write_round(list_to_use, round_num, x0, x1, y0, y1):
             # start from x0 in list and move up to x1  in the list
@@ -196,84 +198,75 @@ def create_tournament(form_data, p_form_data, user):
         if size%2 != 0:
             write_round(seeded_list,r+2,1,split+1,size,split-1)
 
-    ###### The odd number of participants is not working properly.
+    #Single Elimination Tournament Match Creation
     elif form_data.get('type') == 'SE':
-        # I couldn't fit this into the build tourney recursion, however this helps decides the round number for
-        # each match. This method associates each round number with the level of recursion.
-        # for example a tourney of 16 people
-        # 0:[15] 
-        # 1:[14, 13] 
-        # 2:[12, 11, 10, 9] 
-        # 3:[8, 7, 6, 5, 4, 3, 2, 1]
-        # so each each time we create a new match we just pop an element off of the list depedning on our level of
-        # recursion  
-        def decide_rounds(dict_to_fill, num_of_rounds, level=0):
-            if num_of_rounds <=0:
-                return
-            step = num_of_rounds-int(math.pow(2,level))
-            if step<0: 
-                step=0
-            dict_to_fill[level] = [i for i in range(num_of_rounds, step, -1)]
-            decide_rounds(dict_to_fill,step,level+1)
+        num_players = len(seeded_list)
+        seed_dict = dict([(player['seed'],player['name']) for player in seeded_list])
+        logging.debug("Seed_Dict= %s" % seed_dict)
 
-        round_dict = {}
-        decide_rounds(round_dict,len(seeded_list)-1)
+        def determine_bracket(m):
+            """
+            This function generates a nested list representing the bracket.
+            Algorithm based off a question Max asked in StackOverflow
+            stackoverflow.com/questions/13792213/algorithm-for-generating-a-bracket-model-list-in-python
+            :param m: The number of participants.
+            :return: The list representing all or part of the bracket, depending on the recursion.
+            Example: m=8 arr= [[[1,8],[4,5]],[[2,7],[3,6]]]
+            """
+            def divide(arr, depth, m):
+                if len(complements) <= depth:
+                    complements.append(2 ** (depth + 2) + 1)
+                complement = complements[depth]
+                for i in range(2):
+                    if complement - arr[i] <= m:
+                        arr[i] = [arr[i], complement - arr[i]]
+                        divide(arr[i], depth + 1, m)
 
+            arr = [1, 2]
+            complements = []
+            divide(arr, 0, m)
+            return arr
 
-        # rec_build_matches populates our tourneys with the correct network of matches
-        def build_matches_helper(next_match, is_odd, level=0, round =1):
-            logging.info('level: %d, next_match: %s,   %s', level, next_match, round_dict[level])
-            def write_player(seededd_list, cur_match):
-                if len(seeded_list) > 0:
-                    if len(seeded_list)%2==1:
-                        player = seeded_list.pop()
-                    else:
-                        player = seeded_list[0]
-                        seeded_list.remove(player)
-                    if player is not None and player['seed'] is not None and player['name'] is not None:
-                        p1 = models.Participant(
-                            seed=player['seed'],
-                            name=player['name'],
-                            parent=cur_match)
-                        logging.info('player: %s is added to %d', p1.name, cur_match.key().id())
-                        ps_to_put.append(p1)
+        bracket_array = determine_bracket(num_players)
+        logging.debug("Bracket Array= %s" % bracket_array)
+
+        def create_match(bracket_array, next_match, round=1):
+            """
+            Creates one match, and then decides if it should create participants or call this
+            function again, passing along the newly created match as the next match.
+            :param bracket_array: list representing all or part of the bracket depending on recursion
+            :param next_match: The match acting as the parent of the match we create.
+            :param round: We only need this so that we can set it in the match. It isn't used in
+                          recursion logic at all.
+            :return: Nothing
+            """
+            if not bracket_array or len(bracket_array) > 2:
+                raise TypeError("Malformed bracket array. Length=%s" % len(bracket_array))
 
             m = models.Match(round=round, status=models.Match.NOT_STARTED_STATUS, parent=t, next_match = next_match)
             m.put()
-            is_leaf = True
-
+            logging.info(utils.print_match(m))
             if next_match:
                 next_match.add_children_match(m)
 
-            if round_dict.has_key(level+1):
-                candidates = []
-                if len(round_dict[level+1])>1:
-                    candidates.append(round_dict[level+1].pop())
-                    candidates.append(round_dict[level+1].pop())
-                elif len(round_dict[level+1])>0:
-                    candidates.append(round_dict[level+1].pop())
-                while len(candidates)>0:
-                    logging.info(candidates)
-                    is_leaf = False
-                    m.put()
-                    build_matches_helper(m, is_odd, level+1, round+1)
-                    i = candidates.pop()
-                    logging.info('remove: %d', i)
-                    if round_dict.has_key(level+1) and is_odd:
-                        if len(candidates)==0 and len(seeded_list)>0:
-                            is_odd = False
-                            write_player(seeded_list,m)
+            for item in bracket_array:
+                #item could be an int or a list.
+                #if it is a list, we just want to call this function recursively until it is an int.
+                #if it is an int, we create a participant. The item is the seed.
+                if type(item) == int:
+                    logging.info("Participant %s added to %s" % (item,m.key().id()))
+                    p = models.Participant(seed=item,
+                                           name=seed_dict[item],
+                                           uuid=str(uuid.uuid4()),
+                                           parent=m)
+                    ps_to_put.append(p)
+                elif type(item) == list:
+                    create_match(item, m, round+1)
+                else:
+                    raise TypeError("Unexpected type in bracket array. Type=%s" % type(item))
+            return
 
-            if is_leaf:
-
-                write_player(seeded_list,m)
-                write_player(seeded_list,m)
-
-
-        is_odd = False
-        if len(seeded_list)%2 == 1:
-            is_odd = True
-        build_matches_helper(None, is_odd)
+        create_match(bracket_array, None)
     db.put(ps_to_put)
     return t
 
