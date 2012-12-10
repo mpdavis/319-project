@@ -19,6 +19,7 @@ from lib.flask_login import login_required
 from lib import flask_oauth
 from lib.flask_oauth import OAuth
 
+import logging
 import settings
 
 oauth = OAuth()
@@ -70,6 +71,7 @@ class Register(auth.UserAwareView):
 
                 if new_user:
                     registered = True
+                    logging.info("Registered new user: %s" % new_user.email)
 
                     subject = "Welcome to Web Tournaments"
                     body = mail.generate_email_body("email/auth/registration_email.html", username=new_user.username)
@@ -77,6 +79,8 @@ class Register(auth.UserAwareView):
                     mail.send_email(new_user.email, subject, body)
 
                     flask_login.login_user(new_user)
+                    logging.info("Successful Login: %s" % new_user.email)
+
 
             if current_user:
                 message = "Whoops! An account has already been registered with that email."
@@ -101,14 +105,17 @@ class Login(auth.UserAwareView):
         message = None
 
         if form.validate():
+            email = form.email.data
+            password = form.password.data
 
-            loggedin = auth_utils.check_password(form.password.data, form.email.data)
+            loggedin = auth_utils.check_password(password, email)
 
             if not loggedin:
                 message = "Invalid Email / Password"
             else:
-                flask_login.login_user(auth_models.WTUser.all().filter('email =', form.email.data).fetch(1)[0],
+                flask_login.login_user(auth_models.WTUser.all().filter('email =', email).fetch(1)[0],
                                        remember=form.remember_me.data)
+                logging.info("Successful Login: %s" % email)
 
         else:
             message = "Invalid Email / Password"
@@ -133,6 +140,7 @@ class Logout(auth.UserAwareView):
     decorators = [login_required]
 
     def get(self):
+        logging.info("Logging out user: %s" % self.user.email)
         flask_login.logout_user()
         return redirect('/auth/login')
 
@@ -184,6 +192,8 @@ class FacebookAuthorized(auth.UserAwareView):
         if user:
             flask_login.login_user(user)
 
+        logging.info("User: %s logged in with Facebook" % user.email)
+
         return redirect('/')
 
 
@@ -228,6 +238,8 @@ class GoogleAuthorized(auth.UserAwareView):
                 session.pop('access_token', None)
                 return redirect(url_for('google_login'))
             return res.read()
+
+        logging.info("User: %s logged in with Google" % user.email)
 
         return redirect('/')
 
