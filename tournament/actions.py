@@ -222,7 +222,10 @@ def create_tournament(form_data, p_form_data, user):
             if not bracket_array or len(bracket_array) > 2:
                 raise TypeError("Malformed bracket array. Length=%s" % len(bracket_array))
 
-            m = models.Match(round=round, status=models.Match.NOT_STARTED_STATUS, parent=t, next_match = next_match)
+            m = models.Match(round = round,
+                             status = models.Match.NOT_STARTED_STATUS,
+                             parent = t,
+                             next_match = next_match)
             m.put()
             logging.info(utils.print_match(m))
             if next_match:
