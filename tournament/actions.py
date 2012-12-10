@@ -271,69 +271,6 @@ def get_round_robin_rounds(tournament):
     return sorted_list
 
 
-def get_datatables_records(request, *args):
-
-    cols = int(request.args.get('iColumns',0)) # Get the number of columns
-    iDisplayLength =  min(int(request.args.get('iDisplayLength',10)),100)     #Safety measure. If someone messes with iDisplayLength manually, we clip it to the max value of 100.
-    startRecord = int(request.args.get('iDisplayStart',0)) # Where the data starts from (page)
-    endRecord = startRecord + iDisplayLength  # where the data ends (end of page)
-
-    columnIndexNameMap = { 0: 'name', 1 : 'type', 2: 'date', 3:'location', 4:'owner', 5:'created', 6:'actions' }
-    keys = columnIndexNameMap.keys()
-    keys.sort()
-    colitems = [columnIndexNameMap[key] for key in keys]
-    sColumns = ",".join(map(str,colitems))
-
-    searchableColumns = []
-    iSortingCols =  int(request.args.get('iSortingCols',0))
-    # Determine which columns are searchable
-    for col in range(0,cols):
-        if request.args.get('bSearchable_{0}'.format(col), False) == 'true': searchableColumns.append(columnIndexNameMap[col])
-
-    sortedColName = 'created'
-    if iSortingCols:
-        for sortedColIndex in range(0, iSortingCols):
-            sortedColID = int(request.args.get('iSortCol_'+str(sortedColIndex),0))
-            if request.args.get('bSortable_{0}'.format(sortedColID), 'false')  == 'true':  # make sure the column is sortable first
-                sortedColName = columnIndexNameMap[sortedColID]
-                sortingDirection = request.args.get('sSortDir_'+str(sortedColIndex), 'asc')
-                if sortingDirection == 'desc':
-                    sortedColName = '-'+sortedColName
-     
-    tournaments = []
-    customSearch = request.args.get('sSearch', '').encode('utf-8');
-    if customSearch != '':
-        # TODO: make better a better query algorithm 
-        for searchableColumn in searchableColumns:
-            tournaments.extend(models.Tournament.all().filter(searchableColumn+" >=", customSearch).filter(searchableColumn+" <", customSearch+ u"\ufffd").order(searchableColumn).order(sortedColName).fetch(1000))
-        
-        tournaments = [v for v in {tourney.key().id():tourney for tourney in tournaments}.itervalues()]
-        sort_attribute = sortedColName.split('-')
-        tournaments.sort(key=attrgetter(sort_attribute.pop()), reverse=(len(sort_attribute) == 1))
-
-    else:
-        tournaments = models.Tournament.all().order(sortedColName).fetch(3000)
-
-    iTotalRecords = iTotalDisplayRecords = len(tournaments) #count how many records match the final criteria
-    tournaments = tournaments[startRecord:endRecord] #get the slice
-    sEcho = int(request.args.get('sEcho',0)) # required echo response
-
-    aaData = [[ tournament.name,
-                tournament.type,
-                tournament.get_date_formatted(),
-                tournament.location,
-                tournament.owner.get_display_name(),
-                tournament.get_created_formatted(),
-                render_template('tournament_actions.html', id = tournament.key().id())] 
-                for tournament in tournaments]
-
-    response_dict = {}
-    response_dict.update({'aaData':aaData})
-    response_dict.update({'sEcho': sEcho, 'iTotalRecords': iTotalRecords, 'iTotalDisplayRecords':iTotalDisplayRecords, 'sColumns':sColumns})
-    response =  json.dumps(response_dict)
-
-    return response
-
 def get_non_private_tournaments():
     keys = models.Tournament.all(keys_only=True).filter("perms =", models.Tournament.PUBLIC).fetch(1000)
     more_keys = models.Tournament.all(keys_only=True).filter("perms =", models.Tournament.PROTECTED).fetch(1000)
