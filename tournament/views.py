@@ -261,10 +261,6 @@ class check_email(auth.UserAwareView):
         return json.dumps(output)
 
 
-class get_latest_tournaments(auth.UserAwareView):
-    def get(self):
-        return actions.get_datatables_records(request)
-
 class delete_tournament(auth.UserAwareView):
     def post(self):
         context = self.get_context()
