@@ -200,34 +200,13 @@ def create_tournament(form_data, p_form_data, user):
 
     #Single Elimination Tournament Match Creation
     elif form_data.get('type') == 'SE':
-        num_players = len(seeded_list)
-        seed_dict = dict([(player['seed'],player['name']) for player in seeded_list])
+
+        seed_dict = dict([(player['seed'],player['name'])
+                          for player in seeded_list])
         logging.debug("Seed_Dict= %s" % seed_dict)
 
-        def determine_bracket(m):
-            """
-            This function generates a nested list representing the bracket.
-            Algorithm based off a question Max asked in StackOverflow
-            stackoverflow.com/questions/13792213/algorithm-for-generating-a-bracket-model-list-in-python
-            :param m: The number of participants.
-            :return: The list representing all or part of the bracket, depending on the recursion.
-            Example: m=8 arr= [[[1,8],[4,5]],[[2,7],[3,6]]]
-            """
-            def divide(arr, depth, m):
-                if len(complements) <= depth:
-                    complements.append(2 ** (depth + 2) + 1)
-                complement = complements[depth]
-                for i in range(2):
-                    if complement - arr[i] <= m:
-                        arr[i] = [arr[i], complement - arr[i]]
-                        divide(arr[i], depth + 1, m)
-
-            arr = [1, 2]
-            complements = []
-            divide(arr, 0, m)
-            return arr
-
-        bracket_array = determine_bracket(num_players)
+        num_players = len(seeded_list)
+        bracket_array = utils.determine_bracket(num_players)
         logging.debug("Bracket Array= %s" % bracket_array)
 
         def create_match(bracket_array, next_match, round=1):
