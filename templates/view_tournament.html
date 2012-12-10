@@ -128,7 +128,8 @@ var m = { "t": 20, "r": 40, "b": 20, "l": 40 },
     size,
     timer,
     showingWinner = false,
-    hasBeenDrawn = false;
+    hasBeenDrawn = false,
+    inputDict = {};
 
 
 
@@ -359,28 +360,36 @@ update = function(source) {
     });
 
         $(document).ready(function(){
+            $('.update-score').live('focus', function(){
+                var p_key = $(this).parent().find('.participant').val();
+                inputDict[p_key] = $(this).val();
+            });
+
             //Handler for updating a score on a match.
             $('.update-score').live('blur', function(){
-                var url = '/tournament/update_match/';
-                var match_key = $(this).parents().find('.match-wrapper').attr('id');
-                var match_wrapper = $("#" + match_key);
-                match_wrapper.find('.throbber').show();  //Show Throbber
-                var p1_obj = match_wrapper.find('#participant1');
-                var p1_key = p1_obj.val();
-                var p2_obj = match_wrapper.find('#participant2');
-                var p2_key = p2_obj.val();
-                var p1_score = $('input[value="'+p1_key+'"]').parent().find('.update-score1').val();
-                var p2_score = $('input[value="'+p2_key+'"]').parent().find('.update-score2').val();
+                var p_check_key = $(this).parent().find('.participant').val();
+                if(inputDict[p_check_key] != $(this).val()){
+                    var url = '/tournament/update_match/';
+                    var match_key = $(this).parents().find('.match-wrapper').attr('id');
+                    var match_wrapper = $("#" + match_key);
+                    match_wrapper.find('.throbber').show();  //Show Throbber
+                    var p1_obj = match_wrapper.find('#participant1');
+                    var p1_key = p1_obj.val();
+                    var p2_obj = match_wrapper.find('#participant2');
+                    var p2_key = p2_obj.val();
+                    var p1_score = $('input[value="'+p1_key+'"]').parent().find('.update-score1').val();
+                    var p2_score = $('input[value="'+p2_key+'"]').parent().find('.update-score2').val();
 
-                $.getJSON(url,
-                        {'match':{'match_key': match_key, 'match_status':'0', 'player1':{'key':p1_key, 'score':p1_score}, 'player2':{'key':p2_key, 'score':p2_score}}},
-                        function(data){
-{#                            $('#' + data.p1_key + '-score > .score').html(data.p1_score);#}
-{#                            $('#' + data.p2_key + '-score > .score').html(data.p2_score);#}
-                            match_wrapper.css('background-color', '#ccd5ec').animate({backgroundColor: "#F9F9F9"}, 1000);
-                            match_wrapper.find('.throbber').hide();
-                        }
-                );
+                    $.getJSON(url,
+                            {'match':{'match_key': match_key, 'match_status':'0', 'player1':{'key':p1_key, 'score':p1_score}, 'player2':{'key':p2_key, 'score':p2_score}}},
+                            function(data){
+    {#                            $('#' + data.p1_key + '-score > .score').html(data.p1_score);#}
+    {#                            $('#' + data.p2_key + '-score > .score').html(data.p2_score);#}
+                                match_wrapper.css('background-color', '#ccd5ec').animate({backgroundColor: "#F9F9F9"}, 1000);
+                                match_wrapper.find('.throbber').hide();
+                            }
+                    );
+                }
             });
 
             $('.done').live('click', function(){
