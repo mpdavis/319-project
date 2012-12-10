@@ -192,8 +192,8 @@ def create_tournament(form_data, p_form_data, user):
             write_round(seeded_list,r+1,0,split,size,split-1)# create new round
             seeded_list.append(seeded_list.pop(1))# shuffle list
 
-        # if odd num of players we need to create a new round where we exclude the first player
-        # in the above loop, if odd, we at least exclude one player per round, except the first player
+        # if odd num of players we need to create a new round where we exclude the first player in
+        # the above loop, if odd, we at least exclude one player per round, except the first player
         # due to the nature of round robins and the algorithm 
         if size%2 != 0:
             write_round(seeded_list,r+2,1,split+1,size,split-1)
@@ -213,7 +213,8 @@ def create_tournament(form_data, p_form_data, user):
             """
             Creates one match, and then decides if it should create participants or call this
             function again, passing along the newly created match as the next match.
-            :param bracket_array: list representing all or part of the bracket depending on recursion
+            :param bracket_array: list representing all or part of the bracket depending
+                                  on recursion depth.
             :param next_match: The match acting as the parent of the match we create.
             :param round: We only need this so that we can set it in the match. It isn't used in
                           recursion logic at all.
@@ -227,25 +228,27 @@ def create_tournament(form_data, p_form_data, user):
                              parent = t,
                              next_match = next_match)
             m.put()
-            logging.info(utils.print_match(m))
             if next_match:
                 next_match.add_children_match(m)
 
+            p_logs = []
             for item in bracket_array:
                 #item could be an int or a list.
                 #if it is a list, we just want to call this function recursively until it is an int.
                 #if it is an int, we create a participant. The item is the seed.
                 if type(item) == int:
-                    logging.info("Participant %s added to %s" % (item,m.key().id()))
                     p = models.Participant(seed=item,
                                            name=seed_dict[item],
                                            uuid=str(uuid.uuid4()),
                                            parent=m)
                     ps_to_put.append(p)
+                    p_logs.append(item)
                 elif type(item) == list:
                     create_match(item, m, round+1)
                 else:
                     raise TypeError("Unexpected type in bracket array. Type=%s" % type(item))
+
+            logging.info(utils.print_match(m, p_logs))
             return
 
         create_match(bracket_array, None)

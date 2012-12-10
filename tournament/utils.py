@@ -1,12 +1,22 @@
-def print_match(match):
+def print_match(match, participants=[]):
     if match:
-        return "<Model id=%s, round=%s, status=%s>" % (match.key().id(), match.round, match.status)
+        ps = ""
+        if participants:
+            for p in participants:
+                ps += "%s, " % p
+        return "<Model id=%s, round=%s, status=%s, participants=%s>" % (match.key().id(),
+                                                                        match.round,
+                                                                        match.status,
+                                                                        ps)
     return None
 
 
 def print_participant(p):
     if p:
-        return "<Participant name=%s, seed=%s, score=%s, uuid=%s>" % (p.name, p.seed, p.score, p.uuid)
+        return "<Participant name=%s, seed=%s, score=%s, uuid=%s>" % (p.name,
+                                                                      p.seed,
+                                                                      p.score,
+                                                                      p.uuid)
     return None
 
 
