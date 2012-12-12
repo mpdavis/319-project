@@ -1,4 +1,4 @@
-def print_match(match, participants=[]):
+def print_match(match, participants=None):
     if match:
         ps = ""
         if participants:
