@@ -7,7 +7,6 @@ from lib.flask_login import login_required
 
 from tournament import public_tournament
 
-import wtforms
 import auth
 import forms
 import models
@@ -16,8 +15,14 @@ import flask
 
 import logging
 
+
 class New_Tournament(auth.UserAwareView):
-    decorators = [login_required]
+    """
+    View to handle creation of new tournaments.
+    """
+
+    # decorators = [login_required] #TODO make this work
+
     def get(self):
         context = self.get_context({
             'fields':{'step':1},
@@ -82,7 +87,10 @@ class New_Tournament(auth.UserAwareView):
 
 
 class Tournament_List(auth.UserAwareView):
-    decorators = [login_required]
+    """
+    View to list the tournaments for a user
+    """
+    #decorators = [login_required]
     active_nav = 'my_tournaments'
 
     def get(self):
@@ -92,7 +100,10 @@ class Tournament_List(auth.UserAwareView):
 
 
 class Tournament_Edit(auth.UserAwareView):
-    decorators = [login_required]
+    """
+    View to handle editing of a Tournament
+    """
+    #decorators = [login_required]
 
     def get(self, tournament_key):
         context = self.get_context()
@@ -354,4 +365,3 @@ class update_match(auth.UserAwareView):
             return json.dumps({'p1_score':p1_score, 'p1_key': str(p1_key),
                                'p2_score':p2_score, 'p2_key': str(p2_key),
                                'winner': str(winner_key), 'next_match': next_key})
-

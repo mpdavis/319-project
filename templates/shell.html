@@ -1,8 +1,9 @@
-{% extends "base.html" %}
-
-{% block title %}500 - WebTournaments{% endblock %}
-
-{% block script %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>BigSky: Interactive Shell</title>
 <script type="text/javascript" src="/static/js/shell.js"></script>
 <style type="text/css">
 body {
@@ -23,7 +24,6 @@ p {
   padding: 0.5em;
   padding-right: 0em;
   overflow-x: hidden;
-font-family: monospace;
 }
 
 #toolbar {
@@ -70,21 +70,18 @@ font-family: monospace;
 }
 
 </style>
+</head>
 
-{% endblock %}
+<body>
 
-{% block content %}
-<div class="row">
-    <div class="span6 offset3" style="text-align: center;">
-        <h1>Server Error - 500</h1>
-
-
+<p> Interactive server-side Python shell for Big-Sky</p>
 
 <textarea id="output" rows="30" cols="120" readonly="readonly">
 {{ server_software }}
 Python {{ python_version }}
 </textarea>
-        <form id="shell-form" action="/shell/shell.do" method="post">
+
+<form id="form" action="shell.do" method="post">
   <nobr>
   <textarea class="prompt" id="caret" readonly="readonly" cols="120" rows="4"
             onfocus="document.getElementById('statement').focus()"
@@ -92,7 +89,7 @@ Python {{ python_version }}
   <textarea class="prompt" name="statement" id="statement" rows="4"
             onkeypress="return shell.onPromptKeyPress(event);"></textarea>
   </nobr>
-  <input type="hidden" name="session" value="{{ shell_session }}" />
+  <input type="hidden" name="session" value="{{ session }}" />
   <input type="submit" style="display: none" />
 </form>
 
@@ -117,9 +114,6 @@ Python {{ python_version }}
 document.getElementById('statement').focus();
 </script>
 
+</body>
+</html>
 
-
-
-    </div>
-</div>
-{% endblock %}

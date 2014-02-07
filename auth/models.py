@@ -1,5 +1,6 @@
 from google.appengine.ext import db
 
+
 class WTUser(db.Model):
     username = db.StringProperty()
     name = db.StringProperty()

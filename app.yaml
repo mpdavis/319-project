@@ -13,6 +13,10 @@ handlers:
   static_dir: static
   secure: always
 
+- url: /shell/.*
+  script: utility_handler.shell_app
+  secure: optional
+
 - url: /.*
   script: main.py
   secure: always
@@ -20,9 +24,12 @@ handlers:
 libraries:
 - name: jinja2
   version: "2.6"
+- name: webapp2
+  version: latest
 
 builtins:
 - deferred: on
+- remote_api: on
 
 inbound_services:
   - warmup

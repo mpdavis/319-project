@@ -1,5 +1,8 @@
+from google.appengine.ext import db
+
 from base import views as base_views
 from flask import render_template
+from flask import request
 import logging
 
 
@@ -17,5 +20,17 @@ def setup_urls(app):
 
     @app.errorhandler(500)
     def server_error(e):
+        import shell
+
+        session_key = request.args.get('session')
+        if session_key:
+          session = shell.ShellSession.get(session_key)
+        else:
+          # create a new session
+          session = shell.ShellSession()
+          session.unpicklables = [db.Text(line) for line in shell.INITIAL_UNPICKLABLES]
+          session_key = session.put()
+
+        ctx = {'shell_session': session_key}
         logging.error(e)
-        return render_template('500.html'), 500
+        return render_template('500.html', **ctx), 500

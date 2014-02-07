@@ -26,7 +26,7 @@ class DemoHandler(auth.UserAwareView):
 
     def get(self):
         context = self.get_context()
-
+        context['demo'] = demo_content
         return render_template('demo.html', **context)
 
 

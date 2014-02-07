@@ -6,7 +6,9 @@ GOOGLE_SECRET = 'F2ngZOaKzAgUbhe3xVUqgYYj'
 
 DEBUG=True
 SECRET_KEY='dev_key_h8hfne89vm'
-CSRF_ENABLED=True
+CSRF_ENABLED=False
 CSRF_SESSION_LKEY='dev_key_h8asSNJ9s9=+'
 
 MEDIA_MERGED = False
+
+VERSION = 1
